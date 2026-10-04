@@ -1,0 +1,37 @@
+title: Converting user input to a number
+language: python
+code: |
+  text = input("Enter your age: ")
+  age = int(text)
+  print(f"You will be 100 in {100 - age} years!")
+
+steps:
+  - line: 1
+    write: "Enter your age: "
+    caption: input() shows its prompt and waits for the user to type something.
+
+  - input: "30"
+    caption: The user types 30 and presses Enter.
+
+  - badge: { over: 'input("Enter your age: ")', value: "30", from: console }
+    caption: input() always gives back a string, even when the user types digits.
+
+  - assign: { var: text, from: badge }
+    caption: The string "30" is stored in the variable text.
+
+  - line: 2
+    badge: { over: text, value: "30", from: { var: text } }
+    caption: Python looks up text and finds the string "30".
+
+  - convert: { over: int(text), value: 30 }
+    caption: int() converts the string "30" into the integer 30.
+
+  - assign: { var: age, from: badge }
+    caption: Now age holds a number, so we can do math with it.
+
+  - line: 3
+    badge: { over: 100 - age, value: 70 }
+    caption: Because age is an int, 100 - age works out to 70.
+
+  - print: { text: "You will be 100 in 70 years!", from: badge }
+    caption: The f-string fills in 70 and print() shows the message.

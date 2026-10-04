@@ -1,0 +1,20 @@
+{
+  "name": "code-animator",
+  "version": "0.1.0",
+  "description": "Step-through code animations for teaching, as an embeddable web component.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "shiki": "^4.5.0",
+    "yaml": "^2.9.1"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2"
+  }
+}
