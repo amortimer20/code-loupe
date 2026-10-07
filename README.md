@@ -19,6 +19,7 @@ npm run build        # player library + static Astro site
 npm run build:player # packages/player/dist/code-loupe.js and accompanying assets
 npm run build:site   # apps/site/dist/ — deploy this folder to a static host
 npm run typecheck    # check both workspaces
+npm test             # snapshot and call-frame tests
 ```
 
 The home page is a searchable sample library. Each lesson has a player, teaching
@@ -38,8 +39,9 @@ lessons/          Canonical YAML lessons plus Markdown metadata and teaching not
 docs/             Tutorial, contribution guide, roadmap, and journal
 ```
 
-The corpus starts with Python input conversion, an accumulator loop, and a
-conditional branch. See [Adding samples](docs/samples.md) to contribute another
+The corpus includes Python input conversion, an accumulator loop, a conditional
+branch, and a function call with local variables and a return value.
+See [Adding samples](docs/samples.md) to contribute another
 lesson without editing the site routes. The site validates every lesson during
 its build and generates download files from the canonical YAML.
 
@@ -101,7 +103,8 @@ steps:
     caption: Text shown under the code for this step.
 ```
 
-Each step can combine any of these keys. They animate in this order: console → badge → convert → assign.
+Ordinary steps can combine actions. They animate in this order: console → badge →
+convert → assign. `call` and `return` each require their own step, with an optional caption.
 
 | Key       | Example                                         | What it does |
 | --------- | ----------------------------------------------- | ------------ |
@@ -113,6 +116,8 @@ Each step can combine any of these keys. They animate in this order: console →
 | `badge`   | `badge: { over: int(text), value: 30 }`         | Float a value above code on the current line (`line:` and `nth:` pick another spot). Add `from: console` to fly it up from the user's input, or `from: { var: text }` to fly it from a variable. |
 | `convert` | `convert: { over: int(text), value: 30 }`       | Turn the latest badge into a new value, optionally moving it. |
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
+| `call` | `call: { name: add_one, line: 1, over: add_one(value), args: [{ var: value, from: badge }] }` | Save the current caller line and call target, enter a function frame at `line`, and bind its parameters. |
+| `return` | `return: { from: badge }` | Leave the active function, restore its caller, and show the result over the saved call target. Alternatively supply `value` and optional `type`. |
 
 Values: `"30"` (quoted) is a string, `30` is a number, `true`/`false`/`null` are written in the
 lesson language's style (`True`/`None` in Python). Types like `str`/`int` are inferred per
@@ -120,6 +125,31 @@ language; add `type: float` etc. to override.
 
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.
+
+## Function calls and scope
+
+See the [function-call sample](lessons/python/function-call/lesson.yaml) for a complete lesson.
+Highlight the caller line before a `call` step. Its `over` identifies the exact call
+text on that active line; `nth` chooses an occurrence. The call's `line` is the
+function entry line. `args` is an optional list of parameter bindings, each using
+`var` with either `value` or `from: badge` (the latest caller badge).
+
+Assignments inside a function update its own locals. A badge source such as
+`from: { var: value }` looks in the active frame, then globals. Use
+`from: { var: value, scope: global }` to explicitly select a shadowed global.
+Suspended callers' locals are not visible to another function.
+
+`return` supplies an authored result; it does not evaluate code. It restores the
+saved caller line and replaces badges inside the call expression with a result
+badge. Badges outside that expression survive. Assign the returned badge in the
+next step to store it in the caller's scope. Nested calls have separate frames,
+including repeated calls with the same function name.
+
+The Call stack panel appears only in lessons containing `call`. Globals remain
+in the Variables panel; each function frame owns its local variables. Stepping
+backward across a return restores that frame and its locals from the snapshot.
+Closures, nonlocal/global assignment declarations, exceptions, and implicit returns
+are not modeled yet. An authored no-value return can use `return: { value: null }`.
 
 ## License
 

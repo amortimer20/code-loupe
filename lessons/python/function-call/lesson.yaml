@@ -1,0 +1,43 @@
+title: Following an argument and return value
+language: python
+code: |
+  def add_one(value):
+      result = value + 1
+      return result
+
+  value = 10
+  answer = add_one(value)
+  print(answer)
+steps:
+  - line: 5
+    assign: { var: value, value: 10 }
+    caption: Store 10 in the global variable value. Defining the function did not run its body.
+  - line: 6
+    badge: { over: value, value: 10, from: { var: value } }
+    caption: Look up the argument before calling add_one().
+  - call:
+      name: add_one
+      line: 1
+      over: add_one(value)
+      args:
+        - { var: value, from: badge }
+    caption: Enter add_one(). Its parameter value is local to this new call frame.
+  - line: 2
+    badge: { over: value, value: 10, from: { var: value } }
+    caption: Inside the function, value refers to the local parameter. The global value is separate.
+  - convert: { over: value + 1, value: 11 }
+    caption: Adding 1 to the local value gives 11.
+  - assign: { var: result, from: badge }
+    caption: Store 11 in result, another variable local to this call.
+  - line: 3
+    badge: { over: result, value: 11, from: { var: result } }
+    caption: Look up the local result to return it.
+  - return: { from: badge }
+    caption: Return 11 to the caller. The function frame and its local variables are removed.
+  - assign: { var: answer, from: badge }
+    caption: Store the returned number in the global variable answer. The global value is still 10.
+  - line: 7
+    badge: { over: answer, value: 11, from: { var: answer } }
+    caption: Look up answer for the final output.
+  - print: { text: "11", from: badge }
+    caption: The console shows 11. The local result existed only while the function was running.

@@ -12,14 +12,16 @@
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts"
   },
   "dependencies": {
     "shiki": "^4.5.0",
     "yaml": "^2.9.1"
   },
   "devDependencies": {
-    "vite": "^8.3.2",
-    "typescript": "^7.0.2"
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.2"
   }
 }

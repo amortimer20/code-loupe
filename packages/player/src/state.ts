@@ -1,5 +1,8 @@
-import { LessonError, type Lesson, type OutputSpec, type Value } from './lesson';
+import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type Value } from './lesson';
 import { inferType } from './values';
+import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
+
+export type { CallFrame } from './visuals/call-stack-state';
 
 export interface BadgeState {
   id: number;
@@ -23,7 +26,7 @@ export interface ConsoleChunk {
   fromBadge?: number;
 }
 
-export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string };
+export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number };
 
 /** What changed in the step that produced a snapshot; used only to animate forward steps. */
 export interface StepEvents {
@@ -31,7 +34,9 @@ export interface StepEvents {
   consoleFrom: number;
   badgeAdded?: { id: number; from?: BadgeOrigin };
   converted?: { id: number; from: BadgeState };
-  assigned?: { name: string; fromBadge?: number; isNew: boolean };
+  assigned?: { name: string; frameId: number; fromBadge?: number; isNew: boolean };
+  called?: { frameId: number; args: { name: string; fromBadge?: number }[] };
+  returned?: { frameId: number; badgeId: number; fromBadge?: number };
 }
 
 /** The complete picture at one point in the lesson. Snapshot i is the state after i steps. */
@@ -39,6 +44,7 @@ export interface Snapshot {
   line: number | null;
   caption: string | null;
   vars: VarState[];
+  frames: CallFrame[];
   badges: BadgeState[];
   console: ConsoleChunk[];
   events: StepEvents;
@@ -52,8 +58,9 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
   const codeLines = lesson.code.split('\n');
   const lang = lesson.language;
   let nextBadgeId = 1;
+  let nextFrameId = 1;
 
-  let current: Snapshot = { line: null, caption: null, vars: [], badges: [], console: [], events: { lineChanged: false, consoleFrom: 0 } };
+  let current: Snapshot = { line: null, caption: null, vars: [], frames: [], badges: [], console: [], events: { lineChanged: false, consoleFrom: 0 } };
   const snapshots = [current];
 
   lesson.steps.forEach((step, i) => {
@@ -67,6 +74,8 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     };
     const checkTarget = (line: number, over: string, nth: number) => {
       checkLine(line);
+      if (typeof over !== 'string' || !over.length) fail('a code target must be nonempty text.');
+      if (!Number.isInteger(nth) || nth < 1) fail('`nth` must be a positive integer.');
       if (findNth(codeLines[line - 1], over, nth) < 0) {
         fail(`couldn't find \`${over}\`${nth > 1 ? ` (occurrence ${nth})` : ''} on line ${line}: ${codeLines[line - 1].trim()}`);
       }
@@ -76,10 +85,88 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       line: current.line,
       caption: step.caption ?? null,
       vars: current.vars.map((v) => ({ ...v })),
+      frames: cloneFrames(current.frames),
       badges: current.badges.map((b) => ({ ...b })),
       console: [...current.console],
       events: { lineChanged: false, consoleFrom: current.console.length },
     };
+
+    if (step.call !== undefined || step.return !== undefined) {
+      const action = step.call !== undefined ? 'call' : 'return';
+      if (Object.keys(step).some(key => key !== action && key !== 'caption')) {
+        fail(`\`${action}\` must be its own step (with an optional caption).`);
+      }
+    }
+
+    const readValue = (spec: Omit<AssignSpec, 'var'>, label: string) => {
+      if (spec.from !== undefined && spec.from !== 'badge') fail(`${label} \`from\` must be \`badge\`.`);
+      const badge = spec.from === 'badge' ? (s.badges.at(-1) ?? fail(`${label} uses \`from: badge\` but there is no badge.`)) : undefined;
+      const value = spec.value !== undefined ? spec.value : badge?.value;
+      if (value === undefined) fail(`${label} needs a \`value\` (or \`from: badge\`).`);
+      if (value !== null && !['string', 'number', 'boolean'].includes(typeof value)) fail(`${label} needs a primitive value.`);
+      if (typeof value === 'number' && !Number.isFinite(value)) fail(`${label} needs a finite number.`);
+      if (spec.type !== undefined && (typeof spec.type !== 'string' || !spec.type.length)) fail(`${label} \`type\` must be nonempty text.`);
+      return {
+        value: value as Value,
+        type: spec.type ?? (spec.value !== undefined ? inferType(value as Value, lang) : badge!.type),
+        fromBadge: badge?.id,
+      };
+    };
+
+    if (step.call !== undefined) {
+      const call = step.call;
+      if (!isRecord(call)) fail('`call` needs a mapping with name, line, and over.');
+      checkKeys(call, ['name', 'line', 'over', 'nth', 'args'], 'call', fail);
+      if (typeof call.name !== 'string' || !call.name.length) fail('`call` needs a nonempty function `name`.');
+      checkLine(call.line);
+      const callerLine = s.line ?? fail('`call` needs an active caller line.');
+      const nth = call.nth ?? 1;
+      checkTarget(callerLine, call.over, nth);
+      if (call.args !== undefined && !Array.isArray(call.args)) fail('`call.args` must be a list.');
+      const names = new Set<string>();
+      const args = (call.args ?? []).map(arg => {
+        if (!isRecord(arg)) fail('each call argument must be a mapping.');
+        checkKeys(arg, ['var', 'value', 'type', 'from'], 'call argument', fail);
+        if (typeof arg.var !== 'string' || !arg.var.length) fail('each call argument needs a nonempty `var` parameter name.');
+        if (names.has(arg.var)) fail(`duplicate parameter \`${arg.var}\`.`);
+        names.add(arg.var);
+        return { name: arg.var, ...readValue(arg, 'call argument') };
+      });
+      const frame: CallFrame = {
+        id: nextFrameId++, name: call.name,
+        vars: args.map(({ name, value, type }) => ({ name, value, type })),
+        returnTo: { line: callerLine, over: call.over, nth },
+        callerBadges: s.badges.map(b => ({ ...b })),
+      };
+      s.frames.push(frame);
+      s.badges = [];
+      s.line = call.line;
+      s.events.lineChanged = s.line !== current.line;
+      s.events.called = { frameId: frame.id, args: args.map(({ name, fromBadge }) => ({ name, fromBadge })) };
+    }
+
+    if (step.return !== undefined) {
+      if (!isRecord(step.return)) fail('`return` needs a mapping with value or from.');
+      checkKeys(step.return, ['value', 'type', 'from'], 'return', fail);
+      const frame = s.frames.at(-1) ?? fail('`return` needs an active function call.');
+      const result = readValue(step.return, 'return');
+      s.frames.pop();
+      const badge: BadgeState = { id: nextBadgeId++, ...frame.returnTo, value: result.value, type: result.type };
+      const callerCode = codeLines[frame.returnTo.line - 1];
+      const callStart = findNth(callerCode, frame.returnTo.over, frame.returnTo.nth);
+      const callEnd = callStart + frame.returnTo.over.length;
+      const surroundingBadges = frame.callerBadges.filter(b => {
+        if (b.line !== frame.returnTo.line) return true;
+        const start = findNth(callerCode, b.over, b.nth);
+        return start < callStart || start + b.over.length > callEnd;
+      });
+      // The call's result replaces its argument/expression badges, while values
+      // elsewhere in the caller's expression survive. Older snapshots stay intact.
+      s.badges = [...surroundingBadges, badge];
+      s.line = frame.returnTo.line;
+      s.events.lineChanged = s.line !== current.line;
+      s.events.returned = { frameId: frame.id, badgeId: badge.id, fromBadge: result.fromBadge };
+    }
 
     if (step.line !== undefined) {
       checkLine(step.line);
@@ -132,23 +219,12 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.assign) {
       const name = step.assign.var;
       if (typeof name !== 'string') fail('`assign` needs `var`: the variable name.');
-      let value: Value;
-      let type: string;
-      let fromBadge: number | undefined;
-      if (step.assign.from === 'badge') {
-        const badge = s.badges.at(-1) ?? fail('`assign` uses `from: badge` but there is no badge.');
-        value = step.assign.value ?? badge.value;
-        type = step.assign.type ?? badge.type;
-        fromBadge = badge.id;
-      } else {
-        if (step.assign.value === undefined) fail('`assign` needs a `value` (or `from: badge`).');
-        value = step.assign.value!;
-        type = step.assign.type ?? inferType(value, lang);
-      }
-      const existing = s.vars.find((v) => v.name === name);
+      const { value, type, fromBadge } = readValue(step.assign, 'assign');
+      const { vars, frameId } = activeScope(s);
+      const existing = vars.find((v) => v.name === name);
       if (existing) Object.assign(existing, { value, type });
-      else s.vars.push({ name, value, type });
-      s.events.assigned = { name, fromBadge, isNew: !existing };
+      else vars.push({ name, value, type });
+      s.events.assigned = { name, frameId, fromBadge, isNew: !existing };
     }
 
     snapshots.push(s);
@@ -166,10 +242,23 @@ function resolveOrigin(from: unknown, s: Snapshot, fail: (msg: string) => never)
     return { kind: 'console', chunk };
   }
   if (typeof from === 'object' && from !== null && 'var' in from && typeof from.var === 'string') {
-    if (!s.vars.some((v) => v.name === from.var)) fail(`\`from: { var: ${from.var} }\` but there is no variable named ${from.var} yet.`);
-    return { kind: 'var', name: from.var };
+    const scope = 'scope' in from ? from.scope : undefined;
+    if (scope !== undefined && scope !== 'global') fail('variable source `scope` must be `global` when supplied.');
+    const found = findVariable(s, from.var, scope === 'global');
+    if (!found) fail(`\`from: { var: ${from.var} }\` but there is no variable named ${from.var} in the active scope or globals.`);
+    return { kind: 'var', name: from.var, frameId: found!.frameId };
   }
   return fail('`from` must be `console` or `{ var: name }`.');
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function checkKeys(value: object, allowed: string[], label: string, fail: (msg: string) => never) {
+  for (const key of Object.keys(value)) {
+    if (!allowed.includes(key)) fail(`unknown ${label} key \`${key}\`.`);
+  }
 }
 
 /** Index of the nth (1-based) occurrence of needle in text, or -1. */

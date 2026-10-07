@@ -13,7 +13,8 @@
     "build:player": "npm run build --workspace code-loupe",
     "build:site": "npm run build --workspace @code-loupe/site",
     "build:playground": "npm run build:site",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspace code-loupe"
   },
   "devDependencies": {
     "typescript": "^5.9.3"

@@ -74,5 +74,11 @@ skipped branches, and console output.
 
 When a change affects an existing sample, compare both the final result and the
 intermediate states. Teaching order and animation origins matter even when final
-values are identical. This corpus can supply fixtures for future snapshot and
-visual regression tests; those tests are not implemented yet.
+values are identical. The corpus supplies snapshot-test fixtures and can also
+support future visual regression tests.
+
+The function-call sample adds parameter binding, separate global/local scope,
+return-to-caller behavior, and a frame that can be restored by backward stepping.
+Snapshot regression tests now cover these foundations and the earlier corpus
+outcomes; visual regression tests remain future work. Run `npm test` after changing
+the state model or updating a tested sample's authored outcomes.

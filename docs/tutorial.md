@@ -227,3 +227,11 @@ including any accompanying assets, alongside your lesson file. On the host page:
 The lesson URL is resolved relative to the page. See the
 [embedding reference](../README.md#embed-it) for inline lessons, themes, speed,
 motion preferences, and the JavaScript API.
+
+## Next: functions and local variables
+
+Explore the [function-call sample](../lessons/python/function-call/lesson.yaml)
+and its [teaching notes](../lessons/python/function-call/index.md). It adds a
+Call stack panel, local parameter binding, and a returned value. The
+[function and scope reference](../README.md#function-calls-and-scope) explains
+the new `call` and `return` actions.

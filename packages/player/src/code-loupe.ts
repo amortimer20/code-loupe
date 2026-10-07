@@ -3,6 +3,8 @@ import { parseLesson, type Lesson, type Value } from './lesson';
 import { buildSnapshots, findNth, type BadgeOrigin, type Snapshot } from './state';
 import { formatValue } from './values';
 import { styles } from './styles';
+import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
+import { renderVariables } from './visuals/variables';
 
 const DEFAULT_THEME = 'dark-plus';
 
@@ -27,14 +29,17 @@ const ICONS = {
 };
 
 const TEMPLATE = `
-<style>${styles}</style>
+<style>${styles}${callStackStyles}</style>
 <div class="ca" part="container">
   <div class="title" hidden></div>
   <div class="stage">
-    <section class="data" aria-label="Variables">
-      <h3 class="label">Variables</h3>
-      <div class="vars"></div>
-    </section>
+    <div class="data">
+      <section aria-label="Global variables">
+        <h3 class="label vars-label">Variables</h3>
+        <div class="vars globals"></div>
+      </section>
+      <section class="call-stack" aria-label="Call stack" hidden></section>
+    </div>
     <section class="code" aria-label="Code">
       <div class="code-scroll">
         <div class="arrow" aria-hidden="true"></div>
@@ -84,6 +89,7 @@ export class CodeLoupe extends HTMLElement {
   #playTimer: ReturnType<typeof setTimeout> | undefined;
   #speed = 1;
   #resizeObserver = new ResizeObserver(() => this.#render(false));
+  #callStack: CallStackPanel;
   #els: {
     ca: HTMLElement;
     title: HTMLElement;
@@ -131,6 +137,7 @@ export class CodeLoupe extends HTMLElement {
       overlay: $('.overlay'),
       error: $('.error'),
     };
+    this.#callStack = new CallStackPanel($('.call-stack'));
     this.speed = readStoredSpeed() ?? 1;
     this.#els.speed.addEventListener('change', () => {
       this.speed = Number(this.#els.speed.value);
@@ -336,7 +343,7 @@ export class CodeLoupe extends HTMLElement {
   async #highlightLiterals(lesson: Lesson, snapshots: Snapshot[], theme: string) {
     const texts = new Set<string>();
     for (const snap of snapshots) {
-      for (const v of [...snap.vars, ...snap.badges]) texts.add(formatValue(v.value, lesson.language, v.type));
+      for (const v of [...snap.vars, ...snap.frames.flatMap(f => f.vars), ...snap.badges]) texts.add(formatValue(v.value, lesson.language, v.type));
       const from = snap.events.converted?.from;
       if (from) texts.add(formatValue(from.value, lesson.language, from.type));
     }
@@ -353,11 +360,14 @@ export class CodeLoupe extends HTMLElement {
     if (!snap || !this.#lesson) return;
 
     for (const animation of this.#root.getAnimations()) animation.finish();
-    const oldBadges = animate ? this.#captureBadges() : new Map<number, Captured>();
+    const oldBadges = animate ? this.#captureBadges() : new Map<number, CapturedValue>();
     this.#els.overlay.replaceChildren();
 
     this.#renderLine(snap, animate);
     this.#renderVars(snap);
+    const stackEnabled = this.#lesson.steps.some(step => step.call !== undefined);
+    this.#root.querySelector('.vars-label')!.textContent = stackEnabled ? 'Global variables' : 'Variables';
+    this.#callStack.render(snap, stackEnabled, { language: this.#lesson.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
     this.#renderBadges(snap);
     this.#renderConsole(snap);
     this.#els.caption.textContent = snap.caption ?? '';
@@ -389,18 +399,7 @@ export class CodeLoupe extends HTMLElement {
   }
 
   #renderVars(snap: Snapshot) {
-    const lang = this.#lesson!.language;
-    this.#els.vars.replaceChildren(
-      ...snap.vars.map((v) => {
-        const row = el('div', 'var');
-        row.dataset.name = v.name;
-        const value = el('span', 'value');
-        value.innerHTML = this.#literalHtml(v.value, v.type);
-        row.append(el('span', 'name', v.name), el('span', 'eq', '='), value, el('span', 'tag', v.type));
-        row.setAttribute('aria-label', `${v.name} is the ${v.type} ${formatValue(v.value, lang, v.type)}`);
-        return row;
-      }),
-    );
+    renderVariables(this.#els.vars, snap.vars, { language: this.#lesson!.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
   }
 
   #renderBadges(snap: Snapshot) {
@@ -462,10 +461,16 @@ export class CodeLoupe extends HTMLElement {
     return base / this.#speed;
   }
 
-  #animateStep(snap: Snapshot, oldBadges: Map<number, Captured>) {
+  #animateStep(snap: Snapshot, oldBadges: Map<number, CapturedValue>) {
     const ev = snap.events;
     // Let the arrow arrive at the new line before anything on it happens.
     let t = ev.lineChanged ? this.#ms(LINE_MS) : 0;
+    this.#callStack.animate(snap, oldBadges, t, {
+      ms: duration => this.#ms(duration),
+      fly: (html, from, to, delay, align) => this.#fly(html, from, to, delay, align),
+      literalHtml: (value, type) => this.#literalHtml(value, type),
+      badge: id => this.#badgeInnerEl(id),
+    });
 
     // 1. Console: input is typed one character at a time; output fades in, or a badge's value flies into it.
     for (const chunkEl of this.#els.console.querySelectorAll<HTMLElement>('.chunk')) {
@@ -543,8 +548,9 @@ export class CodeLoupe extends HTMLElement {
 
     // 4. A value is stored: it flies from its badge into the Variables panel.
     if (ev.assigned) {
-      const variable = snap.vars.find((v) => v.name === ev.assigned!.name)!;
-      const row = this.#varRow(variable.name);
+      const vars = ev.assigned.frameId === 0 ? snap.vars : snap.frames.find(f => f.id === ev.assigned!.frameId)!.vars;
+      const variable = vars.find((v) => v.name === ev.assigned!.name)!;
+      const row = this.#varRow(variable.name, ev.assigned.frameId);
       const valueEl = row?.querySelector<HTMLElement>('.value');
       const source = ev.assigned.fromBadge !== undefined ? this.#badgeInnerEl(ev.assigned.fromBadge) : null;
       if (row && valueEl) {
@@ -612,12 +618,13 @@ export class CodeLoupe extends HTMLElement {
   /** The element a badge's value comes from: the user's typed input, or a variable's value. */
   #originEl(from: BadgeOrigin | undefined) {
     if (from?.kind === 'console') return this.#els.console.querySelector<HTMLElement>(`.chunk[data-index="${from.chunk}"] .in`);
-    if (from?.kind === 'var') return this.#varRow(from.name)?.querySelector<HTMLElement>('.value') ?? null;
+    if (from?.kind === 'var') return this.#varRow(from.name, from.frameId)?.querySelector<HTMLElement>('.value') ?? null;
     return null;
   }
 
-  #varRow(name: string) {
-    return this.#els.vars.querySelector<HTMLElement>(`[data-name="${CSS.escape(name)}"]`);
+  #varRow(name: string, frameId: number) {
+    const host = frameId === 0 ? this.#els.vars : this.#callStack.host.querySelector<HTMLElement>(`[data-frame-id="${frameId}"]`);
+    return host?.querySelector<HTMLElement>(`[data-name="${CSS.escape(name)}"]`) ?? null;
   }
 
   /** How a value looks when printed: strings lose their quotes. */
@@ -626,7 +633,7 @@ export class CodeLoupe extends HTMLElement {
   }
 
   #captureBadges() {
-    const captured = new Map<number, Captured>();
+    const captured = new Map<number, CapturedValue>();
     for (const badge of this.#els.badges.querySelectorAll<HTMLElement>('.badge')) {
       const inner = badge.querySelector<HTMLElement>('.badge-inner')!;
       captured.set(Number(badge.dataset.id), { rect: inner.getBoundingClientRect(), html: inner.innerHTML });
@@ -701,11 +708,6 @@ export class CodeLoupe extends HTMLElement {
     if (e.key !== ' ') this.pause();
     action();
   }
-}
-
-interface Captured {
-  rect: DOMRect;
-  html: string;
 }
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string) {

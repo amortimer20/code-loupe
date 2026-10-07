@@ -60,3 +60,23 @@ remain future decisions; this site produces ordinary static files.
 
 The Astro checker requires the classic TypeScript compiler API, so the site uses
 TypeScript 5.9 while the player keeps the existing TypeScript 7 compiler.
+
+## 2026-10-07 — First function-call visual
+
+Added an authored `add_one(value)` lesson and separate `call`/`return` steps.
+Calls capture their caller line and expression, bind parameters, and create an
+independent frame. Assignments belong to the active function; variable sources
+look up locals then globals, with explicit global lookup for shadowed names.
+Nested frames have unique identities even when their function names match.
+
+Returns remove the active frame and show the result over the saved call expression.
+The result replaces argument badges inside that expression while retaining values
+elsewhere in the caller. Earlier snapshots preserve both suspended caller state
+and completed locals, keeping backward stepping and scrubbing immediate.
+
+Extracted the Call stack panel, its forward animations, pure scope helpers, and
+shared variable rendering as the first visual modules. Globals stay in the
+Variables panel; locals belong to their visible function frame. Lessons without
+calls retain the simpler layout. Added Node/tsx regression tests for snapshot,
+scope, nested-call, and return behavior. Closures and exception unwinding remain
+future design work.

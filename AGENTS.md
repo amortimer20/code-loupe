@@ -27,6 +27,9 @@ This is an npm workspace monorepo:
   component; loading, rendering, animation, playback, and viewer preferences.
 - `packages/player/src/values.ts`, `styles.ts`, `index.ts`: value formatting,
   component styles, and browser entry/registration.
+- `packages/player/src/visuals/`: pure call-frame scope helpers, the Call stack
+  panel and its animations, and variable rows shared by globals and locals.
+  Keep browser panel imports out of the pure state path.
 - `apps/site/`: Astro static gallery, sample pages, authoring guide, and playground.
   Import the browser player only in client scripts; its entry depends on DOM globals.
   Build-time validation uses `code-loupe/lesson` and `code-loupe/state` instead.
@@ -44,6 +47,7 @@ Run commands at the repository root:
 - `npm install`: install and link both workspaces.
 - `npm run dev`: run the Astro sample site and playground at localhost:5173.
 - `npm run typecheck`: check the player and Astro site.
+- `npm test`: run snapshot, scope, and call/return regression tests with Node and tsx.
 - `npm run build`: build both workspaces.
 - `npm run build:player`: build `packages/player/dist/code-loupe.js` and its assets.
 - `npm run build:site`: build the static site into `apps/site/dist/`.
@@ -58,6 +62,8 @@ There is currently no checked-in automated browser test suite. For player/site
 changes, also check relevant browser behavior, including backward stepping,
 scrubbing, reduced motion, gallery filters, downloads, and sample-to-playground
 loading when applicable. Report completed checks and any checks not completed.
+Snapshot tests live in `packages/player/tests/state.test.ts`; run them after
+changes to lesson actions, scope, or snapshot generation.
 
 ## Documentation
 

@@ -7,7 +7,7 @@ export type Value = string | number | boolean | null;
  * Where a value travels from: the user's most recent console input, or a variable
  * in the Variables panel.
  */
-export type ValueSource = 'console' | { var: string };
+export type ValueSource = 'console' | { var: string; scope?: 'global' };
 
 /** Float a value above a piece of code, e.g. the result of a function call. */
 export interface BadgeSpec {
@@ -39,6 +39,22 @@ export interface AssignSpec {
   from?: 'badge';
 }
 
+/** Enter a function at `line`; `over` identifies the call in the current line. */
+export interface CallSpec {
+  name: string;
+  line: number;
+  over: string;
+  nth?: number;
+  args?: AssignSpec[];
+}
+
+/** Leave the active function and show its result over the saved caller target. */
+export interface ReturnSpec {
+  value?: Value;
+  type?: string;
+  from?: 'badge';
+}
+
 export interface Step {
   line?: number;
   caption?: string;
@@ -48,6 +64,8 @@ export interface Step {
   badge?: BadgeSpec;
   convert?: ConvertSpec;
   assign?: AssignSpec;
+  call?: CallSpec;
+  return?: ReturnSpec;
 }
 
 export interface Lesson {
@@ -59,7 +77,7 @@ export interface Lesson {
 
 export class LessonError extends Error {}
 
-const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign'];
+const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'call', 'return'];
 
 export function parseLesson(source: string): Lesson {
   let data: unknown;

@@ -98,7 +98,9 @@ line-by-line debugging hooks don't show what a single call like `input()` return
 
 ## 4. Visuals: how to organize them
 
-Today the visuals are hard-coded into the component. As the set grows, each visual should
+The first extracted visual is the Call stack panel, with pure scope helpers,
+panel rendering/animations, and shared variable rows in `packages/player/src/visuals/`.
+Other visuals still live in the main component. As the set grows, each visual should
 become a self-contained **module**:
 
 - **Panel:** a region of the player (Variables, Console, Call stack, Memory/heap)
@@ -126,6 +128,12 @@ through a shared "where is this value on screen?" lookup.
 | Objects and references  | Heap boxes with arrows; two variables pointing to one object       |
 | Errors                  | Exception badge, stack unwinding                                   |
 
+- [x] First function-call lesson: parameter binding, local assignment, authored return,
+      and a Call stack panel with argument/return animations.
+- [x] Scope foundations: separate globals and locals, shadowing, and nested call frames.
+- [ ] Extend module boundaries to the remaining visuals as new features need them.
+- [ ] Closures, nonlocal/global assignment declarations, implicit returns, and exception unwinding.
+
 ## 5. Authoring: tutorial, playground, visual editor
 
 1. [x] **Tutorial** ([`docs/tutorial.md`](tutorial.md)): build a lesson file from scratch, one concept at a time
@@ -136,8 +144,8 @@ through a shared "where is this value on screen?" lookup.
        static site with searchable samples, teaching notes, canonical YAML downloads,
        sample-specific playground drafts, and build-time lesson validation.
 4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
-       Start with input conversion, an accumulator loop, and a conditional branch;
-       next explore functions, scope, collections, and references.
+       Includes input conversion, an accumulator loop, a conditional branch, and a
+       function call; next explore nested-call teaching examples, collections, and references.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
@@ -173,7 +181,8 @@ through a shared "where is this value on screen?" lookup.
 
 ## 8. Quality
 
-- [ ] Unit tests for the step-to-snapshot logic (`state.ts`)
+- [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
+      shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [ ] Visual tests with Playwright, **including reduced motion**
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [ ] CI on GitHub
