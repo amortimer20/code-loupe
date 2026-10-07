@@ -1,26 +1,38 @@
-# Code Animator
+# Code Loupe
 
 Step-through animations of code for teaching. Students step forward and back through a
 program and watch the current line, variables, return values, type conversions and console
 I/O change. It's a web component, so it embeds in any page.
+
+Lessons currently play teacher-authored steps; the player does not execute the code.
+See the [roadmap](docs/roadmap.md) for planned features, the [project journal](docs/journal.md)
+for design decisions, and [AGENTS.md](AGENTS.md) for development conventions.
 
 ## Run the demo
 
 ```sh
 npm install
 npm run dev        # http://localhost:5173
-npm run build      # dist/code-animator.js for embedding
+npm run build      # dist/code-loupe.js for embedding
+npm run build:playground  # demo + playground site in dist/playground/
 ```
+
+Open [the playground](http://localhost:5173/playground.html) while the dev server
+is running to edit YAML beside a live player. It starts with the numeric-input
+example, saves your draft in browser storage when available, and downloads the
+exact YAML you have written, including incomplete lessons. Edits restart the preview
+at Step 0 after a short pause; errors appear below the editor and in the player.
+The playground works locally without an account or backend.
 
 ## Embed it
 
 ```html
-<script type="module" src="code-animator.js"></script>
+<script type="module" src="code-loupe.js"></script>
 
-<code-animator src="lessons/numeric-input.yaml"></code-animator>
+<code-loupe src="lessons/numeric-input.yaml"></code-loupe>
 
 <!-- or inline -->
-<code-animator>
+<code-loupe>
   <script type="text/yaml">
     language: python
     code: |
@@ -29,7 +41,7 @@ npm run build      # dist/code-animator.js for embedding
       - line: 1
         assign: { var: x, value: 5 }
   </script>
-</code-animator>
+</code-loupe>
 ```
 
 | Attribute     | Meaning                                                      |
@@ -43,7 +55,17 @@ npm run build      # dist/code-animator.js for embedding
 JavaScript API: `next()`, `prev()`, `goTo(n)`, `play()`, `pause()`, `step`, `total`, and a
 `stepchange` event with `{ step, total }`.
 
+For live authoring, `await player.loadLesson(yaml)` loads YAML directly and returns
+`true` on success or `false` if loading fails or a newer load supersedes it. Successful
+loads restart at Step 0 and emit `stepchange`; failed loads show an error and emit
+`lessonerror` with `{ message }`. Event payloads are in `event.detail`.
+Direct loads don't change the `src` attribute; changing `src` or `theme`, or reconnecting
+the element, loads its configured URL or inline lesson again.
+
 ## Lesson format
+
+Start with the [lesson-writing tutorial](docs/tutorial.md) for a guided example.
+The tables below provide a quick reference.
 
 ```yaml
 title: Converting user input to a number   # optional
@@ -75,3 +97,7 @@ language; add `type: float` etc. to override.
 
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.
+
+## License
+
+Code Loupe is available under the [MIT License](LICENSE).

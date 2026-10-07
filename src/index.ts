@@ -1,9 +1,9 @@
-import { CodeAnimator } from './code-animator';
+import { CodeLoupe } from './code-loupe';
 
-export { CodeAnimator };
+export { CodeLoupe };
 export { parseLesson, LessonError } from './lesson';
 export type { Lesson, Step, Value } from './lesson';
 
-if (!customElements.get('code-animator')) {
-  customElements.define('code-animator', CodeAnimator);
+if (!customElements.get('code-loupe')) {
+  customElements.define('code-loupe', CodeLoupe);
 }

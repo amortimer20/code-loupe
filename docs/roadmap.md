@@ -1,7 +1,7 @@
 # Roadmap
 
 > **Code Loupe**: a loupe is a jeweler's magnifying glass for close inspection, and a nod to Emerald.
-> Repo: https://github.com/amortimer20/code-loupe. The code still says "code-animator" until the rename (section 1).
+> Repo: https://github.com/amortimer20/code-loupe. The package and web component are named `code-loupe`.
 
 The goal: let teachers turn a code snippet into a step-through animation that shows what
 students can't normally see, such as the current line, variables changing, return values,
@@ -12,7 +12,7 @@ in any site, including Reveal.js decks, and other teachers can use it too.
 
 Phase 1 (proof of concept) is done:
 
-- `<code-animator>` web component that embeds anywhere with a `<script>` tag
+- `<code-loupe>` web component that embeds anywhere with a `<script>` tag
 - Hand-written YAML lessons with readable error messages for mistakes
 - Shiki syntax highlighting (VS Code grammars, 200+ languages)
 - Variables panel, console, execution arrow, value badges, type tags
@@ -26,21 +26,25 @@ Phase 1 (proof of concept) is done:
 
 - [x] Choose a name: **Code Loupe** (see the naming notes at the end of this file)
 - [x] Create the GitHub repo: [amortimer20/code-loupe](https://github.com/amortimer20/code-loupe)
-- [ ] First commit and push
-- [ ] Rename the package (`code-loupe`), element tag (`<code-animator>` → `<code-loupe>`), class, storage keys and docs
-- [ ] Choose a license (MIT is typical for embeddable teaching tools)
+- [x] First commit and push
+- [x] Rename the package (`code-loupe`), element tag (`<code-loupe>`), class, storage keys and docs
+- [x] Choose a license: MIT (see [`LICENSE`](../LICENSE))
 
 ## 2. Codebase walkthrough (pair session)
 
-Walk through the code together before building more on it:
+The pair walkthrough is complete. We followed the example lesson through parsing,
+snapshot generation, rendering, animation, playback, and language-specific values:
 
 - `src/lesson.ts`: the lesson format and its validation
 - `src/state.ts`: turns steps into **snapshots**, the full picture at each step. This is
   why stepping backward and scrubbing are free.
-- `src/code-animator.ts`: rendering, animation and playback
+- `src/code-loupe.ts`: rendering, animation and playback
 - `src/values.ts`: per-language literals and type names (`True`/`None`, `str`/`int`)
 
 From now on, build features as pair-programming sessions instead of in large solo batches.
+
+Working conventions live in [`AGENTS.md`](../AGENTS.md); decisions and their reasons live in
+[`docs/journal.md`](journal.md). The roadmap tracks planned work, rather than decision history.
 
 ## 3. Two ways to make a lesson: authored and traced
 
@@ -124,19 +128,35 @@ through a shared "where is this value on screen?" lookup.
 
 ## 5. Authoring: tutorial, playground, visual editor
 
-1. [ ] **Tutorial** (`docs/tutorial.md`): build a lesson file from scratch, one concept at a time
-2. [ ] **Playground page**: YAML on the left, live player on the right, errors inline. This is
-       cheap to build, makes the tutorial interactive, and is the first step toward the editor.
+1. [x] **Tutorial** ([`docs/tutorial.md`](tutorial.md)): build a lesson file from scratch, one concept at a time
+2. [x] **Playground page** (`playground.html`): YAML on the left, live player on the right,
+       errors inline, browser draft persistence, and YAML download. Makes the tutorial
+       interactive and is the first step toward the editor.
 3. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
-## 6. Themes and colors
+## 6. Styling Code Loupes
 
-- Today: `theme` attribute sets any Shiki theme, and the panel colors follow it
+- Today: the `theme` attribute sets any Shiki syntax-highlighting theme, and the panel
+  colors follow it. The player uses Shadow DOM; a supported styling API is still needed.
+- [ ] **Host-page styling API:** documented CSS custom properties for fonts, sizes,
+      colors, spacing, borders, and corner radii, so teachers can match a website or slide deck.
+      Support page-wide defaults and overrides for individual `<code-loupe>` instances.
+      Define a small, stable set of CSS `::part` hooks for customization beyond those properties.
+- [ ] **Typography:** separate code/console and interface/caption fonts; font size,
+      line height, and badge/type-tag sizing. Reposition badges and arrows when custom fonts load.
+- [ ] **Shape and layout:** player, panel, badge, and control corner radii; border width
+      and color; padding and gaps; variable-panel width and a compact presentation for slides.
+      Keep code targets aligned and the player usable at narrow widths.
+- [ ] **Colors and states:** accent, active-line highlight, variable names, console input,
+      errors, and keyboard-focus styling. Define how explicit color overrides interact with
+      colors derived from the syntax-highlighting theme.
 - [ ] Teacher sets a default theme and accent color per lesson or per page
 - [ ] Viewer theme menu (like the speed menu), remembered per viewer
 - [ ] Automatic light/dark following the viewer's system setting
 - [ ] A few curated themes with checked contrast; never rely on color alone to tell types apart (type tags already help)
+- [ ] **Styling guide and examples:** demonstrate a site-matched player and a compact
+      slide player; verify light/dark themes, keyboard focus, reduced motion, and custom fonts.
 
 ## 7. Embedding and distribution
 

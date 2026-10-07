@@ -1,12 +1,14 @@
 {
-  "name": "code-animator",
+  "name": "code-loupe",
   "version": "0.1.0",
+  "license": "MIT",
   "description": "Step-through code animations for teaching, as an embeddable web component.",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "build:playground": "tsc --noEmit && vite build --mode playground",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

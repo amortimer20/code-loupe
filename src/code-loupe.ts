@@ -14,8 +14,8 @@ const TYPE_MS_PER_CHAR = 150;
 const AUTOPLAY_PAUSE_MS = 1600;
 
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2];
-const SPEED_STORAGE_KEY = 'code-animator:speed';
-const MOTION_STORAGE_KEY = 'code-animator:motion';
+const SPEED_STORAGE_KEY = 'code-loupe:speed';
+const MOTION_STORAGE_KEY = 'code-loupe:motion';
 
 const ICONS = {
   first: '<svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM19 5v14l-10-7z"/></svg>',
@@ -65,12 +65,12 @@ const TEMPLATE = `
 </div>`;
 
 /**
- * <code-animator src="lesson.yaml"> — or put the YAML inside a
+ * <code-loupe src="lesson.yaml"> — or put the YAML inside a
  * <script type="text/yaml"> child. Attributes: src, theme (any Shiki theme), speed,
  * motion ("full" to animate even when the OS asks for reduced motion), no-keyboard.
  * Fires `stepchange` with { step, total }. Methods: next(), prev(), goTo(n), play(), pause().
  */
-export class CodeAnimator extends HTMLElement {
+export class CodeLoupe extends HTMLElement {
   static observedAttributes = ['src', 'theme', 'speed', 'motion'];
 
   #root = this.attachShadow({ mode: 'open' });
@@ -226,6 +226,11 @@ export class CodeAnimator extends HTMLElement {
     return Math.max(0, this.#snapshots.length - 1);
   }
 
+  /** Load authored YAML directly. Returns false on an error or a superseded load. */
+  loadLesson(source: string): Promise<boolean> {
+    return this.#load(source);
+  }
+
   goTo(step: number) {
     const target = Math.max(0, Math.min(this.total, Math.round(step)));
     if (target === this.#index && this.#lesson) return;
@@ -268,16 +273,16 @@ export class CodeAnimator extends HTMLElement {
     });
   }
 
-  async #load() {
+  async #load(source?: string): Promise<boolean> {
     const loadId = ++this.#loadId;
     this.pause();
     try {
-      const lesson = parseLesson(await this.#readSource());
+      const lesson = parseLesson(source ?? await this.#readSource());
       const snapshots = buildSnapshots(lesson);
       const theme = this.getAttribute('theme') ?? DEFAULT_THEME;
       const codeHtml = await codeToHtml(lesson.code, { lang: lesson.language, theme });
       const literals = await this.#highlightLiterals(lesson, snapshots, theme);
-      if (loadId !== this.#loadId) return; // a newer load started while we were waiting
+      if (loadId !== this.#loadId) return false; // a newer load started while we were waiting
 
       this.#lesson = lesson;
       this.#snapshots = snapshots;
@@ -300,12 +305,18 @@ export class CodeAnimator extends HTMLElement {
 
       this.#render(false);
       this.dispatchEvent(new CustomEvent('stepchange', { detail: { step: 0, total: this.total }, bubbles: true }));
+      return true;
     } catch (err) {
-      if (loadId !== this.#loadId) return;
+      if (loadId !== this.#loadId) return false;
       this.#lesson = null;
+      this.#snapshots = [];
+      this.#index = 0;
+      this.#renderControls();
       this.#els.ca.classList.add('has-error');
       this.#els.error.hidden = false;
       this.#els.error.textContent = `Couldn't load this lesson.\n\n${(err as Error).message}`;
+      this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message: (err as Error).message }, bubbles: true }));
+      return false;
     }
   }
 
