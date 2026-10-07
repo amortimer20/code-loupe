@@ -1,0 +1,30 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { sitePath } from '../../lib/samples';
+---
+<Layout title="Authoring guide" description="Explore the library, adapt a sample, and write your own code explanation.">
+  <div class="intro"><p class="eyebrow">Getting started</p><h1>Build an explanation,<br />one step at a time.</h1><p class="lede">A lesson combines the code students see with the teaching moments you want them to follow.</p></div>
+  <div class="prose guide">
+    <h2>Explore, then adapt</h2>
+    <ol><li>Choose a lesson from the <a href={sitePath('')}>sample library</a> and step through it.</li><li>Use “Edit in playground” to start a separate draft from that sample.</li><li>Edit the YAML. The preview restarts at Step 0 after you pause typing.</li><li>Download your YAML to keep a file you can embed or contribute to the corpus.</li></ol>
+    <p>Drafts are saved in this browser when storage is available. Each sample has its own draft; editing it doesn't change the published lesson. Download important work so you have a copy outside browser storage.</p>
+    <h2>Your first lesson</h2>
+    <pre><code>{`title: Storing a number
+language: python
+code: |
+  x = 5
+steps:
+  - line: 1
+    badge: { over: "5", value: 5 }
+    caption: The expression gives us the integer 5.
+  - assign: { var: x, from: badge }
+    caption: Store that value in x.`}</code></pre>
+    <p>A badge shows a value above matching code text. The next step copies the latest badge into a variable. Quoted values such as <code>"5"</code> are strings; unquoted <code>5</code> is a number.</p>
+    <h2>Author the outcomes</h2>
+    <p>Code Loupe currently plays authored steps. It doesn't execute the displayed program. When changing input, a condition, or a loop, also update its values, captions, and output to match.</p>
+    <p>Actions within a step follow a fixed order: line change, console activity, badge creation, conversion, then assignment. Put printing in a later step if it needs a newly created badge. Moving to a different line clears existing badges.</p>
+    <h2>Go further</h2>
+    <p>The repository has a <a href="https://github.com/amortimer20/code-loupe/blob/main/docs/tutorial.md">full lesson-writing tutorial</a>, a <a href="https://github.com/amortimer20/code-loupe#lesson-format">format reference</a>, and a <a href="https://github.com/amortimer20/code-loupe/blob/main/docs/samples.md">guide to contributing samples</a>.</p>
+    <a class="button" href={sitePath('playground/')}>Try the playground →</a>
+  </div>
+</Layout>

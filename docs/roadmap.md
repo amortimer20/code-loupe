@@ -18,7 +18,7 @@ Phase 1 (proof of concept) is done:
 - Variables panel, console, execution arrow, value badges, type tags
 - Tweens: values fly between the console, the code and the Variables panel
 - Step, scrub, autoplay, keyboard controls, speed menu, animations toggle
-- Example lesson: `public/lessons/numeric-input.yaml` (casting input in Python)
+- Example lesson: `lessons/python/numeric-input/lesson.yaml` (casting input in Python)
 
 ---
 
@@ -35,11 +35,11 @@ Phase 1 (proof of concept) is done:
 The pair walkthrough is complete. We followed the example lesson through parsing,
 snapshot generation, rendering, animation, playback, and language-specific values:
 
-- `src/lesson.ts`: the lesson format and its validation
-- `src/state.ts`: turns steps into **snapshots**, the full picture at each step. This is
+- `packages/player/src/lesson.ts`: the lesson format and its validation
+- `packages/player/src/state.ts`: turns steps into **snapshots**, the full picture at each step. This is
   why stepping backward and scrubbing are free.
-- `src/code-loupe.ts`: rendering, animation and playback
-- `src/values.ts`: per-language literals and type names (`True`/`None`, `str`/`int`)
+- `packages/player/src/code-loupe.ts`: rendering, animation and playback
+- `packages/player/src/values.ts`: per-language literals and type names (`True`/`None`, `str`/`int`)
 
 From now on, build features as pair-programming sessions instead of in large solo batches.
 
@@ -129,10 +129,16 @@ through a shared "where is this value on screen?" lookup.
 ## 5. Authoring: tutorial, playground, visual editor
 
 1. [x] **Tutorial** ([`docs/tutorial.md`](tutorial.md)): build a lesson file from scratch, one concept at a time
-2. [x] **Playground page** (`playground.html`): YAML on the left, live player on the right,
+2. [x] **Playground page** (`/playground/` on the sample site): YAML on the left, live player on the right,
        errors inline, browser draft persistence, and YAML download. Makes the tutorial
        interactive and is the first step toward the editor.
-3. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
+3. [x] **Sample library and workspace split:** independent player package plus an Astro
+       static site with searchable samples, teaching notes, canonical YAML downloads,
+       sample-specific playground drafts, and build-time lesson validation.
+4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
+       Start with input conversion, an accumulator loop, and a conditional branch;
+       next explore functions, scope, collections, and references.
+5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
 ## 6. Styling Code Loupes

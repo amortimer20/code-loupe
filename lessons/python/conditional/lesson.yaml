@@ -1,0 +1,21 @@
+title: Choosing a conditional branch
+language: python
+code: |
+  age = 16
+  if age >= 18:
+      print("Adult")
+  else:
+      print("Under 18")
+steps:
+  - line: 1
+    assign: { var: age, value: 16 }
+    caption: Store the integer 16 in age.
+  - line: 2
+    badge: { over: age, value: 16, from: { var: age } }
+    caption: Look up age before comparing it with 18.
+  - convert: { over: age >= 18, value: false }
+    caption: Evaluating 16 >= 18 gives False, a Boolean value.
+  - line: 5
+    caption: The condition is false, so skip line 3 and enter the else branch.
+  - print: "Under 18"
+    caption: Only the selected branch prints its message.

@@ -8,21 +8,44 @@ Lessons currently play teacher-authored steps; the player does not execute the c
 See the [roadmap](docs/roadmap.md) for planned features, the [project journal](docs/journal.md)
 for design decisions, and [AGENTS.md](AGENTS.md) for development conventions.
 
-## Run the demo
+## Run the sample site
+
+Use Node.js 22.12 or newer and npm 9.6.5 or newer.
 
 ```sh
 npm install
-npm run dev        # http://localhost:5173
-npm run build      # dist/code-loupe.js for embedding
-npm run build:playground  # demo + playground site in dist/playground/
+npm run dev          # http://localhost:5173
+npm run build        # player library + static Astro site
+npm run build:player # packages/player/dist/code-loupe.js and accompanying assets
+npm run build:site   # apps/site/dist/ — deploy this folder to a static host
+npm run typecheck    # check both workspaces
 ```
 
-Open [the playground](http://localhost:5173/playground.html) while the dev server
-is running to edit YAML beside a live player. It starts with the numeric-input
-example, saves your draft in browser storage when available, and downloads the
-exact YAML you have written, including incomplete lessons. Edits restart the preview
-at Step 0 after a short pause; errors appear below the editor and in the player.
-The playground works locally without an account or backend.
+The home page is a searchable sample library. Each lesson has a player, teaching
+notes, a YAML download, and an **Edit in playground** link. Open
+[the playground](http://localhost:5173/playground/) to author a lesson locally.
+Edits restart the preview at Step 0 after a short pause; errors appear below the
+editor and in the player. Drafts are saved in browser storage when available,
+with separate drafts for each sample. Download preserves the exact YAML, even
+for incomplete lessons. There is no account or backend.
+
+## Repository structure
+
+```text
+packages/player/  Embeddable web component and pure lesson/snapshot logic
+apps/site/        Static Astro gallery, sample pages, guide, and playground
+lessons/          Canonical YAML lessons plus Markdown metadata and teaching notes
+docs/             Tutorial, contribution guide, roadmap, and journal
+```
+
+The corpus starts with Python input conversion, an accumulator loop, and a
+conditional branch. See [Adding samples](docs/samples.md) to contribute another
+lesson without editing the site routes. The site validates every lesson during
+its build and generates download files from the canonical YAML.
+
+The player builds independently of Astro. `npm run build:playground` is retained
+as an alias for the site build. The workspaces are private while distribution
+is still being designed.
 
 ## Embed it
 

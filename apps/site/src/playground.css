@@ -1,21 +1,6 @@
-:root {
-  color-scheme: light dark;
-  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
-  line-height: 1.5;
-  background: #f6f7f9;
-  color: #1d1f23;
-  --border: #c9cdd5;
-  --panel: #fff;
-  --accent: #08745f;
-}
-* { box-sizing: border-box; }
-body { margin: 0; padding: 2rem 1rem 4rem; }
-main { max-width: 96rem; margin: auto; }
-header { margin-bottom: 1.5rem; }
-h1 { margin: 0.5rem 0; font-size: 1.8rem; }
-h2 { margin: 0; font-size: 1rem; }
-p { margin: 0.5rem 0; }
-a { color: var(--accent); }
+.playground-heading { margin-bottom: 2rem; }
+.playground-heading h1 { font-size: 2.4rem; }
+.panel-heading h2 { margin: 0; font-size: 1rem; }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 1.5rem; align-items: start; }
 .editor-panel, .preview-panel { min-width: 0; }
 .panel-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 2.5rem; }
@@ -54,6 +39,5 @@ textarea[aria-invalid='true'] { border-color: #c53030; }
   textarea { min-height: 24rem; }
 }
 @media (prefers-color-scheme: dark) {
-  :root { background: #121316; color: #e4e6eb; --border: #4b5260; --panel: #1d2027; --accent: #5cd6b8; }
   #lesson-error { color: #ffaaaa; }
 }

@@ -1,0 +1,35 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import { getSamples, sitePath, type Sample } from '../../lib/samples';
+export async function getStaticPaths() {
+  return (await getSamples()).map(sample => ({ params: { id: sample.entry.id }, props: { sample } }));
+}
+interface Props { sample: Sample }
+const { sample } = Astro.props;
+const { entry, steps } = sample;
+const { Content } = await render(entry);
+const source = sitePath(`lessons/${entry.id}.yaml`);
+---
+<Layout title={entry.data.title} description={entry.data.summary}>
+  <a class="back-link" href={sitePath('')}>← Sample library</a>
+  <div class="lesson-heading">
+    <p class="eyebrow">{entry.data.languageLabel} · {steps} steps · Authored lesson</p>
+    <h1>{entry.data.title}</h1>
+    <p class="lede">{entry.data.summary}</p>
+    <div class="actions">
+      <a class="button" href={`${sitePath('playground/')}?sample=${encodeURIComponent(entry.id)}`}>Edit in playground</a>
+      <a class="button secondary" href={source} download={`${entry.id.split('/').at(-1)}.yaml`}>Download YAML</a>
+    </div>
+  </div>
+  <code-loupe src={source}></code-loupe>
+  <div class="lesson-details">
+    <aside class="learning-goal">
+      <h2>Learning objective</h2><p>{entry.data.objective}</p>
+      <h2>Before this lesson</h2><ul>{entry.data.prerequisites.map(p => <li>{p}</li>)}</ul>
+      <div class="tags">{entry.data.topics.map(t => <span>{t}</span>)}</div>
+    </aside>
+    <div class="prose"><Content /></div>
+  </div>
+</Layout>
+<script>import 'code-loupe';</script>

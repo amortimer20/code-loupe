@@ -1,22 +1,21 @@
 {
-  "name": "code-loupe",
-  "version": "0.1.0",
-  "license": "MIT",
-  "description": "Step-through code animations for teaching, as an embeddable web component.",
+  "name": "code-loupe-workspace",
   "private": true,
   "type": "module",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
-    "build:playground": "tsc --noEmit && vite build --mode playground",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "shiki": "^4.5.0",
-    "yaml": "^2.9.1"
+    "dev": "npm run dev --workspace @code-loupe/site",
+    "build": "npm run build:player && npm run build:site",
+    "build:player": "npm run build --workspace code-loupe",
+    "build:site": "npm run build --workspace @code-loupe/site",
+    "build:playground": "npm run build:site",
+    "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "devDependencies": {
-    "typescript": "^7.0.2",
-    "vite": "^8.3.2"
+    "typescript": "^5.9.3"
   }
 }

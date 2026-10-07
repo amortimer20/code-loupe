@@ -1,0 +1,28 @@
+---
+import '../site.css';
+import { sitePath } from '../lib/samples';
+interface Props { title: string; description: string; wide?: boolean }
+const { title, description, wide = false } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <title>{title} · Code Loupe</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href={sitePath('')}>Code Loupe<span>Code, in focus.</span></a>
+      <nav aria-label="Main navigation">
+        <a href={sitePath('')}>Sample library</a>
+        <a href={sitePath('playground/')}>Playground</a>
+        <a href={sitePath('docs/')}>Guide</a>
+      </nav>
+    </header>
+    <main id="main" class:list={['site-main', { wide }]}><slot /></main>
+    <footer class="site-footer">Step-through code animations for teaching. <a href="https://github.com/amortimer20/code-loupe">Source on GitHub</a> · MIT License</footer>
+  </body>
+</html>

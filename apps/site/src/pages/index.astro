@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getSamples, sitePath } from '../lib/samples';
+const samples = await getSamples();
+const languages = [...new Set(samples.map(s => s.entry.data.languageLabel))].sort();
+const topics = [...new Set(samples.flatMap(s => s.entry.data.topics))].sort();
+---
+<Layout title="Sample library" description="Explore, compare, and adapt small code lessons for teaching.">
+  <div class="intro">
+    <p class="eyebrow">The sample library</p>
+    <h1>Small programs.<br />Closer inspection.</h1>
+    <p class="lede">Follow values through a program, one teaching moment at a time. Explore a lesson, compare its behavior, or make it your own.</p>
+    <a class="button" href={sitePath('playground/')}>Open the playground <span aria-hidden="true">→</span></a>
+  </div>
+  <section aria-labelledby="library-heading">
+    <div class="section-heading"><h2 id="library-heading">Explore the lessons</h2><span id="sample-count" role="status">{samples.length} lessons</span></div>
+    <div class="filters">
+      <label>Search<input id="sample-search" type="search" placeholder="Title, topic, or concept" /></label>
+      <label>Language<select id="sample-language"><option value="">All languages</option>{languages.map(l => <option>{l}</option>)}</select></label>
+      <label>Topic<select id="sample-topic"><option value="">All topics</option>{topics.map(t => <option>{t}</option>)}</select></label>
+    </div>
+    <div class="sample-grid">
+      {samples.map(({ entry, steps }) => (
+        <article class="sample-card" data-language={entry.data.languageLabel} data-topics={JSON.stringify(entry.data.topics)} data-search={`${entry.data.title} ${entry.data.summary} ${entry.data.objective} ${entry.data.topics.join(' ')}`.toLowerCase()}>
+          <div class="card-meta"><span>{entry.data.languageLabel}</span><span>{steps} steps · Authored</span></div>
+          <h3><a href={sitePath(`samples/${entry.id}/`)}>{entry.data.title}</a></h3>
+          <p>{entry.data.summary}</p>
+          <div class="tags">{entry.data.topics.map(t => <span>{t}</span>)}</div>
+          <a class="card-link" href={sitePath(`samples/${entry.id}/`)}>Explore lesson <span aria-hidden="true">→</span></a>
+        </article>
+      ))}
+    </div>
+    <p id="no-samples" hidden>No lessons match these filters. Try another topic or search.</p>
+  </section>
+  <aside class="library-note"><h2>A growing collection</h2><p>These lessons use teacher-authored steps. Their values and outcomes are fixed, so you can focus on pacing and explanation. New samples will help us explore more complex behavior as the player grows.</p></aside>
+</Layout>
+<script>
+  const search = document.querySelector<HTMLInputElement>('#sample-search')!;
+  const language = document.querySelector<HTMLSelectElement>('#sample-language')!;
+  const topic = document.querySelector<HTMLSelectElement>('#sample-topic')!;
+  const cards = [...document.querySelectorAll<HTMLElement>('.sample-card')];
+  function filter() {
+    let count = 0;
+    for (const card of cards) {
+      const visible = card.dataset.search!.includes(search.value.trim().toLowerCase())
+        && (!language.value || card.dataset.language === language.value)
+        && (!topic.value || JSON.parse(card.dataset.topics!).includes(topic.value));
+      card.hidden = !visible;
+      if (visible) count++;
+    }
+    document.querySelector('#sample-count')!.textContent = `${count} lesson${count === 1 ? '' : 's'}`;
+    (document.querySelector('#no-samples') as HTMLElement).hidden = count > 0;
+  }
+  for (const control of [search, language, topic]) control.addEventListener('input', filter);
+</script>

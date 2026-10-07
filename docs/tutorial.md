@@ -6,24 +6,19 @@ it does not run the code or ask students to enter input.
 
 We'll start with a variable assignment, then build an explanation of why Python
 input needs converting before arithmetic. The finished example is
-[`numeric-input.yaml`](../public/lessons/numeric-input.yaml).
-
-For a quicker editing loop, run `npm run dev` and open `/playground.html` at
-the local URL Vite prints. Paste any complete lesson from this tutorial into the
-YAML editor; the preview updates automatically. Download YAML to save your work.
-The file-based instructions below also work with the original demo.
+[`numeric-input/lesson.yaml`](../lessons/python/numeric-input/lesson.yaml).
 
 ## 1. Preview a lesson locally
 
-From the repository directory, install dependencies and start the demo:
+From the repository directory, install dependencies and start the sample site:
 
 ```sh
 npm install
 npm run dev
 ```
 
-Open the local URL Vite prints. Save the following as
-`public/lessons/first-lesson.yaml`:
+Open `/playground/` at the local URL Astro prints. Replace the editor contents
+with this complete lesson:
 
 ```yaml
 title: Storing a number
@@ -35,14 +30,9 @@ steps:
     caption: We are about to store a number in x.
 ```
 
-In the root `index.html`, change the demo element's `src` to point at your file:
-
-```html
-<code-loupe src="lessons/first-lesson.yaml" motion="full"></code-loupe>
-```
-
-Vite serves files in `public/` at the site's root, so the URL starts with
-`lessons/`, not `public/lessons/`. Reload the page after saving lesson edits.
+The preview updates automatically after you pause typing. Use **Download YAML**
+to save your draft as a file. To add a permanent sample to the library, follow
+[the sample contribution guide](samples.md).
 
 The player begins at **Step 0**, before any authored steps have happened. Click
 Next to highlight the first code line and show your caption.
@@ -73,7 +63,7 @@ text, while the second is a number.
 The second step copies the latest badge's value into the Variables panel. It
 inherits the active line, so you don't need to repeat `line: 1`.
 
-Reload and advance twice. You should see a badge containing `5` with an `int`
+After the preview updates, advance twice. You should see a badge containing `5` with an `int`
 tag, followed by `x = 5` in the Variables panel. Step backward to see the state
 before the assignment.
 
@@ -111,7 +101,7 @@ steps:
 `write` adds console output without a newline. `input` depicts the input you
 authored, including an Enter indicator. It is a fixed part of the explanation.
 
-Reload and advance through both steps. The prompt and the input should appear
+After the preview updates, advance through both steps. The prompt and the input should appear
 on the same console line.
 
 ## 4. Make the returned string visible
@@ -157,7 +147,7 @@ above `text`, then `convert` changes that latest badge's value and moves it
 above `int(text)`. Finally, the number is assigned to `age`.
 
 You supplied the conversion's result, `30`; Code Loupe doesn't call `int()`.
-Reload and reach Step 7. Both variables should be present: `text` is a `str`,
+After the preview updates, reach Step 7. Both variables should be present: `text` is a `str`,
 and `age` is an `int`.
 
 Type names are inferred from values and the lesson language. You can override
@@ -181,7 +171,7 @@ Append the final two steps:
 value into the output; you still write the complete output text yourself.
 
 Your lesson now has nine steps. Compare it with the
-[complete example](../public/lessons/numeric-input.yaml), then try backward
+[complete example](../lessons/python/numeric-input/lesson.yaml), then try backward
 stepping, the scrubber, and autoplay. Turn animations off to check that the
 lesson still makes sense when each step appears immediately.
 
@@ -225,7 +215,8 @@ specification, for example `badge: { line: 2, over: text, value: "30" }`.
 
 ## Embed your lesson
 
-Run `npm run build` to produce `dist/code-loupe.js`. Host the build output,
+Run `npm run build:player` to produce `packages/player/dist/code-loupe.js`. Host
+the contents of that build directory,
 including any accompanying assets, alongside your lesson file. On the host page:
 
 ```html

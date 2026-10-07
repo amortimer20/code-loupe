@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getSamples, sitePath } from '../lib/samples';
+const samples = await getSamples();
+---
+<Layout title="Playground" description="Write YAML and preview a Code Loupe lesson as you edit." wide>
+  <header class="playground-heading">
+    <p class="eyebrow">Make it your own</p>
+    <h1>Lesson playground</h1>
+    <p class="lede">Edit a YAML lesson and step through its preview. Values and input are authored by you.</p>
+    <p id="draft-context">Your draft is separate from the published samples. <a href={sitePath('docs/')}>Authoring guide →</a></p>
+  </header>
+  <div class="workspace" data-samples={JSON.stringify(samples.map(({entry}) => ({ id: entry.id, title: entry.data.title, source: sitePath(`lessons/${entry.id}.yaml`) })))}>
+    <section class="editor-panel" aria-labelledby="editor-heading">
+      <div class="panel-heading">
+        <h2 id="editor-heading"><label for="lesson-source">Lesson YAML</label></h2>
+        <button id="download" type="button" disabled>Download YAML</button>
+      </div>
+      <p id="editor-help">Preview updates after you stop typing and restarts at Step 0. Your draft is saved in this browser when storage is available.</p>
+      <textarea id="lesson-source" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="editor-help lesson-error" disabled></textarea>
+      <pre id="lesson-error" role="alert" hidden></pre>
+    </section>
+    <section class="preview-panel" aria-labelledby="preview-heading">
+      <div class="panel-heading"><h2 id="preview-heading">Live preview</h2><span id="preview-status" role="status">Loading lesson…</span></div>
+      <div id="preview" aria-busy="true"></div>
+      <p class="preview-help">Click the player to use ← / →, Home / End, and Space. Use its animations toggle to preview with reduced motion.</p>
+    </section>
+  </div>
+</Layout>
+<script>import '../playground';</script>

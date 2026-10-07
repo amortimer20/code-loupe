@@ -41,3 +41,22 @@ Added `loadLesson(yaml)` and `lessonerror` to the component so authoring tools c
 reuse a player directly. The embeddable library build remains separate from the
 demo/playground site build. A richer code editor can follow once we understand
 which editing aids teachers need.
+
+## 2026-10-07 — Sample corpus and Astro workspace
+
+Split the repository into an independent player package and a static Astro site
+using npm workspaces. The library, lesson pages, guide, and playground share that
+player. Browser-dependent registration stays in client scripts; the site validates
+lessons through the pure parser and snapshot builder at build time.
+
+Each sample lives in `lessons/<language>/<slug>/` with one canonical YAML file and
+Markdown metadata/teaching notes. Pages, gallery filters, and downloadable YAML
+are generated from those sources. Seeded the corpus with input conversion, an
+accumulator loop, and a conditional branch, all authored using existing actions.
+
+Sample-specific playground drafts preserve experiments separately from published
+lessons and from each other. Accounts, cloud storage, and publishing services
+remain future decisions; this site produces ordinary static files.
+
+The Astro checker requires the classic TypeScript compiler API, so the site uses
+TypeScript 5.9 while the player keeps the existing TypeScript 7 compiler.

@@ -1,0 +1,42 @@
+title: Following an accumulator loop
+language: python
+code: |
+  total = 0
+  for n in range(3):
+      total = total + n
+  print(total)
+steps:
+  - line: 1
+    assign: { var: total, value: 0 }
+    caption: Start the running total at zero.
+  - line: 2
+    assign: { var: n, value: 0 }
+    caption: The first value supplied by range(3) is 0.
+  - line: 3
+    badge: { over: total + n, value: 0 }
+    caption: On the first iteration, 0 + 0 gives 0.
+  - assign: { var: total, from: badge }
+    caption: Store the result back in total. Its value is still 0.
+  - line: 2
+    assign: { var: n, value: 1 }
+    caption: The next iteration sets n to 1. The total is retained.
+  - line: 3
+    badge: { over: total + n, value: 1 }
+    caption: Now 0 + 1 gives 1.
+  - assign: { var: total, from: badge }
+    caption: The running total becomes 1.
+  - line: 2
+    assign: { var: n, value: 2 }
+    caption: The third iteration sets n to 2. The total is still 1.
+  - line: 3
+    badge: { over: total + n, value: 3 }
+    caption: This time, 1 + 2 gives 3.
+  - assign: { var: total, from: badge }
+    caption: The running total becomes 3.
+  - line: 2
+    caption: range(3) has no more values. Execution leaves the loop.
+  - line: 4
+    badge: { over: total, value: 3, from: { var: total } }
+    caption: Look up the final total to print it.
+  - print: { text: "3", from: badge }
+    caption: The console shows 3, the sum of 0, 1, and 2.

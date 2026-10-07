@@ -1,7 +1,11 @@
-import { CodeLoupe } from './index';
+import { CodeLoupe } from 'code-loupe';
 import './playground.css';
 
-const DRAFT_KEY = 'code-loupe:playground-draft';
+interface SampleOption { id: string; title: string; source: string }
+const samples: SampleOption[] = JSON.parse(document.querySelector<HTMLElement>('.workspace')!.dataset.samples!);
+const requested = new URLSearchParams(location.search).get('sample');
+const sample = samples.find(s => s.id === requested) ?? samples.find(s => s.id === 'python/numeric-input') ?? samples[0];
+const DRAFT_KEY = requested ? `code-loupe:playground-draft:${sample.id}` : 'code-loupe:playground-draft';
 const editor = document.querySelector<HTMLTextAreaElement>('#lesson-source')!;
 const download = document.querySelector<HTMLButtonElement>('#download')!;
 const preview = document.querySelector<HTMLElement>('#preview')!;
@@ -65,7 +69,7 @@ download.addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([editor.value], { type: 'application/yaml;charset=utf-8' }));
   const link = document.createElement('a');
   link.href = url;
-  link.download = 'lesson.yaml';
+  link.download = `${sample.id.split('/').at(-1)}-draft.yaml`;
   document.body.append(link);
   link.click();
   link.remove();
@@ -81,12 +85,18 @@ async function start() {
   }
   if (draft === null) {
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}lessons/numeric-input.yaml`);
+      const response = await fetch(sample.source);
       if (!response.ok) throw new Error(`Example returned ${response.status}.`);
       draft = await response.text();
     } catch {
       draft = 'language: python\ncode: |\n  x = 5\nsteps:\n  - line: 1\n    assign: { var: x, value: 5 }\n';
+      document.querySelector('#draft-context')!.textContent = 'The sample could not be loaded. Starting a small new lesson instead.';
     }
+  } else {
+    document.querySelector('#draft-context')!.textContent = `Restored your saved draft of “${sample.title}”. The published sample is unchanged.`;
+  }
+  if (requested && !samples.some(s => s.id === requested)) {
+    document.querySelector('#draft-context')!.textContent = `Unknown sample. Using “${sample.title}” instead.`;
   }
   editor.value = draft;
   inline.textContent = draft;
