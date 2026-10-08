@@ -35,6 +35,33 @@ test('returning and later assignments cannot change snapshots used for back-step
   assert.notEqual(states[3].frames[0].vars[0], states[7].frames[0].vars[0]);
 });
 
+test('nested-call sample returns through each caller without sharing its locals', () => {
+  const states = buildSnapshots(sample('nested-function-call'));
+  assert.equal(states.length, 20);
+  const [outer, inner] = states[8].frames;
+  assert.equal(outer.name, 'double_after_bump');
+  assert.equal(inner.name, 'add_one');
+  assert.deepEqual(vars(outer.vars), { value: 10 });
+  assert.deepEqual(vars(inner.vars), { value: 10, result: 11 });
+  assert.equal(inner.returnTo.line, 6);
+  assert.equal(outer.returnTo.line, 11);
+
+  assert.equal(states[10].line, 6);
+  assert.deepEqual(states[10].frames.map(f => f.id), [outer.id]);
+  assert.deepEqual(vars(states[10].frames[0].vars), { value: 10 });
+  assert.deepEqual(states[10].badges.map(b => [b.over, b.value]), [['add_one(value)', 11]]);
+  assert.deepEqual(vars(states[11].frames[0].vars), { value: 10, result: 11 });
+  assert.deepEqual(vars(states[14].frames[0].vars), { value: 10, result: 22 });
+  assert.deepEqual(vars(states[8].frames[1].vars), { value: 10, result: 11 });
+
+  assert.equal(states[16].line, 11);
+  assert.deepEqual(states[16].frames, []);
+  assert.deepEqual(vars(states[16].vars), { value: 10 });
+  assert.deepEqual(states[16].badges.map(b => [b.over, b.value]), [['double_after_bump(value)', 22]]);
+  assert.deepEqual(vars(states[19].vars), { value: 10, answer: 22 });
+  assert.equal(states[19].console.map(c => c.text).join(''), '22\n');
+});
+
 test('nested calls with the same name have distinct frames and restore the suspended caller', () => {
   const states = buildSnapshots(fixture([
     { line: 1, badge: { over: '10', value: 10 } },

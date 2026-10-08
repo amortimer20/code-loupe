@@ -129,6 +129,8 @@ a readable error inside the player.
 ## Function calls and scope
 
 See the [function-call sample](lessons/python/function-call/lesson.yaml) for a complete lesson.
+Follow it with the [nested-call sample](lessons/python/nested-function-call/lesson.yaml)
+to see one caller pause while another runs and two returns resume their callers.
 Highlight the caller line before a `call` step. Its `over` identifies the exact call
 text on that active line; `nth` chooses an occurrence. The call's `line` is the
 function entry line. `args` is an optional list of parameter bindings, each using

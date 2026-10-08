@@ -1,0 +1,72 @@
+title: Following nested function calls
+language: python
+code: |
+  def add_one(value):
+      result = value + 1
+      return result
+
+  def double_after_bump(value):
+      result = add_one(value)
+      result = result * 2
+      return result
+
+  value = 10
+  answer = double_after_bump(value)
+  print(answer)
+steps:
+  - line: 10
+    assign: { var: value, value: 10 }
+    caption: Store 10 globally. Neither function body has run yet.
+  - line: 11
+    badge: { over: value, value: 10, from: { var: value } }
+    caption: Look up the argument for double_after_bump().
+  - call:
+      name: double_after_bump
+      line: 5
+      over: double_after_bump(value)
+      args:
+        - { var: value, from: badge }
+    caption: The outer call gets its own local parameter value. The global value stays separate.
+  - line: 6
+    badge: { over: value, value: 10, from: { var: value } }
+    caption: The outer function passes its local value to add_one(). Its result is not assigned yet.
+  - call:
+      name: add_one
+      line: 1
+      over: add_one(value)
+      args:
+        - { var: value, from: badge }
+    caption: The outer frame pauses at line 6 while add_one() runs in a new frame.
+  - line: 2
+    badge: { over: value, value: 10, from: { var: value } }
+    caption: This value belongs to add_one(). Each call has a separate parameter with the same name.
+  - convert: { over: value + 1, value: 11 }
+    caption: Add 1 to the inner parameter to get 11.
+  - assign: { var: result, from: badge }
+    caption: Create result in the inner frame. The paused outer frame still has no result.
+  - line: 3
+    badge: { over: result, value: 11, from: { var: result } }
+    caption: Read the inner result for the first return.
+  - return: { from: badge }
+    caption: Return 11 to line 6. Only add_one() finishes; the outer frame resumes.
+  - assign: { var: result, from: badge }
+    caption: Store the returned 11 in the outer frame's own result variable.
+  - line: 7
+    badge: { over: result, value: 11, from: { var: result } }
+    caption: Read the outer result. The inner frame has already gone.
+  - convert: { over: result * 2, value: 22 }
+    caption: Double the returned value to get 22.
+  - assign: { var: result, from: badge }
+    caption: Update the outer result to 22. The global value remains 10.
+  - line: 8
+    badge: { over: result, value: 22, from: { var: result } }
+    caption: Read the outer result for the second return.
+  - return: { from: badge }
+    caption: Return 22 to line 11. Both calls have now finished, and no function frames remain.
+  - assign: { var: answer, from: badge }
+    caption: Assign the final returned value to the global answer.
+  - line: 12
+    badge: { over: answer, value: 22, from: { var: answer } }
+    caption: Look up the global answer for printing.
+  - print: { text: "22", from: badge }
+    caption: The console shows 22. Step backward across each return to restore that call's locals.

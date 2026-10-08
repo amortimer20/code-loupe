@@ -80,3 +80,15 @@ Variables panel; locals belong to their visible function frame. Lessons without
 calls retain the simpler layout. Added Node/tsx regression tests for snapshot,
 scope, nested-call, and return behavior. Closures and exception unwinding remain
 future design work.
+
+## 2026-10-07 — Nested-call comparison lesson and priorities
+
+Added a second function lesson using the existing authored call/return model.
+`double_after_bump()` pauses while `add_one()` runs; both frames use `value` and
+`result` to demonstrate separate ownership. Two returns resume different caller
+lines, with assignments deliberately shown after each return. Teaching notes
+identify comparison points for scrubbing and backward stepping, and a corpus
+regression test checks the intermediate scopes as well as the final output.
+
+Moved the Reveal.js adapter to the backlog at the user's request. Expanding the
+lesson corpus takes priority over slide integration for now.

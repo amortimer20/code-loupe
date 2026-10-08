@@ -131,6 +131,8 @@ through a shared "where is this value on screen?" lookup.
 - [x] First function-call lesson: parameter binding, local assignment, authored return,
       and a Call stack panel with argument/return animations.
 - [x] Scope foundations: separate globals and locals, shadowing, and nested call frames.
+- [x] Nested-call teaching lesson: a paused caller, independent same-named locals,
+      and two returns back to global scope.
 - [ ] Extend module boundaries to the remaining visuals as new features need them.
 - [ ] Closures, nonlocal/global assignment declarations, implicit returns, and exception unwinding.
 
@@ -145,7 +147,7 @@ through a shared "where is this value on screen?" lookup.
        sample-specific playground drafts, and build-time lesson validation.
 4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
        Includes input conversion, an accumulator loop, a conditional branch, and a
-       function call; next explore nested-call teaching examples, collections, and references.
+       function call and nested calls; next explore collections and references.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
@@ -174,7 +176,8 @@ through a shared "where is this value on screen?" lookup.
 
 ## 7. Embedding and distribution
 
-- [ ] **Reveal.js adapter**: steps become fragments, so the clicker advances the animation
+- [ ] **Reveal.js adapter (backlog, not a current priority)**: steps become fragments,
+      so the clicker advances the animation
 - [ ] Publish to npm and a CDN so teachers can use one `<script>` tag
 - [ ] Smaller bundle: load only the languages and themes actually used
 - [ ] Emerald grammar for Shiki (from its VS Code extension, if it has a TextMate grammar)
@@ -193,11 +196,14 @@ through a shared "where is this value on screen?" lookup.
 
 1. Name, repo, codebase walkthrough
 2. Tutorial and playground page (makes authoring pleasant now)
-3. Reveal.js adapter (puts it into your real lessons)
-4. Visual module structure, then functions and the call stack as the first new visual
+3. Sample library, function-call visual, and nested-call lesson (complete)
+4. Grow the corpus with collections and references; extend visual modules as needed
 5. Design session on authored versus traced lessons, then the Python tracer proof of concept
 6. Visual editor
 7. Themes, more languages, Emerald
+
+The Reveal.js adapter remains in the embedding backlog; it is not part of the
+near-term sequence.
 
 ## Naming notes
 
