@@ -10,13 +10,13 @@ export function renderHeap(host: HTMLElement, snap: Snapshot, renderer: ValueRen
   if (host.hidden) return;
   const label = document.createElement('h3');
   label.className = 'label';
-  label.textContent = 'Shared lists';
+  label.textContent = 'List objects';
   host.append(label);
   for (const object of snap.heap) {
     const card = document.createElement('article');
     card.className = 'heap-object';
     card.dataset.ref = object.id;
-    card.setAttribute('aria-label', `Shared list ${object.id}`);
+    card.setAttribute('aria-label', `List object ${object.id}`);
     const title = document.createElement('h4');
     title.className = 'heap-heading';
     title.textContent = object.id;

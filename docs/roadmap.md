@@ -141,7 +141,9 @@ through a shared "where is this value on screen?" lookup.
       cells, shifted indices, selection adjustment, and reversible snapshots.
 - [x] Shared-list identity and aliasing lesson: explicit allocation/reference
       bindings, one object card, mutation through either name, and reversible sharing.
-- [ ] Copying versus aliasing lesson, nested objects, reference-valued returns,
+- [x] Copying versus aliasing lesson: two separate list cards with equal starting
+      contents, mutation of only the copy, and outputs compared with aliasing.
+- [ ] Nested objects, reference-valued returns,
       and memory lifetime/garbage-collection visuals.
 - [ ] Extend module boundaries to the remaining visuals as new features need them.
 - [ ] Closures, nonlocal/global assignment declarations, implicit returns, and exception unwinding.
@@ -158,7 +160,7 @@ through a shared "where is this value on screen?" lookup.
 4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
        Includes input conversion, an accumulator loop, a conditional branch, and a
        function call, nested calls, list iteration, element updates, append, and
-       indexed removal, and shared-list aliasing; next contrast aliases with copies.
+       indexed removal, shared-list aliasing, and a copying comparison.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
@@ -210,8 +212,8 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      twenty-two reviewed screenshot references for themes, nested calls/returns,
-      list selection/updates/length changes/aliasing, the gallery, narrow player,
+      twenty-three reviewed screenshot references for themes, nested calls/returns,
+      list selection/updates/length changes/aliasing/copying, the gallery, narrow player,
       and short-laptop Focus lesson view;
       pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order

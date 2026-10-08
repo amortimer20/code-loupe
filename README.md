@@ -165,7 +165,7 @@ a name to it.
 | `badge`   | `badge: { over: int(text), value: 30 }`         | Float a value above code on the current line (`line:` and `nth:` pick another spot). Add `from: console` to fly it up from the user's input, or `from: { var: text }` to fly it from a variable. |
 | `convert` | `convert: { over: int(text), value: 30 }`       | Turn the latest badge into a new value, optionally moving it. |
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
-| `allocate` | `allocate: { id: list-1, value: [2, 4] }` | Create a shared list with a unique, author-chosen identity. `assign: { var: numbers, ref: list-1 }` binds a name to it. |
+| `allocate` | `allocate: { id: list-1, value: [2, 4] }` | Create a list object with a unique, author-chosen identity. `assign: { var: numbers, ref: list-1 }` binds a name to it. |
 | `select` | `select: { var: numbers, index: 0 }` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
 | `update` | `update: { var: numbers, index: 1, value: 10 }` | Replace an existing list element. `from: badge` transfers the latest badge's scalar value into that cell. |
 | `append` | `append: { var: numbers, value: 6 }` | Add a scalar at the end of a list, including an empty one. Alternatively use `from: badge`. |
@@ -215,7 +215,7 @@ its index when a selected surviving element shifts. Use a later `select` step to
 mark a newly appended cell. One mutation per step keeps transitions unambiguous;
 backward stepping and scrubbing restore the complete earlier list.
 
-## Shared lists and references
+## List objects and references
 
 See [Two names for one list](lessons/python/list-aliasing/lesson.yaml):
 
@@ -229,10 +229,15 @@ See [Two names for one list](lessons/python/list-aliasing/lesson.yaml):
   append: { var: other, value: 6 }
 ```
 
-Both names point to one list in the Shared lists panel. Mutation through either
+Both names point to one list in the List objects panel. Mutation through either
 name changes that object; assigning another value or reference to a name changes
 the binding instead. Each snapshot stores the list contents once and preserves
 its identity, so backward stepping restores sharing as well as values.
+
+Compare [Copying a list](lessons/python/list-copying/lesson.yaml): a second
+allocation represents `numbers.copy()`, with its own reference and the same
+starting contents. Appending through the copy leaves the original unchanged.
+Both allocations and their contents are authored explicitly.
 
 `allocate` accepts a flat list and a unique nonempty `id`. These labels are
 teaching identifiers, not memory addresses. Reference bindings require an already

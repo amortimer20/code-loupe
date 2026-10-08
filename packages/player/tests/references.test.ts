@@ -25,6 +25,24 @@ test('the aliasing lesson has two bindings, one object, and an append visible th
   assert.equal(states[7].console.at(-1)?.text, '[2, 4, 6]\n');
 });
 
+test('the copying lesson preserves the original while its separate copy grows', () => {
+  const lesson = parseLesson(readFileSync(new URL('../../../lessons/python/list-copying/lesson.yaml', import.meta.url), 'utf8'));
+  const states = buildSnapshots(lesson);
+  assert.equal(states.length, 10);
+  assert.equal(states[1].heap.length, 1);
+  assert.deepEqual(states[2].vars.map(v => v.value), [{ ref: 'list-1' }, { ref: 'list-2' }]);
+  assert.deepEqual(states[2].heap.map(object => object.value), [[2, 4], [2, 4]]);
+  assert.deepEqual(states[4].heap.map(object => object.value), [[2, 4], [2, 4, 6]]);
+  assert.deepEqual(states[3].heap[1].value, [2, 4]);
+  assert.equal(states[4].events.appended?.ref, 'list-2');
+  assert.equal(states[5].selection?.ref, 'list-2');
+  assert.deepEqual(states[6].badges.at(-1)?.value, [2, 4]);
+  assert.deepEqual(states[8].badges.at(-1)?.value, [2, 4, 6]);
+  assert.equal(states[6].events.badgeAdded?.from?.kind, 'var');
+  assert.equal(states[8].events.badgeAdded?.from?.kind, 'var');
+  assert.deepEqual(states[9].console.map(entry => entry.text), ['[2, 4]\n', '[2, 4, 6]\n']);
+});
+
 test('rebindings change a name, while distinct shared lists and earlier snapshots stay independent', () => {
   const states = buildSnapshots(fixture([
     create,

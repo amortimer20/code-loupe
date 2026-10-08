@@ -43,7 +43,7 @@ const TEMPLATE = `
         <div class="vars globals"></div>
       </section>
       <section class="call-stack" aria-label="Call stack" hidden></section>
-      <section class="heap-panel" aria-label="Shared lists" hidden></section>
+      <section class="heap-panel" aria-label="List objects" hidden></section>
     </div>
     <section class="code" aria-label="Code">
       <div class="code-scroll">

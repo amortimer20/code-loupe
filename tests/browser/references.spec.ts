@@ -17,8 +17,8 @@ test('two names share one visible list through mutation, backward stepping, scru
   await settle(player);
   await expect(object.locator('.collection-item')).toHaveText(['2', '4', '6']);
   await expect(player.locator('.heap-object')).toHaveCount(1);
-  await expect(player.locator('.globals [data-name="numbers"]')).toHaveAttribute('aria-label', 'numbers points to shared list list-1');
-  await expect(player.locator('.globals [data-name="other"]')).toHaveAttribute('aria-label', 'other points to shared list list-1');
+  await expect(player.locator('.globals [data-name="numbers"]')).toHaveAttribute('aria-label', 'numbers points to list object list-1');
+  await expect(player.locator('.globals [data-name="other"]')).toHaveAttribute('aria-label', 'other points to list object list-1');
   await player.getByRole('button', { name: 'Previous step', exact: true }).click();
   await settle(player);
   await expect(object.locator('.collection-item')).toHaveText(['2', '4']);
@@ -55,6 +55,56 @@ test('two names share one visible list through mutation, backward stepping, scru
     await expect(object).toBeInViewport();
     await expect(object.locator('.collection-item')).toHaveText(['2', '4']);
     await goTo(player, 5);
+  }
+});
+
+test('copying shows two separate cards and restores only the copy when stepping backward', async ({ page }) => {
+  await page.goto('/samples/python/list-copying/');
+  const player = await ready(page, 9);
+  const original = player.locator('.heap-object[data-ref="list-1"]');
+  const copy = player.locator('.heap-object[data-ref="list-2"]');
+  await goTo(player, 2);
+  await expect(player.getByRole('region', { name: 'List objects', exact: true })).toBeVisible();
+  await expect(player.getByRole('article', { name: 'List object list-1', exact: true })).toBeVisible();
+  await expect(player.getByRole('article', { name: 'List object list-2', exact: true })).toBeVisible();
+  await expect(player.locator('.heap-object')).toHaveCount(2);
+  await expect(original.locator('.heap-owners')).toHaveText('Referenced by: numbers');
+  await expect(copy.locator('.heap-owners')).toHaveText('Referenced by: other');
+  await expect(original.locator('.collection-item')).toHaveText(['2', '4']);
+  await expect(copy.locator('.collection-item')).toHaveText(['2', '4']);
+  await goTo(player, 3);
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(original.locator('.collection-item')).toHaveText(['2', '4']);
+  await expect(copy.locator('.collection-item')).toHaveText(['2', '4', '6']);
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(copy.locator('.collection-item')).toHaveText(['2', '4']);
+  await expect(original.locator('.collection-item')).toHaveText(['2', '4']);
+  const scrub = player.getByRole('slider', { name: 'Step', exact: true });
+  await scrub.focus();
+  await scrub.press('Home');
+  await expect(player.locator('.heap-object')).toHaveCount(0);
+  await scrub.press('ArrowRight');
+  await expect(player.locator('.heap-object')).toHaveCount(1);
+  await expect(player.locator('.globals [data-name="other"]')).toHaveCount(0);
+  await goTo(player, 5);
+  await selectTheme(page, 'paper');
+  await expect(copy.locator('[aria-current]')).toHaveAttribute('data-index', '2');
+  await expect(original.locator('.collection-item')).toHaveText(['2', '4']);
+  await page.getByRole('button', { name: 'Enter fullscreen', exact: true }).click();
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 600 });
+    await goTo(player, 5);
+    const cell = await copy.locator('[aria-current]').boundingBox();
+    const pane = await player.locator('.data').boundingBox();
+    expect(cell!.y).toBeGreaterThanOrEqual(pane!.y);
+    expect(cell!.y + cell!.height).toBeLessThanOrEqual(pane!.y + pane!.height);
+    await goTo(player, 6);
+    await expect(original).toBeInViewport();
+    await expect(original.locator('.collection-item')).toHaveText(['2', '4']);
+    await goTo(player, 9);
+    await expect(player.locator('.console pre')).toHaveText('[2, 4]\n[2, 4, 6]\n');
   }
 });
 

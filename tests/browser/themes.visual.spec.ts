@@ -24,6 +24,14 @@ for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
   });
 }
 
+test('two separate lists after appending to the copy', async ({ page }) => {
+  await page.goto('/samples/python/list-copying/');
+  const player = await ready(page, 9);
+  await goTo(player, 5);
+  await page.mouse.move(0, 0);
+  await expect(player).toHaveScreenshot('midnight-list-copying.png');
+});
+
 test('updated list cell and list-valued print badge', async ({ page }) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);

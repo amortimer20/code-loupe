@@ -30,7 +30,8 @@ local/global scope, invalid operations, forward transitions, restored lengths
 and indices, reduced motion, and laptop/narrow fullscreen views.
 Reference checks cover one object shared by two bindings, mutations through
 aliases, rebinding, distinct objects, local/global references, restored identities,
-selection through another alias, and bounded data-pane following.
+selection through another alias, independent copies with contrasting console
+outputs, and bounded data-pane following across two object cards.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -91,8 +92,8 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains twenty-two PNGs, including indexed list selection and aliasing in all three presets
-and element update, list print badge, append, and removal in Midnight.
+The set contains twenty-three PNGs, including indexed list selection and aliasing in all three presets
+and element update, list print badge, append, removal, and separate copies in Midnight.
 Desktop captures use 1280×960, the narrow
 case uses 390×844, and the focused laptop uses 1280×600. Visual tests disable animations and move the pointer away from
 controls. Comparisons permit no differing pixels beyond Playwright's default

@@ -14,8 +14,8 @@ order: 10
 
 ## Teaching notes
 
-The Variables panel shows `numbers → list-1` and `other → list-1`. The Shared
-lists panel shows the indexed contents once. The repeated label identifies the
+The Variables panel shows `numbers → list-1` and `other → list-1`. The List
+objects panel shows the indexed contents once. The repeated label identifies the
 same object; it is an author-chosen teaching label, not a Python memory address.
 
 At Step 2, ask students how many lists exist. Both names point to the single
@@ -29,8 +29,9 @@ model of identity and sharing; the player still does not run Python.
 
 `allocate` creates the list and `assign.ref` binds each name to its identity.
 Earlier value-based list lessons remain useful for index and length concepts,
-but do not imply Python copying semantics. A copying comparison will be a
-separate lesson. Nested objects, reference-valued returns, and garbage collection
+but do not imply Python copying semantics. Compare with
+[Copying a list](/samples/python/list-copying/) to see two separate objects with
+equal starting contents. Nested objects, reference-valued returns, and garbage collection
 are outside this first reference lesson.
 
 ## Try a variation

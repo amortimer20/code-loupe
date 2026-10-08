@@ -220,3 +220,18 @@ data pane. Bounded viewing now follows the selected cell or relevant shared-list
 card within that pane without moving the host page. Objects with no remaining
 bindings stay visible; garbage collection, nested references, and a copying
 comparison are separate future work.
+
+## 2026-10-08 — Comparing copying with aliasing
+
+Added a separate flat-list copying lesson beside the aliasing lesson. Reuse
+explicit allocation and reference bindings: `numbers.copy()` is represented by
+a second allocated list with authored starting contents. Two cards make equal
+values versus shared identity visible, and printing both lists shows that only
+the copy changed. No copy action or execution inference is needed in the player.
+Keep the example to numbers; nested objects and shallow-versus-deep-copy behavior
+remain future lessons.
+
+The panel is labeled List objects consistently for both lessons. Sharing is a
+relationship between variable references and an object, not a property required
+of every list card. Keep the layout and reference labels; one card versus two
+cards explains aliasing versus copying without changing the panel's name.
