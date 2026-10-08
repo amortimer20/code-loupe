@@ -1,0 +1,23 @@
+title: Removing a list element
+language: python
+code: |
+  numbers = [2, 4, 6]
+  del numbers[1]
+  print(numbers)
+steps:
+  - line: 1
+    assign: { var: numbers, value: [2, 4, 6] }
+    caption: Create a list with three elements at indices 0, 1, and 2.
+  - line: 2
+    select: { var: numbers, index: 1 }
+    caption: Index 1 selects the second element, whose value is 4.
+  - remove: { var: numbers, index: 1 }
+    caption: Delete that element. The list shrinks to two cells; 6 moves from index 2 to index 1.
+  - select: { var: numbers, index: 1 }
+    caption: Index 1 now refers to 6. Its value did not change; its position did.
+  - line: 3
+    select: null
+    badge: { over: numbers, value: [2, 6], from: { var: numbers } }
+    caption: Read the shorter list. There is no empty cell or gap at the removed position.
+  - print: { text: "[2, 6]", from: badge }
+    caption: The console shows [2, 6]. Step backward to restore 4 and the original indices.

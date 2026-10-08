@@ -5,7 +5,7 @@ import { formatValue } from './values';
 import { styles } from './styles';
 import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
 import { renderVariables } from './visuals/variables';
-import { animateCollectionUpdate, collectionStyles } from './visuals/collection';
+import { animateCollectionAppend, animateCollectionRemoval, animateCollectionUpdate, captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
 
 const DEFAULT_THEME = 'dark-plus';
@@ -448,6 +448,8 @@ export class CodeLoupe extends HTMLElement {
 
     for (const animation of this.#root.getAnimations()) animation.finish();
     const oldBadges = animate ? this.#captureBadges() : new Map<number, CapturedValue>();
+    const removed = snap.events.removed;
+    const oldCells = animate && removed ? captureCollectionCells(this.#varRow(removed.name, removed.frameId)) : [];
     this.#els.overlay.replaceChildren();
 
     this.#renderLine(snap, animate);
@@ -460,7 +462,7 @@ export class CodeLoupe extends HTMLElement {
     this.#els.caption.textContent = snap.caption ?? '';
     this.#renderControls();
 
-    if (animate) this.#animateStep(snap, oldBadges);
+    if (animate) this.#animateStep(snap, oldBadges, oldCells);
   }
 
   #lineEls() {
@@ -557,7 +559,7 @@ export class CodeLoupe extends HTMLElement {
     return base / this.#speed;
   }
 
-  #animateStep(snap: Snapshot, oldBadges: Map<number, CapturedValue>) {
+  #animateStep(snap: Snapshot, oldBadges: Map<number, CapturedValue>, oldCells: CapturedCell[]) {
     const ev = snap.events;
     // Let the arrow arrive at the new line before anything on it happens.
     let t = ev.lineChanged ? this.#ms(LINE_MS) : 0;
@@ -667,18 +669,23 @@ export class CodeLoupe extends HTMLElement {
         );
       }
     }
-    if (ev.updated) {
-      const update = ev.updated;
+    if (ev.updated || ev.appended) {
+      const update = (ev.updated ?? ev.appended)!;
       const cell = this.#varRow(update.name, update.frameId)?.querySelector<HTMLElement>(`.collection-cell[data-index="${update.index}"]`);
       const value = cell?.querySelector<HTMLElement>('.collection-item');
       const source = update.fromBadge !== undefined ? this.#badgeInnerEl(update.fromBadge) : null;
       if (cell && value) {
+        if (ev.appended) animateCollectionAppend(cell, t, this.#ms(250));
         if (source) {
           t += this.#fly(value.innerHTML, source.getBoundingClientRect(), value.getBoundingClientRect(), t, 'start');
           value.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(150), delay: t - this.#ms(60), fill: 'backwards' });
         }
         animateCollectionUpdate(cell, t, this.#ms(900));
       }
+    }
+    if (ev.removed) {
+      const row = this.#varRow(ev.removed.name, ev.removed.frameId);
+      if (row) animateCollectionRemoval(row, oldCells, ev.removed.index, this.#els.overlay, t, this.#ms(300));
     }
   }
 

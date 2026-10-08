@@ -16,6 +16,17 @@ export function replaceCollectionElement(variable: VarState, index: number, valu
   return items;
 }
 
+export function appendCollectionElement(variable: VarState, value: Value, fail: (message: string) => never): ScalarValue[] {
+  if (!Array.isArray(variable.value)) return fail(`variable \`${variable.name}\` is not a list.`);
+  if (Array.isArray(value)) return fail('`append` needs a scalar element value; nested lists are not supported.');
+  return [...variable.value, value];
+}
+
+export function removeCollectionElement(variable: VarState, index: number, fail: (message: string) => never): ScalarValue[] {
+  checkCollectionIndex(variable, index, fail);
+  return (variable.value as ScalarValue[]).filter((_, position) => position !== index);
+}
+
 export function checkCollectionIndex(variable: VarState, index: unknown, fail: (message: string) => never): asserts index is number {
   if (!Array.isArray(variable.value)) fail(`variable \`${variable.name}\` is not a list.`);
   if (typeof index !== 'number' || !Number.isInteger(index) || index < 0 || index >= variable.value.length) {

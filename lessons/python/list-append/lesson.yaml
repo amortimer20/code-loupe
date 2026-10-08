@@ -1,0 +1,23 @@
+title: Appending to a list
+language: python
+code: |
+  numbers = [2, 4]
+  numbers.append(6)
+  print(numbers)
+steps:
+  - line: 1
+    assign: { var: numbers, value: [2, 4] }
+    caption: Create a list with two elements, at indices 0 and 1.
+  - line: 2
+    badge: { over: "6", value: 6 }
+    caption: The value to append is 6. It will go after the existing elements.
+  - append: { var: numbers, from: badge }
+    caption: Add 6 at the end. The list grows from two elements to three.
+  - select: { var: numbers, index: 2 }
+    caption: The new element has index 2. The original cells keep their values and indices.
+  - line: 3
+    select: null
+    badge: { over: numbers, value: [2, 4, 6], from: { var: numbers } }
+    caption: Read the whole list after appending.
+  - print: { text: "[2, 4, 6]", from: badge }
+    caption: The console shows [2, 4, 6]. Step backward to restore the two-element list.

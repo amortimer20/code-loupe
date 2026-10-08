@@ -89,7 +89,10 @@ Steps 6, 10, and 14 for accumulation; Step 15 clears the selection. The list is
 unchanged throughout. The list-update sample adds replacement of one existing
 element. Compare Steps 2 and 3 to see the second cell change from `4` to `10`,
 while the neighbors and length stay the same. Step 5 shows the whole updated
-list as a badge. Length changes and shared references need separate future lessons.
+list as a badge. List-append introduces a cell at the old list length; list-removal
+deletes by index and shifts later elements forward. Compare Steps 2 and 3 in
+both lessons for the length change, then Step 4 for the final indices. Shared
+references still need a separate lesson and state model.
 Checked-in Playwright tests cover the library/player/playground, with focused
 theme and nested-call screenshot references. Run `npm test` after changing the
 state model or a tested sample's authored outcomes, and `npm run test:docker`

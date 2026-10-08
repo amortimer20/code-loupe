@@ -150,7 +150,8 @@ steps:
 ```
 
 Ordinary steps can combine actions. They animate in this order: console → badge →
-convert → assign → update. `call` and `return` each require their own step, with an optional caption.
+convert → assign → collection mutation. Use at most one `update`, `append`, or
+`remove` per step. `call` and `return` each require their own step, with an optional caption.
 
 | Key       | Example                                         | What it does |
 | --------- | ----------------------------------------------- | ------------ |
@@ -164,6 +165,8 @@ convert → assign → update. `call` and `return` each require their own step, 
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
 | `select` | `select: { var: numbers, index: 0 }` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
 | `update` | `update: { var: numbers, index: 1, value: 10 }` | Replace an existing list element. `from: badge` transfers the latest badge's scalar value into that cell. |
+| `append` | `append: { var: numbers, value: 6 }` | Add a scalar at the end of a list, including an empty one. Alternatively use `from: badge`. |
+| `remove` | `remove: { var: numbers, index: 1 }` | Delete an element by zero-based index; later elements shift forward. |
 | `call` | `call: { name: add_one, line: 1, over: add_one(value), args: [{ var: value, from: badge }] }` | Save the current caller line and call target, enter a function frame at `line`, and bind its parameters. |
 | `return` | `return: { from: badge }` | Leave the active function, restore its caller, and show the result over the saved call target. Alternatively supply `value` and optional `type`. |
 
@@ -174,7 +177,7 @@ language; add `type: float` etc. to override.
 Flat lists of these scalar values are supported, including empty lists:
 `assign: { var: numbers, value: [2, 4, 6] }`. Python infers `list`; JavaScript
 infers `array`. Variable lists display indexed cells; list badges display a literal.
-Nested lists, objects, length-changing operations, and shared-reference identity are not modeled yet.
+Nested lists, objects, and shared-reference identity are not modeled yet.
 
 See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
 indexed source such as `badge: { over: numbers, value: 2, from: { var: numbers, index: 0 } }`
@@ -192,7 +195,20 @@ list, a valid zero-based `index`, and a scalar `value` or `from: badge`. It reso
 locals then globals; `scope: global` explicitly updates a shadowed global. Selection
 is separate: use `select` to mark a cell and `select: null` to clear it. A forward
 update briefly highlights the changed cell; reduced motion and backward stepping
-show the stored state immediately. Negative indices and append/remove are not supported.
+show the stored state immediately. Negative indices are not supported.
+
+The [append lesson](lessons/python/list-append/lesson.yaml) adds a new cell at the
+old list length; existing elements keep their indices. The
+[removal lesson](lessons/python/list-removal/lesson.yaml) deletes by index and
+shows later elements shifting forward. `remove` models indexed deletion such as
+Python's `del numbers[1]`, not its value-searching `list.remove()` method. It does
+not produce a return badge. Deleting the only element leaves an empty list.
+
+Both actions resolve locals then globals and support `scope: global`. Append
+preserves selection. Removal clears selection on the deleted element or adjusts
+its index when a selected surviving element shifts. Use a later `select` step to
+mark a newly appended cell. One mutation per step keeps transitions unambiguous;
+backward stepping and scrubbing restore the complete earlier list.
 
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.

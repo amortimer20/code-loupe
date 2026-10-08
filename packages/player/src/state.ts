@@ -1,6 +1,6 @@
 import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type Value } from './lesson';
 import { cloneValue, inferType, validateValue } from './values';
-import { checkCollectionIndex, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
+import { appendCollectionElement, checkCollectionIndex, removeCollectionElement, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
 
 export type { CallFrame } from './visuals/call-stack-state';
@@ -37,6 +37,8 @@ export interface StepEvents {
   converted?: { id: number; from: BadgeState };
   assigned?: { name: string; frameId: number; fromBadge?: number; isNew: boolean };
   updated?: CollectionSelection & { fromBadge?: number };
+  appended?: CollectionSelection & { fromBadge?: number };
+  removed?: CollectionSelection;
   called?: { frameId: number; args: { name: string; fromBadge?: number }[] };
   returned?: { frameId: number; badgeId: number; fromBadge?: number };
 }
@@ -100,6 +102,9 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       if (Object.keys(step).some(key => key !== action && key !== 'caption')) {
         fail(`\`${action}\` must be its own step (with an optional caption).`);
       }
+    }
+    if ([step.update, step.append, step.remove].filter(action => action !== undefined).length > 1) {
+      fail('use only one collection mutation (`update`, `append`, or `remove`) per step.');
     }
 
     const readValue = (spec: Omit<AssignSpec, 'var'>, label: string) => {
@@ -256,6 +261,29 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const { value, fromBadge } = readValue(update, 'update');
       found.variable.value = replaceCollectionElement(found.variable, update.index, value, fail);
       s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge };
+    }
+
+    for (const action of ['append', 'remove'] as const) {
+      const spec = step[action];
+      if (spec === undefined) continue;
+      if (!isRecord(spec)) fail(`\`${action}\` needs a mapping with var${action === 'remove' ? ' and index' : ' and value or from'}.`);
+      checkKeys(spec, action === 'append' ? ['var', 'value', 'from', 'scope'] : ['var', 'index', 'scope'], action, fail);
+      if (typeof spec.var !== 'string' || !spec.var.length) fail(`\`${action}\` needs a nonempty \`var\` name.`);
+      if (spec.scope !== undefined && spec.scope !== 'global') fail(`\`${action}.scope\` must be \`global\` when supplied.`);
+      const found = findVariable(s, spec.var, spec.scope === 'global') ?? fail(`no variable named ${spec.var} in the active scope or globals.`);
+      if (action === 'append') {
+        const { value, fromBadge } = readValue(step.append!, 'append');
+        found.variable.value = appendCollectionElement(found.variable, value, fail);
+        s.events.appended = { name: spec.var, frameId: found.frameId, index: found.variable.value.length - 1, fromBadge };
+      } else {
+        const index = step.remove!.index;
+        found.variable.value = removeCollectionElement(found.variable, index, fail);
+        s.events.removed = { name: spec.var, frameId: found.frameId, index };
+        if (s.selection?.name === spec.var && s.selection.frameId === found.frameId) {
+          if (s.selection.index === index) s.selection = null;
+          else if (s.selection.index > index) s.selection.index--;
+        }
+      }
     }
 
     snapshots.push(s);

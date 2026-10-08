@@ -36,6 +36,53 @@ export function animateCollectionUpdate(cell: HTMLElement, delay: number, durati
   ], { duration, delay, easing: 'ease-out' });
 }
 
+export interface CapturedCell {
+  rect: DOMRect;
+  html: string;
+  font: Pick<CSSStyleDeclaration, 'fontFamily' | 'fontSize' | 'fontWeight' | 'fontStyle' | 'lineHeight' | 'fontVariantLigatures'>;
+}
+
+export function captureCollectionCells(row: HTMLElement | null): CapturedCell[] {
+  return [...row?.querySelectorAll<HTMLElement>('.collection-cell') ?? []].map(cell => {
+    const style = getComputedStyle(cell);
+    return {
+      rect: cell.getBoundingClientRect(), html: cell.outerHTML,
+      // The font shorthand can be empty with non-default ligature settings.
+      font: { fontFamily: style.fontFamily, fontSize: style.fontSize, fontWeight: style.fontWeight,
+        fontStyle: style.fontStyle, lineHeight: style.lineHeight, fontVariantLigatures: style.fontVariantLigatures },
+    };
+  });
+}
+
+export function animateCollectionAppend(cell: HTMLElement, delay: number, duration: number) {
+  cell.animate([{ opacity: 0, transform: 'scale(0.6)' }, { opacity: 1, transform: 'none' }], { delay, duration, fill: 'backwards', easing: 'ease-out' });
+}
+
+/** Draw the removed cell in the overlay, then move surviving cells from their old positions. */
+export function animateCollectionRemoval(row: HTMLElement, before: CapturedCell[], index: number, overlay: HTMLElement, delay: number, duration: number) {
+  const removed = before[index];
+  if (!removed) return;
+  const base = overlay.getBoundingClientRect();
+  const ghost = document.createElement('span');
+  ghost.className = 'collection-removal';
+  ghost.innerHTML = removed.html;
+  ghost.style.left = `${removed.rect.left - base.left}px`;
+  ghost.style.top = `${removed.rect.top - base.top}px`;
+  ghost.style.width = `${removed.rect.width}px`;
+  Object.assign(ghost.style, removed.font);
+  overlay.append(ghost);
+  ghost.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(0.5)' }], { delay, duration, fill: 'backwards', easing: 'ease-in' })
+    .finished.then(() => ghost.remove(), () => ghost.remove());
+  row.querySelectorAll<HTMLElement>('.collection-cell').forEach((cell, newIndex) => {
+    const old = before[newIndex < index ? newIndex : newIndex + 1];
+    if (!old) return;
+    const rect = cell.getBoundingClientRect();
+    const dx = old.rect.left - rect.left;
+    const dy = old.rect.top - rect.top;
+    if (dx || dy) cell.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: 'none' }], { delay: delay + duration, duration, fill: 'backwards', easing: 'ease-out' });
+  });
+}
+
 export const collectionStyles = /* css */ `
 .var.has-collection .value { flex-basis: 100%; order: 1; min-width: 0; }
 .collection { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.25rem 0; }
@@ -44,4 +91,6 @@ export const collectionStyles = /* css */ `
 .collection-item { padding: 0.25rem 0.35rem; overflow-wrap: anywhere; }
 .collection-cell[aria-current] { outline: 2px solid var(--ca-accent); outline-offset: -2px; background: color-mix(in srgb, var(--ca-accent) 10%, transparent); }
 .collection-cell[aria-current] .collection-index::after { content: ' ←'; color: var(--ca-accent); }
+.collection-removal { position: absolute; display: block; background: var(--ca-panel); }
+.collection-removal > .collection-cell { width: 100%; }
 `;

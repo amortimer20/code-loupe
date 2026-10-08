@@ -23,6 +23,16 @@ test('updated list cell and list-valued print badge', async ({ page }) => {
   await expect(player).toHaveScreenshot('midnight-list-print-badge.png');
 });
 
+for (const slug of ['list-append', 'list-removal']) {
+  test(`${slug}: changed length and indices`, async ({ page }) => {
+    await page.goto(`/samples/python/${slug}/`);
+    const player = await ready(page, 6);
+    await goTo(player, 4);
+    await page.mouse.move(0, 0);
+    await expect(player).toHaveScreenshot(`midnight-${slug}.png`);
+  });
+}
+
 test('gallery shell and narrow nested-call layout', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.sample-card')).toHaveCount(corpus.length);

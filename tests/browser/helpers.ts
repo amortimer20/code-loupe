@@ -22,6 +22,8 @@ export const corpus = [
   { id: 'nested-function-call', steps: 19, output: '22', vars: /answer\s*=\s*22/ },
   { id: 'list-iteration', steps: 17, output: '12', vars: /total\s*=\s*12/ },
   { id: 'list-update', steps: 6, output: '[2, 10, 6]', vars: /numbers\s*=/ },
+  { id: 'list-append', steps: 6, output: '[2, 4, 6]', vars: /numbers\s*=/ },
+  { id: 'list-removal', steps: 6, output: '[2, 6]', vars: /numbers\s*=/ },
 ];
 
 export async function canonical(id: string) {

@@ -184,3 +184,18 @@ The new lesson changes `[2, 4, 6]` to `[2, 10, 6]`, separating target selection,
 replacement, and printing. Copy the list on update to keep earlier snapshots
 and independently stored values intact. Shared references and object identity
 still need a distinct model; this action does not implement Python aliasing.
+
+## 2026-10-08 — Appending and removing list elements
+
+Added authored `append` and indexed `remove` actions, each with a focused lesson.
+Append adds a scalar at the old list length and can transfer it from a badge.
+Removal uses `del numbers[1]` in the displayed Python: it deletes by index rather
+than modeling Python's value-searching `remove()` method or a `pop()` return value.
+
+Keep length changes in pure snapshots and allow one collection mutation per
+step. Append preserves existing selection; removal clears it for the deleted
+element or shifts its index to follow a surviving element. Forward removal
+captures the old cell layout, fades out the removed cell in an overlay, and moves
+survivors to their new positions. Reduced motion, backward stepping, and
+scrubbing show snapshot values directly. Empty lists remain valid, while negative
+indices and nested values are rejected. Shared references remain future work.

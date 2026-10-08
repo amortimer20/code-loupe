@@ -123,7 +123,7 @@ through a shared "where is this value on screen?" lookup.
 | Loops                   | Iteration counter, loop variable history, the arrow jumping back   |
 | Functions               | Call stack frames, arguments flying in, the return value flying out |
 | Scope                   | Frames that own variables; shadowing                              |
-| Lists and arrays        | Indexed cells and authored selection (done); append/remove animations next |
+| Lists and arrays        | Indexed cells, authored selection, update/append/remove transitions (done) |
 | Strings                 | Characters with indices, slicing                                   |
 | Objects and references  | Heap boxes with arrows; two variables pointing to one object       |
 | Errors                  | Exception badge, stack unwinding                                   |
@@ -137,7 +137,9 @@ through a shared "where is this value on screen?" lookup.
       element-to-badge transfers, and an accumulator with explicit exhaustion.
 - [x] List element-update lesson: replace one indexed cell, transfer a badge into it,
       highlight the change, and restore the previous value when stepping backward.
-- [ ] Length-changing collection operations and shared-reference/heap semantics with focused lessons.
+- [x] Append and indexed-removal lessons: growing/shrinking lists, newly created
+      cells, shifted indices, selection adjustment, and reversible snapshots.
+- [ ] Shared-reference/heap semantics with a focused lesson and object-identity model.
 - [ ] Extend module boundaries to the remaining visuals as new features need them.
 - [ ] Closures, nonlocal/global assignment declarations, implicit returns, and exception unwinding.
 
@@ -152,8 +154,8 @@ through a shared "where is this value on screen?" lookup.
        sample-specific playground drafts, and build-time lesson validation.
 4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
        Includes input conversion, an accumulator loop, a conditional branch, and a
-       function call, nested calls, list iteration, and an element update;
-       next explore length changes and references.
+       function call, nested calls, list iteration, element updates, append, and
+       indexed removal; next explore references.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
@@ -205,8 +207,8 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      seventeen reviewed screenshot references for themes, nested calls/returns,
-      list selection/updates, the gallery, narrow player, and short-laptop Focus lesson view;
+      nineteen reviewed screenshot references for themes, nested calls/returns,
+      list selection/updates/length changes, the gallery, narrow player, and short-laptop Focus lesson view;
       pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,

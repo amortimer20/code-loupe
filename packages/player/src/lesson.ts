@@ -53,6 +53,14 @@ export interface UpdateSpec extends SelectSpec {
   from?: 'badge';
 }
 
+/** Add a scalar value to the end of an existing list. */
+export interface AppendSpec {
+  var: string;
+  scope?: 'global';
+  value?: ScalarValue;
+  from?: 'badge';
+}
+
 /** Enter a function at `line`; `over` identifies the call in the current line. */
 export interface CallSpec {
   name: string;
@@ -80,6 +88,8 @@ export interface Step {
   assign?: AssignSpec;
   select?: SelectSpec | null;
   update?: UpdateSpec;
+  append?: AppendSpec;
+  remove?: SelectSpec;
   call?: CallSpec;
   return?: ReturnSpec;
 }
@@ -93,7 +103,7 @@ export interface Lesson {
 
 export class LessonError extends Error {}
 
-const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'select', 'update', 'call', 'return'];
+const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'select', 'update', 'append', 'remove', 'call', 'return'];
 
 export function parseLesson(source: string): Lesson {
   let data: unknown;
