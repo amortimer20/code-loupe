@@ -31,7 +31,7 @@ export class CallStackPanel {
       returnTo.textContent = `Returns to line ${frame.returnTo.line}`;
       const vars = document.createElement('div');
       vars.className = 'vars';
-      renderVariables(vars, frame.vars, renderer);
+      renderVariables(vars, frame.vars, renderer, snap.selection, frame.id);
       card.append(returnTo, vars);
       return card;
     });

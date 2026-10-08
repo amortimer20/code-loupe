@@ -1,5 +1,6 @@
 import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type Value } from './lesson';
-import { inferType } from './values';
+import { cloneValue, inferType, validateValue } from './values';
+import { checkCollectionIndex, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
 
 export type { CallFrame } from './visuals/call-stack-state';
@@ -26,7 +27,7 @@ export interface ConsoleChunk {
   fromBadge?: number;
 }
 
-export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number };
+export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number; index?: number };
 
 /** What changed in the step that produced a snapshot; used only to animate forward steps. */
 export interface StepEvents {
@@ -47,6 +48,7 @@ export interface Snapshot {
   frames: CallFrame[];
   badges: BadgeState[];
   console: ConsoleChunk[];
+  selection: CollectionSelection | null;
   events: StepEvents;
 }
 
@@ -60,7 +62,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
   let nextBadgeId = 1;
   let nextFrameId = 1;
 
-  let current: Snapshot = { line: null, caption: null, vars: [], frames: [], badges: [], console: [], events: { lineChanged: false, consoleFrom: 0 } };
+  let current: Snapshot = { line: null, caption: null, vars: [], frames: [], badges: [], console: [], selection: null, events: { lineChanged: false, consoleFrom: 0 } };
   const snapshots = [current];
 
   lesson.steps.forEach((step, i) => {
@@ -84,10 +86,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     const s: Snapshot = {
       line: current.line,
       caption: step.caption ?? null,
-      vars: current.vars.map((v) => ({ ...v })),
+      vars: current.vars.map((v) => ({ ...v, value: cloneValue(v.value) })),
       frames: cloneFrames(current.frames),
-      badges: current.badges.map((b) => ({ ...b })),
+      badges: current.badges.map((b) => ({ ...b, value: cloneValue(b.value) })),
       console: [...current.console],
+      selection: current.selection ? { ...current.selection } : null,
       events: { lineChanged: false, consoleFrom: current.console.length },
     };
 
@@ -103,11 +106,10 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const badge = spec.from === 'badge' ? (s.badges.at(-1) ?? fail(`${label} uses \`from: badge\` but there is no badge.`)) : undefined;
       const value = spec.value !== undefined ? spec.value : badge?.value;
       if (value === undefined) fail(`${label} needs a \`value\` (or \`from: badge\`).`);
-      if (value !== null && !['string', 'number', 'boolean'].includes(typeof value)) fail(`${label} needs a primitive value.`);
-      if (typeof value === 'number' && !Number.isFinite(value)) fail(`${label} needs a finite number.`);
+      validateValue(value, fail, label);
       if (spec.type !== undefined && (typeof spec.type !== 'string' || !spec.type.length)) fail(`${label} \`type\` must be nonempty text.`);
       return {
-        value: value as Value,
+        value: cloneValue(value),
         type: spec.type ?? (spec.value !== undefined ? inferType(value as Value, lang) : badge!.type),
         fromBadge: badge?.id,
       };
@@ -136,7 +138,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
         id: nextFrameId++, name: call.name,
         vars: args.map(({ name, value, type }) => ({ name, value, type })),
         returnTo: { line: callerLine, over: call.over, nth },
-        callerBadges: s.badges.map(b => ({ ...b })),
+        callerBadges: s.badges.map(b => ({ ...b, value: cloneValue(b.value) })),
       };
       s.frames.push(frame);
       s.badges = [];
@@ -151,6 +153,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const frame = s.frames.at(-1) ?? fail('`return` needs an active function call.');
       const result = readValue(step.return, 'return');
       s.frames.pop();
+      if (s.selection?.frameId === frame.id) s.selection = null;
       const badge: BadgeState = { id: nextBadgeId++, ...frame.returnTo, value: result.value, type: result.type };
       const callerCode = codeLines[frame.returnTo.line - 1];
       const callStart = findNth(callerCode, frame.returnTo.over, frame.returnTo.nth);
@@ -177,6 +180,18 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       s.line = step.line;
     }
 
+    if (step.select !== undefined) {
+      if (step.select === null) s.selection = null;
+      else {
+        if (!isRecord(step.select)) fail('`select` needs a mapping with var and index, or null.');
+        checkKeys(step.select, ['var', 'index', 'scope'], 'select', fail);
+        const origin = resolveOrigin(step.select, s, fail);
+        if (origin?.kind === 'var' && origin.index !== undefined) {
+          s.selection = { name: origin.name, frameId: origin.frameId, index: origin.index };
+        } else fail('`select` needs a variable and index.');
+      }
+    }
+
     const output = (spec: OutputSpec, newline: string) => {
       const { text, from } = typeof spec === 'object' && spec !== null ? spec : { text: spec, from: undefined };
       if (text === undefined) fail('output needs `text`, e.g. `print: { text: Hi, from: badge }`.');
@@ -193,10 +208,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const { over, value } = step.badge;
       if (typeof over !== 'string') fail('`badge` needs `over`: the code the value floats above.');
       if (value === undefined) fail('`badge` needs a `value`.');
+      validateValue(value, fail, 'badge');
       const line = step.badge.line ?? s.line ?? fail('`badge` needs a `line` because no line is active yet.');
       const nth = step.badge.nth ?? 1;
       checkTarget(line, over, nth);
-      const badge: BadgeState = { id: nextBadgeId++, line, over, nth, value, type: step.badge.type ?? inferType(value, lang) };
+      const badge: BadgeState = { id: nextBadgeId++, line, over, nth, value: cloneValue(value), type: step.badge.type ?? inferType(value, lang) };
       s.badges.push(badge);
       s.events.badgeAdded = { id: badge.id, from: resolveOrigin(step.badge.from, s, fail) };
     }
@@ -204,8 +220,9 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.convert) {
       const badge = s.badges.at(-1) ?? fail('`convert` needs a badge to convert. Add a `badge` step first.');
       if (step.convert.value === undefined) fail('`convert` needs a `value`.');
-      const from = { ...badge };
-      badge.value = step.convert.value;
+      validateValue(step.convert.value, fail, 'convert');
+      const from = { ...badge, value: cloneValue(badge.value) };
+      badge.value = cloneValue(step.convert.value);
       badge.type = step.convert.type ?? inferType(step.convert.value, lang);
       if (step.convert.over !== undefined) {
         badge.over = step.convert.over;
@@ -221,6 +238,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       if (typeof name !== 'string') fail('`assign` needs `var`: the variable name.');
       const { value, type, fromBadge } = readValue(step.assign, 'assign');
       const { vars, frameId } = activeScope(s);
+      if (s.selection?.name === name && s.selection.frameId === frameId) s.selection = null;
       const existing = vars.find((v) => v.name === name);
       if (existing) Object.assign(existing, { value, type });
       else vars.push({ name, value, type });
@@ -242,10 +260,15 @@ function resolveOrigin(from: unknown, s: Snapshot, fail: (msg: string) => never)
     return { kind: 'console', chunk };
   }
   if (typeof from === 'object' && from !== null && 'var' in from && typeof from.var === 'string') {
+    checkKeys(from, ['var', 'scope', 'index'], 'variable source', fail);
     const scope = 'scope' in from ? from.scope : undefined;
     if (scope !== undefined && scope !== 'global') fail('variable source `scope` must be `global` when supplied.');
     const found = findVariable(s, from.var, scope === 'global');
     if (!found) fail(`\`from: { var: ${from.var} }\` but there is no variable named ${from.var} in the active scope or globals.`);
+    if ('index' in from) {
+      checkCollectionIndex(found!.variable, from.index, fail);
+      return { kind: 'var', name: from.var, frameId: found!.frameId, index: from.index };
+    }
     return { kind: 'var', name: from.var, frameId: found!.frameId };
   }
   return fail('`from` must be `console` or `{ var: name }`.');

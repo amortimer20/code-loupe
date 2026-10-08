@@ -45,6 +45,8 @@ export const styles = /* css */ `
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
+.viewer-actions { position: absolute; top: 0.3rem; right: 0.4rem; z-index: 2; }
+
 .title {
   padding: 0.6rem 1rem;
   font-weight: 600;

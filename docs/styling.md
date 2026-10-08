@@ -53,11 +53,14 @@ Docker environment and how to review intentional visual changes.
 The site follows Phosphor's square-pane design, thin borders, coordinated surfaces,
 and monospace labels. Code Loupe does not currently include Phosphor's CRT effects.
 
-The sample page's **Focus lesson** button opens the existing player in a viewport-sized
-modal with an exit bar. Escape or **Exit focus** restores the inline view and its
+The sample page's four-corner **Enter fullscreen** icon sits at the top right of
+the player card and opens the existing player in a viewport-sized modal.
+Escape or the same icon (**Exit fullscreen**) restores the inline view and its
 page position. The player stays connected, preserving its step, theme, and frames.
-The player's `title` CSS part lets this view hide the repeated internal title;
-ordinary bounded embeds retain their title unless the host styles that part.
+The internal title stays visible in both views. An optional `viewer-actions`
+slot places host-provided controls at the card's top right; the sample site uses
+it for this toggle and adds title padding through the `title` CSS part.
+Fullscreen here fills the browser viewport; it does not hide browser chrome.
 Code and data panes scroll internally, with captions, console, and controls below
 them. The active code line is kept in view, with room above it for badges.
 

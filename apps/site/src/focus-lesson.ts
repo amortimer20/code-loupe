@@ -1,33 +1,37 @@
 const view = document.querySelector<HTMLDialogElement>('#lesson-view')!;
-const enter = document.querySelector<HTMLButtonElement>('#focus-lesson')!;
-const exit = document.querySelector<HTMLButtonElement>('#exit-focus')!;
-const bar = view.querySelector<HTMLElement>('.focus-bar')!;
+const toggle = view.querySelector<HTMLButtonElement>('.fullscreen-toggle')!;
 const player = view.querySelector('code-loupe')!;
 let focused = false;
 let pageScroll = 0;
 
-enter.addEventListener('click', () => {
+function updateToggle() {
+  const label = focused ? 'Exit fullscreen' : 'Enter fullscreen';
+  toggle.setAttribute('aria-label', label);
+  toggle.setAttribute('aria-pressed', String(focused));
+  toggle.title = focused ? `${label} (Esc)` : label;
+}
+
+toggle.addEventListener('click', () => {
+  if (focused) return view.close();
   pageScroll = window.scrollY;
-  // Reuse the inline dialog and player. Reparenting the component would reconnect
-  // it and reload the lesson, losing the viewer's current step.
+  // Keep the player connected so changing the view preserves the current step.
   view.close();
   focused = true;
-  bar.hidden = false;
+  updateToggle();
   player.setAttribute('fit', '');
   document.documentElement.classList.add('lesson-focused');
   view.showModal();
-  exit.focus();
+  toggle.focus({ preventScroll: true });
 });
 
-exit.addEventListener('click', () => view.close());
 view.addEventListener('close', () => {
-  // close() on entry queues an event too; by then the modal is open again.
+  // Entry queues a close event too; by then the modal is open again.
   if (!focused || view.open) return;
   focused = false;
-  bar.hidden = true;
+  updateToggle();
   player.removeAttribute('fit');
   document.documentElement.classList.remove('lesson-focused');
   view.show();
   window.scrollTo({ top: pageScroll, behavior: 'instant' });
-  enter.focus({ preventScroll: true });
+  toggle.focus({ preventScroll: true });
 });

@@ -1,0 +1,56 @@
+title: Iterating through a list
+language: python
+code: |
+  numbers = [2, 4, 6]
+  total = 0
+  for n in numbers:
+      total = total + n
+  print(total)
+steps:
+  - line: 1
+    assign: { var: numbers, value: [2, 4, 6] }
+    caption: The list contains three elements. Their positions are numbered 0, 1, and 2.
+  - line: 2
+    assign: { var: total, value: 0 }
+    caption: Start the running total at zero.
+  - line: 3
+    select: { var: numbers, index: 0 }
+    badge: { over: numbers, value: 2, from: { var: numbers, index: 0 } }
+    caption: The loop reads the first element, at index 0. Its value is 2.
+  - assign: { var: n, from: badge }
+    caption: Bind n to the element's value, 2. n is not the index.
+  - line: 4
+    badge: { over: total + n, value: 2 }
+    caption: Add the current element to the total. 0 + 2 gives 2.
+  - assign: { var: total, from: badge }
+    caption: Store 2 in total. Reading the element did not change the list.
+  - line: 3
+    select: { var: numbers, index: 1 }
+    badge: { over: numbers, value: 4, from: { var: numbers, index: 1 } }
+    caption: Advance to index 1. The next element's value is 4.
+  - assign: { var: n, from: badge }
+    caption: n becomes 4; total retains 2 from the previous iteration.
+  - line: 4
+    badge: { over: total + n, value: 6 }
+    caption: Now 2 + 4 gives 6.
+  - assign: { var: total, from: badge }
+    caption: The running total becomes 6. The list still contains 2, 4, and 6.
+  - line: 3
+    select: { var: numbers, index: 2 }
+    badge: { over: numbers, value: 6, from: { var: numbers, index: 2 } }
+    caption: Advance to the final element, at index 2. Its value is 6.
+  - assign: { var: n, from: badge }
+    caption: n becomes 6. The index is 2, while the element's value is 6.
+  - line: 4
+    badge: { over: total + n, value: 12 }
+    caption: Add the last element. 6 + 6 gives 12.
+  - assign: { var: total, from: badge }
+    caption: The running total becomes 12.
+  - line: 3
+    select: null
+    caption: There are no more elements. Leave the loop; Python keeps n at its last value, 6.
+  - line: 5
+    badge: { over: total, value: 12, from: { var: total } }
+    caption: Read the final total to print it.
+  - print: { text: "12", from: badge }
+    caption: The console shows 12, the sum of the list's three elements.

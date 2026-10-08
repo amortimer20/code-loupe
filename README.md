@@ -32,8 +32,9 @@ editor and in the player. Drafts are saved in browser storage when available,
 with separate drafts for each sample. Download preserves the exact YAML, even
 for incomplete lessons. There is no account or backend.
 
-On a sample page, **Focus lesson** fills the viewport with the current player and
-a small exit bar. It preserves your step; use **Exit focus** or Escape to return.
+On a sample page, the four-corner **Enter fullscreen** icon at the top right of
+the player fills the viewport. It preserves your step; click the **Exit fullscreen**
+icon or press Escape to return.
 The code follows the active line, while code and variable/call-stack panes scroll
 internally as needed. Captions, console, and playback controls remain available.
 
@@ -161,12 +162,28 @@ convert → assign. `call` and `return` each require their own step, with an opt
 | `badge`   | `badge: { over: int(text), value: 30 }`         | Float a value above code on the current line (`line:` and `nth:` pick another spot). Add `from: console` to fly it up from the user's input, or `from: { var: text }` to fly it from a variable. |
 | `convert` | `convert: { over: int(text), value: 30 }`       | Turn the latest badge into a new value, optionally moving it. |
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
+| `select` | `select: { var: numbers, index: 0 }` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
 | `call` | `call: { name: add_one, line: 1, over: add_one(value), args: [{ var: value, from: badge }] }` | Save the current caller line and call target, enter a function frame at `line`, and bind its parameters. |
 | `return` | `return: { from: badge }` | Leave the active function, restore its caller, and show the result over the saved call target. Alternatively supply `value` and optional `type`. |
 
 Values: `"30"` (quoted) is a string, `30` is a number, `true`/`false`/`null` are written in the
 lesson language's style (`True`/`None` in Python). Types like `str`/`int` are inferred per
 language; add `type: float` etc. to override.
+
+Flat lists of these scalar values are supported, including empty lists:
+`assign: { var: numbers, value: [2, 4, 6] }`. Python infers `list`; JavaScript
+infers `array`. Variable lists display indexed cells; list badges display a literal.
+Nested lists, objects, element mutation, and shared-reference identity are not modeled yet.
+
+See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
+indexed source such as `badge: { over: numbers, value: 2, from: { var: numbers, index: 0 } }`
+flies the authored badge value from that cell. The teacher still supplies the
+value: sources identify animation origins, not computed reads. Indices must be
+integers within an existing list. Both `select` and indexed sources look up locals
+then globals; `scope: global` selects a shadowed global explicitly.
+Selection is applied before badge animation and remains through the loop body.
+Reassigning the selected list or returning from its owning frame clears it.
+Lists are snapshot values, not a model of Python object identity or aliasing.
 
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.

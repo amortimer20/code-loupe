@@ -8,10 +8,12 @@ test('focus view fits a short laptop, follows execution, and restores the curren
   await page.goto('/samples/python/nested-function-call/');
   const player = await ready(page, 19);
   await goTo(player, 8);
-  await page.getByRole('button', { name: 'Focus lesson', exact: true }).click();
+  await expect(player.getByRole('button', { name: 'Enter fullscreen', exact: true })).toHaveAttribute('aria-pressed', 'false');
+  await page.getByRole('button', { name: 'Enter fullscreen', exact: true }).click();
   const view = page.locator('#lesson-view');
   await expect.poll(() => view.evaluate(el => el.matches(':modal'))).toBe(true);
-  await expect(page.getByRole('button', { name: 'Exit focus', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Exit fullscreen', exact: true })).toBeFocused();
+  await expect(player.getByRole('button', { name: 'Exit fullscreen', exact: true })).toHaveAttribute('aria-pressed', 'true');
   expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(8);
   await expect(player.locator('[data-frame-id="2"]')).toContainText(/result\s*=\s*11/);
   for (const step of [2, 8, 10, 16, 19]) {
@@ -30,18 +32,20 @@ test('focus view fits a short laptop, follows execution, and restores the curren
   await page.keyboard.press('Escape');
   await expect.poll(() => view.evaluate(el => el.matches(':modal'))).toBe(false);
   await expect(player).not.toHaveAttribute('fit');
-  await expect(page.getByRole('button', { name: 'Focus lesson', exact: true })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Enter fullscreen', exact: true })).toBeFocused();
+  await expect(player.getByRole('button', { name: 'Enter fullscreen', exact: true })).toHaveAttribute('aria-pressed', 'false');
   expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(19);
   expect(fetches).toBe(1);
-  await page.getByRole('button', { name: 'Focus lesson', exact: true }).click();
-  await page.getByRole('button', { name: 'Exit focus', exact: true }).click();
+  await page.keyboard.press('Enter');
+  await expect(player).toHaveAttribute('fit');
+  await page.keyboard.press('Space');
   await expect(player).not.toHaveAttribute('fit');
 });
 
 test('focus view resizes to a narrow screen with reachable panels and controls', async ({ page }) => {
   await page.goto('/samples/python/nested-function-call/');
   const player = await ready(page, 19);
-  await page.getByRole('button', { name: 'Focus lesson', exact: true }).click();
+  await page.getByRole('button', { name: 'Enter fullscreen', exact: true }).click();
   await page.setViewportSize({ width: 390, height: 600 });
   await goTo(player, 8);
   await settle(player);

@@ -5,6 +5,7 @@ import { formatValue } from './values';
 import { styles } from './styles';
 import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
 import { renderVariables } from './visuals/variables';
+import { collectionStyles } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
 
 const DEFAULT_THEME = 'dark-plus';
@@ -30,8 +31,9 @@ const ICONS = {
 };
 
 const TEMPLATE = `
-<style>${styles}${callStackStyles}</style>
+<style>${styles}${callStackStyles}${collectionStyles}</style>
 <div class="ca" part="container">
+  <div class="viewer-actions"><slot name="viewer-actions"></slot></div>
   <div class="title" part="title" hidden></div>
   <div class="stage">
     <div class="data">
@@ -425,7 +427,10 @@ export class CodeLoupe extends HTMLElement {
   async #highlightLiterals(lesson: Lesson, snapshots: Snapshot[], theme: string | ThemeRegistration) {
     const texts = new Set<string>();
     for (const snap of snapshots) {
-      for (const v of [...snap.vars, ...snap.frames.flatMap(f => f.vars), ...snap.badges]) texts.add(formatValue(v.value, lesson.language, v.type));
+      for (const v of [...snap.vars, ...snap.frames.flatMap(f => f.vars), ...snap.badges]) {
+        texts.add(formatValue(v.value, lesson.language, v.type));
+        if (Array.isArray(v.value)) for (const item of v.value) texts.add(formatValue(item, lesson.language));
+      }
       const from = snap.events.converted?.from;
       if (from) texts.add(formatValue(from.value, lesson.language, from.type));
     }
@@ -490,7 +495,7 @@ export class CodeLoupe extends HTMLElement {
   }
 
   #renderVars(snap: Snapshot) {
-    renderVariables(this.#els.vars, snap.vars, { language: this.#lesson!.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
+    renderVariables(this.#els.vars, snap.vars, { language: this.#lesson!.language, literalHtml: (value, type) => this.#literalHtml(value, type) }, snap.selection);
   }
 
   #renderBadges(snap: Snapshot) {
@@ -709,7 +714,10 @@ export class CodeLoupe extends HTMLElement {
   /** The element a badge's value comes from: the user's typed input, or a variable's value. */
   #originEl(from: BadgeOrigin | undefined) {
     if (from?.kind === 'console') return this.#els.console.querySelector<HTMLElement>(`.chunk[data-index="${from.chunk}"] .in`);
-    if (from?.kind === 'var') return this.#varRow(from.name, from.frameId)?.querySelector<HTMLElement>('.value') ?? null;
+    if (from?.kind === 'var') {
+      const target = from.index === undefined ? '.value' : `.collection-cell[data-index="${from.index}"] .collection-item`;
+      return this.#varRow(from.name, from.frameId)?.querySelector<HTMLElement>(target) ?? null;
+    }
     return null;
   }
 

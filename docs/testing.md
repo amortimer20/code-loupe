@@ -7,11 +7,11 @@ execute the Python displayed in a lesson.
 
 | Layer | Coverage |
 | --- | --- |
-| Node tests | Snapshot generation, invalid transitions, scope/shadowing, nested calls, preserved earlier snapshots, and corpus outcomes |
+| Node tests | Snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, preserved earlier snapshots, and corpus outcomes |
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
 | Type checks and builds | Player and site code, browser tests/configuration, canonical lesson metadata and semantic validation, independent player bundle and static site |
 | Playwright behavior | Gallery filters, all samples' outcomes and downloads, draft restoration/isolation, invalid draft recovery/download, nested frames, both returns, backward stepping, scrubbing, keyboard navigation, autoplay, animations, theme/draft/load races, storage failure, and narrow layouts |
-| Screenshot comparisons | Paper/Midnight/Terminal at nested locals and both return destinations; Midnight gallery, narrow nested-call player, and focused player on a short laptop |
+| Screenshot comparisons | Paper/Midnight/Terminal at nested locals, both return destinations, and indexed list selection; Midnight gallery, narrow nested-call player, and focused player on a short laptop |
 
 Behavioral tests run in separate Chromium projects for normal motion and OS
 reduced motion. Each test starts with a fresh browser context and checks for
@@ -20,6 +20,8 @@ and actual Web Animations to finish rather than sleeping for guessed durations.
 Focus-view tests cover 1280×600 and 390×600 viewports, execution following,
 reachable controls, step/frame preservation, both exit paths, no source refetch,
 and a bounded independent embed without a title.
+List checks cover iteration bindings, selection restoration, themed literals,
+empty/mixed lists in local and global scopes, and laptop/narrow Focus views.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -80,7 +82,7 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains twelve PNGs. Desktop captures use 1280×960, the narrow
+The set contains fifteen PNGs, including indexed list selection in all three presets. Desktop captures use 1280×960, the narrow
 case uses 390×844, and the focused laptop uses 1280×600. Visual tests disable animations and move the pointer away from
 controls. Comparisons permit no differing pixels beyond Playwright's default
 per-pixel color threshold; they do not use a broad percentage tolerance.

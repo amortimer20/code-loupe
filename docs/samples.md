@@ -83,6 +83,10 @@ The nested-function-call sample adds a suspended caller, same-named locals in
 independent frames, and two returns that resume different lines. Compare Steps 8,
 11, and 14 to see the inner result become an independently owned outer result.
 Snapshot regression tests cover these foundations and the earlier corpus outcomes.
+The list-iteration sample adds indexed cells, an authored selection cue, element
+value transfers, and loop exhaustion. Compare Steps 3, 7, and 11 for reads and
+Steps 6, 10, and 14 for accumulation; Step 15 clears the selection. The list is
+unchanged throughout. Mutation and shared references need separate future lessons.
 Checked-in Playwright tests cover the library/player/playground, with focused
 theme and nested-call screenshot references. Run `npm test` after changing the
 state model or a tested sample's authored outcomes, and `npm run test:docker`

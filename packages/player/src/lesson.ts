@@ -1,13 +1,21 @@
 import { parse } from 'yaml';
 
 /** A runtime value as written in a lesson file. YAML strings become language strings, numbers stay numbers. */
-export type Value = string | number | boolean | null;
+export type ScalarValue = string | number | boolean | null;
+export type Value = ScalarValue | ScalarValue[];
 
 /**
  * Where a value travels from: the user's most recent console input, or a variable
  * in the Variables panel.
  */
-export type ValueSource = 'console' | { var: string; scope?: 'global' };
+export type ValueSource = 'console' | { var: string; scope?: 'global'; index?: number };
+
+/** Highlight an indexed element until another selection or explicit clearing. */
+export interface SelectSpec {
+  var: string;
+  index: number;
+  scope?: 'global';
+}
 
 /** Float a value above a piece of code, e.g. the result of a function call. */
 export interface BadgeSpec {
@@ -64,6 +72,7 @@ export interface Step {
   badge?: BadgeSpec;
   convert?: ConvertSpec;
   assign?: AssignSpec;
+  select?: SelectSpec | null;
   call?: CallSpec;
   return?: ReturnSpec;
 }
@@ -77,7 +86,7 @@ export interface Lesson {
 
 export class LessonError extends Error {}
 
-const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'call', 'return'];
+const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'select', 'call', 'return'];
 
 export function parseLesson(source: string): Lesson {
   let data: unknown;

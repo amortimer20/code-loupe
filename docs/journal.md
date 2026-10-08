@@ -148,3 +148,26 @@ the remaining fixed regions. The code pane keeps the active line visible with
 space for value badges. Normal players retain their natural height. This first
 iteration keeps the existing font size and code-row spacing so we can evaluate
 the focused layout before adding compact density settings.
+
+## 2026-10-08 — List iteration and indexed cells
+
+Added a Python lesson that sums `[2, 4, 6]` while distinguishing indices from
+values. Flat lists are snapshot values and render as indexed cells in global
+and local variable rows. An authored `select` action marks the current cell;
+`select: null` shows exhaustion. Indexed badge sources identify the cell from
+which a value travels. As with existing sources, the teacher supplies the badge
+value and controls the pacing.
+
+Keep selection in pure snapshots so backward stepping and scrubbing restore it.
+Resolve collection names with the existing local/global scope rules and clear
+selection on reassignment or return from its owning frame. Clone flat list values
+across snapshots and value transfers. This iteration does not claim mutation,
+aliasing, nested collections, or iterator execution; those require separate
+semantics and teaching examples.
+
+Replaced the sample page's separate Focus lesson action and exit bar with a
+four-corner fullscreen toggle inside the player card. The same button changes
+to the inward-corner icon on entry; its accessible label and tooltip describe
+the current action. Keep the viewport-sized dialog behavior and the player's
+own title. A small optional `viewer-actions` slot lets the host supply this control
+without making the embeddable player depend on the sample site's dialog.

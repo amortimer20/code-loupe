@@ -1,4 +1,5 @@
 import type { BadgeState, VarState } from '../state';
+import { cloneValue } from '../values';
 
 export interface CallFrame {
   id: number;
@@ -14,9 +15,9 @@ interface Scopes { vars: VarState[]; frames: CallFrame[] }
 export function cloneFrames(frames: CallFrame[]): CallFrame[] {
   return frames.map(frame => ({
     ...frame,
-    vars: frame.vars.map(v => ({ ...v })),
+    vars: frame.vars.map(v => ({ ...v, value: cloneValue(v.value) })),
     returnTo: { ...frame.returnTo },
-    callerBadges: frame.callerBadges.map(b => ({ ...b })),
+    callerBadges: frame.callerBadges.map(b => ({ ...b, value: cloneValue(b.value) })),
   }));
 }
 

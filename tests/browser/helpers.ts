@@ -20,6 +20,7 @@ export const corpus = [
   { id: 'conditional', steps: 5, output: 'Under 18', vars: /age\s*=\s*16/ },
   { id: 'function-call', steps: 11, output: '11', vars: /answer\s*=\s*11/ },
   { id: 'nested-function-call', steps: 19, output: '22', vars: /answer\s*=\s*22/ },
+  { id: 'list-iteration', steps: 17, output: '12', vars: /total\s*=\s*12/ },
 ];
 
 export async function canonical(id: string) {

@@ -36,6 +36,7 @@ const FLOAT_TYPES = ['float', 'double', 'decimal', 'Float', 'Double'];
 
 /** Format a value as a literal in the lesson's language, e.g. True/None in Python. */
 export function formatValue(value: Value, language: string, type?: string): string {
+  if (Array.isArray(value)) return `[${value.map(item => formatValue(item, language)).join(', ')}]`;
   if (typeof value === 'string') return JSON.stringify(value);
   if (typeof value === 'number') {
     return type && FLOAT_TYPES.includes(type) && Number.isInteger(value) ? value.toFixed(1) : String(value);
@@ -47,9 +48,22 @@ export function formatValue(value: Value, language: string, type?: string): stri
 
 /** Guess a type name for a value when the lesson doesn't give one. */
 export function inferType(value: Value, language: string): string {
+  if (Array.isArray(value)) return ['python', 'py'].includes(language.toLowerCase()) ? 'list' : 'array';
   const w = words(language);
   if (typeof value === 'string') return w.string;
   if (typeof value === 'number') return Number.isInteger(value) ? w.int : w.float;
   if (typeof value === 'boolean') return w.bool;
   return language.toLowerCase().startsWith('py') ? 'NoneType' : w.null;
+}
+
+/** Values are scalars or flat lists; objects and nested collections need a later model. */
+export function validateValue(value: unknown, fail: (message: string) => never, label: string): asserts value is Value {
+  const scalar = (item: unknown) => item === null || typeof item === 'string' || typeof item === 'boolean' || (typeof item === 'number' && Number.isFinite(item));
+  if (!(Array.isArray(value) ? value.every(scalar) : scalar(value))) {
+    fail(`${label} needs a finite scalar value or a flat list of finite scalar values.`);
+  }
+}
+
+export function cloneValue(value: Value): Value {
+  return Array.isArray(value) ? [...value] : value;
 }
