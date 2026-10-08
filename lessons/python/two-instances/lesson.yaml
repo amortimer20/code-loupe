@@ -1,0 +1,76 @@
+title: Two instances with independent state
+language: python
+code: |
+  class Student:
+      def __init__(self, name):
+          self.name = name
+
+  ada = Student("Ada")
+  grace = Student("Grace")
+  ada.name = "Lovelace"
+  print(ada.name)
+  print(grace.name)
+steps:
+  - line: 1
+    caption: The Student definition is already available. Each new instance will have its own name attribute.
+  - line: 5
+    badge: { over: '"Ada"', value: Ada }
+    caption: Evaluate "Ada" for the first constructor call.
+  - allocate: { id: student-1, class: Student, fields: {} }
+    caption: Allocate the first Student. Its name attribute has not been initialized yet.
+  - call:
+      name: Student.__init__
+      line: 2
+      over: 'Student("Ada")'
+      construct: student-1
+      args:
+        - { var: self, ref: student-1 }
+        - { var: name, from: badge }
+    caption: In this initializer call, self points to student-1 and the local name is "Ada".
+  - line: 3
+    badge: { over: name, nth: 2, value: Ada, from: { var: name } }
+    caption: Read this call's local name parameter.
+  - update: { var: self, attribute: name, from: badge }
+    caption: Initialize student-1's name to "Ada" through self.
+  - return: { value: null }
+    caption: The initializer finishes with None; the constructor expression produces a reference to student-1.
+  - assign: { var: ada, from: badge }
+    caption: Bind ada to the first instance. The initializer's locals are gone.
+  - line: 6
+    badge: { over: '"Grace"', value: Grace }
+    caption: Evaluate "Grace" for a separate constructor call using the same class.
+  - allocate: { id: student-2, class: Student, fields: {} }
+    caption: Allocate a second Student with a distinct identity. student-1 still holds "Ada".
+  - call:
+      name: Student.__init__
+      line: 2
+      over: 'Student("Grace")'
+      construct: student-2
+      args:
+        - { var: self, ref: student-2 }
+        - { var: name, from: badge }
+    caption: This new call has its own locals. self now points to student-2, while ada still points to student-1.
+  - line: 3
+    badge: { over: name, nth: 2, value: Grace, from: { var: name } }
+    caption: Read "Grace" from the second initializer's local name parameter.
+  - update: { var: self, attribute: name, from: badge }
+    caption: Initialize student-2's name to "Grace". The first instance's name remains "Ada".
+  - return: { value: null }
+    caption: The second initializer finishes with None; this constructor expression produces a reference to student-2.
+  - assign: { var: grace, from: badge }
+    caption: ada and grace point to two independent instances of the same class. Both have an attribute named name.
+  - line: 7
+    badge: { over: '"Lovelace"', value: Lovelace }
+    caption: Evaluate the replacement name before updating ada's instance.
+  - update: { var: ada, attribute: name, from: badge }
+    caption: Replace only student-1's name with "Lovelace". Using the same class and attribute name does not make the two instances share that attribute's value.
+  - line: 8
+    badge: { over: ada.name, value: Lovelace, from: { var: ada, attribute: name } }
+    caption: Follow ada's reference and read "Lovelace" from the first instance.
+  - print: { text: Lovelace, from: badge }
+    caption: Print the first instance's updated name.
+  - line: 9
+    badge: { over: grace.name, value: Grace, from: { var: grace, attribute: name } }
+    caption: Follow grace's different reference. Its instance still holds "Grace".
+  - print: { text: Grace, from: badge }
+    caption: The two outputs confirm independent state. Updating ada.name did not change grace.name.

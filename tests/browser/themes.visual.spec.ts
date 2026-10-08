@@ -61,6 +61,14 @@ test('initializer self binding and the enclosing constructor result', async ({ p
   await expect(player).toHaveScreenshot('midnight-instance-result.png');
 });
 
+test('two Student instances retain independent attribute values', async ({ page }) => {
+  await page.goto('/samples/python/two-instances/');
+  const player = await ready(page, 21);
+  await goTo(player, 18);
+  await page.mouse.move(0, 0);
+  await expect(player).toHaveScreenshot('midnight-two-instances.png');
+});
+
 test('updated list cell and list-valued print badge', async ({ page }) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);

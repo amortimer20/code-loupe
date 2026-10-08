@@ -299,3 +299,12 @@ limited to authored constructor results; ordinary return values remain scalar
 or list values. Definition execution, __new__, inheritance, and nested attributes
 are not modeled. Shared field storage stays pure, with separate dictionary and
 instance validation helpers. Two-instance and method lessons remain next steps.
+
+## 2026-10-08 — Independent instance state
+
+Repeat the full construction sequence for two Students before changing one name
+attribute. Showing each initializer's self binding makes the shared definition
+and separate instance identities explicit. Contrast with list aliasing: two
+variable names alone do not establish independence; separate allocations do.
+Reuse the existing constructor and scalar attribute format without extending the
+player. Ordinary instance-method calls remain the next lesson.

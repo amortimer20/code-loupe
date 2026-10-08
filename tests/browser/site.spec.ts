@@ -16,7 +16,7 @@ test('gallery combines search and topic filters and reports empty results', asyn
   await expect(page.locator('.sample-card').nth(8)).toContainText('A simple while loop');
   await expect(page.locator('.sample-card').nth(9)).toContainText('Following an accumulator loop');
   await page.getByRole('combobox', { name: 'Topic', exact: true }).selectOption('Functions');
-  await expect(page.locator('.sample-card:visible')).toHaveCount(3);
+  await expect(page.locator('.sample-card:visible')).toHaveCount(4);
   await page.getByLabel('Search', { exact: true }).fill('nested');
   await expect(page.locator('.sample-card:visible')).toHaveCount(1);
   await expect(page.locator('#sample-count')).toHaveText('1 lesson');

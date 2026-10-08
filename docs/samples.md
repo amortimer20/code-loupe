@@ -125,6 +125,10 @@ Steps 3 and 6 for the empty versus initialized instance, Step 4 for self and the
 local name parameter, and Steps 7–8 for the constructor reference before and
 after global assignment. Initializer completion is None; the enclosing class
 call supplies the instance reference. The player does not execute a class definition.
+Two-instances repeats construction using the same class: compare self at Steps 4
+and 11, then both global references at Step 15. Steps 16–17 change only the first
+instance's name, preserving the second instance's value. Steps 19 and 21 print
+Lovelace and Grace. Compare separate allocation with list-aliasing's shared object.
 Checked-in Playwright tests cover the library/player/playground, with focused
 theme and nested-call screenshot references. Run `npm test` after changing the
 state model or a tested sample's authored outcomes, and `npm run test:docker`

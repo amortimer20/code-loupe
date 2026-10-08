@@ -50,6 +50,27 @@ test('attribute updates create or replace scalar attributes through scoped alias
   assert.deepEqual(states[1].heap[0], { id: 'instance', class: 'Student', fields: {}, type: 'Student' });
 });
 
+test('two-instance lesson binds each initializer to its own object and changes only the first instance', () => {
+  const lesson = parseLesson(readFileSync(new URL('../../../lessons/python/two-instances/lesson.yaml', import.meta.url), 'utf8'));
+  const states = buildSnapshots(lesson);
+  const fields = (step: number) => states[step].heap.map(object => 'fields' in object ? object.fields : object.value);
+  assert.equal(states.length, 22);
+  assert.deepEqual(states[4].frames[0].vars.map(v => [v.name, v.value]), [['self', { ref: 'student-1' }], ['name', 'Ada']]);
+  assert.deepEqual(fields(10), [{ name: 'Ada' }, {}]);
+  assert.deepEqual(states[11].frames[0].vars.map(v => [v.name, v.value]), [['self', { ref: 'student-2' }], ['name', 'Grace']]);
+  assert.deepEqual(states[11].vars.map(v => [v.name, v.value]), [['ada', { ref: 'student-1' }]]);
+  assert.deepEqual(fields(13), [{ name: 'Ada' }, { name: 'Grace' }]);
+  assert.deepEqual(states[14].frames, []);
+  assert.deepEqual(states[14].badges[0].value, { ref: 'student-2' });
+  assert.deepEqual(states[15].vars.map(v => [v.name, v.value]), [['ada', { ref: 'student-1' }], ['grace', { ref: 'student-2' }]]);
+  assert.deepEqual(fields(17), [{ name: 'Lovelace' }, { name: 'Grace' }]);
+  assert.deepEqual(fields(16), [{ name: 'Ada' }, { name: 'Grace' }]);
+  assert.deepEqual(fields(10), [{ name: 'Ada' }, {}]);
+  assert.equal(states[18].badges[0].value, 'Lovelace');
+  assert.equal(states[20].badges[0].value, 'Grace');
+  assert.equal(states[21].console.map(entry => entry.text).join(''), 'Lovelace\nGrace\n');
+});
+
 test('invalid class metadata, constructor bindings, and attribute operations fail before rendering', () => {
   for (const [action, pattern] of [
     ['allocate: { id: another, class: "", fields: {} }', /nonempty/],

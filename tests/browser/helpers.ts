@@ -35,6 +35,7 @@ export const corpus: { id: string; steps: number; output: string; vars?: RegExp 
   { id: 'list-copying', steps: 9, output: '[2, 4]\n[2, 4, 6]', vars: /other\s*=\s*→ list-2/ },
   { id: 'dictionary-fields', steps: 5, output: '7', vars: /student\s*=\s*→ student-1/ },
   { id: 'class-instance', steps: 10, output: 'Ada', vars: /student\s*=\s*→ student-1/ },
+  { id: 'two-instances', steps: 21, output: 'Lovelace\nGrace', vars: /grace\s*=\s*→ student-2/ },
 ];
 
 export async function canonical(id: string) {

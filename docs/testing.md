@@ -49,6 +49,10 @@ Instance checks cover empty allocation, self binding and local parameters,
 new/replaced scalar attributes, constructor completion versus initializer None,
 reference-result assignment, restored frames and missing attributes, invalid
 constructor bindings/operations, themes, and short/narrow fullscreen layouts.
+Two-instance checks compare sequential initializer self bindings, construction
+results and global identities, independent attribute values, reversed writes and
+returns, scrubbed construction states, contrasting outputs, and bounded following
+of the correct card in short/narrow fullscreen layouts.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -109,11 +113,11 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains twenty-nine PNGs, including indexed list selection, aliasing,
+The set contains thirty PNGs, including indexed list selection, aliasing,
 and dictionary fields in all three presets
 and element update, list print badge, append, removal, separate copies, and a
 false while-loop condition, initializer self binding, and constructor reference
-result in Midnight.
+result, and independent instance attributes in Midnight.
 Desktop captures use 1280×960, the narrow
 case uses 390×844, and the focused laptop uses 1280×600. Visual tests disable animations and move the pointer away from
 controls. Comparisons permit no differing pixels beyond Playwright's default
