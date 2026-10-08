@@ -120,6 +120,11 @@ Dictionary-fields adds named string keys instead of list indices. Compare Steps
 2 and 3 for the score update: name remains "Ada", the reference is unchanged,
 and stepping backward restores score to 5. Step 4 reads score from the object
 card into a scalar badge. This is a flat dictionary, not a class instance.
+Class-instance introduces an authored class label and attribute names. Compare
+Steps 3 and 6 for the empty versus initialized instance, Step 4 for self and the
+local name parameter, and Steps 7–8 for the constructor reference before and
+after global assignment. Initializer completion is None; the enclosing class
+call supplies the instance reference. The player does not execute a class definition.
 Checked-in Playwright tests cover the library/player/playground, with focused
 theme and nested-call screenshot references. Run `npm test` after changing the
 state model or a tested sample's authored outcomes, and `npm run test:docker`

@@ -9,7 +9,7 @@ test('dictionary fields update independently and restore through backward steppi
   const score = object.locator('[data-key="score"]');
   await goTo(player, 1);
   await expect(player.getByRole('region', { name: 'Objects', exact: true })).toBeVisible();
-  await expect(player.locator('.globals [data-name="student"]')).toHaveAttribute('aria-label', 'student points to dictionary object student-1');
+  await expect(player.locator('.globals [data-name="student"]')).toHaveAttribute('aria-label', 'student points to object student-1');
   await expect(object.locator('.field-key')).toHaveText(['"name"', '"score"']);
   await expect(name.locator('.field-value')).toHaveText('"Ada"');
   await expect(name.locator('.tag')).toHaveText('str');

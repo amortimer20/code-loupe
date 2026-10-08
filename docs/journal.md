@@ -283,3 +283,19 @@ scalar types, update independently, and become visible within bounded data panes
 when read or changed. The first lesson changes score without changing name.
 Adding/deleting fields, nested values, whole-dictionary badges, class instances,
 and methods remain future work.
+
+## 2026-10-08 — Initialization versus construction
+
+Represent class instances as named-field objects with an authored class label.
+An empty allocation precedes the initializer frame; self refers to that instance
+and attribute writes can create scalar attributes. Keep dictionary keys and
+instance attributes separate in the lesson format and renderer.
+
+Add `call.construct` to distinguish initializer completion from the enclosing
+constructor expression. The initializer must finish with null (Python None),
+then the constructor produces a reference badge that can be assigned to a name.
+This avoids presenting __init__ as returning its instance. Reference badges are
+limited to authored constructor results; ordinary return values remain scalar
+or list values. Definition execution, __new__, inheritance, and nested attributes
+are not modeled. Shared field storage stays pure, with separate dictionary and
+instance validation helpers. Two-instance and method lessons remain next steps.

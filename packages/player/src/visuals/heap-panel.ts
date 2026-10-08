@@ -3,19 +3,19 @@ import { isReference } from '../values';
 import { renderCollection } from './collection';
 import type { ValueRenderer } from './variables';
 import { formatValue, inferType } from '../values';
-import type { DictionaryObject } from './heap-state';
+import type { FieldObject } from './heap-state';
 
-function renderFields(object: DictionaryObject, renderer: ValueRenderer) {
+function renderFields(object: FieldObject, renderer: ValueRenderer) {
   const fields = document.createElement('dl');
   fields.className = 'object-fields';
-  if (!Object.keys(object.fields).length) fields.textContent = '{}';
+  if (!Object.keys(object.fields).length) fields.textContent = object.class === undefined ? '{}' : 'No attributes yet';
   for (const [key, value] of Object.entries(object.fields)) {
     const row = document.createElement('div');
     row.className = 'object-field';
     row.dataset.key = key;
     const label = document.createElement('dt');
     label.className = 'field-key';
-    label.textContent = formatValue(key, renderer.language);
+    label.textContent = object.class === undefined ? formatValue(key, renderer.language) : key;
     const content = document.createElement('dd');
     content.className = 'field-content';
     const literal = document.createElement('span');
@@ -45,7 +45,7 @@ export function renderHeap(host: HTMLElement, snap: Snapshot, renderer: ValueRen
     const card = document.createElement('article');
     card.className = 'heap-object';
     card.dataset.ref = object.id;
-    card.setAttribute('aria-label', `${'fields' in object ? 'Dictionary' : 'List'} object ${object.id}`);
+    card.setAttribute('aria-label', 'fields' in object && object.class !== undefined ? `${object.class} instance ${object.id}` : `${'fields' in object ? 'Dictionary' : 'List'} object ${object.id}`);
     const title = document.createElement('h4');
     title.className = 'heap-heading';
     title.textContent = object.id;

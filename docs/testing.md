@@ -45,6 +45,10 @@ Dictionary checks cover named scalar fields and type tags, one-field animation,
 unchanged neighbors/identity, backward stepping and scrubbing, theme switching,
 local/global aliases and rebinding, empty dictionaries, invalid keys/nested
 values, quoted and reserved-looking keys, and bounded field following.
+Instance checks cover empty allocation, self binding and local parameters,
+new/replaced scalar attributes, constructor completion versus initializer None,
+reference-result assignment, restored frames and missing attributes, invalid
+constructor bindings/operations, themes, and short/narrow fullscreen layouts.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -105,10 +109,11 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains twenty-seven PNGs, including indexed list selection, aliasing,
+The set contains twenty-nine PNGs, including indexed list selection, aliasing,
 and dictionary fields in all three presets
 and element update, list print badge, append, removal, separate copies, and a
-false while-loop condition in Midnight.
+false while-loop condition, initializer self binding, and constructor reference
+result in Midnight.
 Desktop captures use 1280×960, the narrow
 case uses 390×844, and the focused laptop uses 1280×600. Visual tests disable animations and move the pointer away from
 controls. Comparisons permit no differing pixels beyond Playwright's default

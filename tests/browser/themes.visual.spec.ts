@@ -51,6 +51,16 @@ test('while loop exits on a false Boolean condition', async ({ page }) => {
   await expect(player).toHaveScreenshot('midnight-while-false.png');
 });
 
+test('initializer self binding and the enclosing constructor result', async ({ page }) => {
+  await page.goto('/samples/python/class-instance/');
+  const player = await ready(page, 10);
+  await goTo(player, 6);
+  await page.mouse.move(0, 0);
+  await expect(player).toHaveScreenshot('midnight-instance-initializer.png');
+  await goTo(player, 7);
+  await expect(player).toHaveScreenshot('midnight-instance-result.png');
+});
+
 test('updated list cell and list-valued print badge', async ({ page }) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);

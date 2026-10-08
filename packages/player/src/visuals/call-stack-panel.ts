@@ -1,4 +1,4 @@
-import type { Value } from '../lesson';
+import type { StoredValue } from '../lesson';
 import type { Snapshot } from '../state';
 import { isReference } from '../values';
 import { renderVariables, type ValueRenderer } from './variables';
@@ -8,7 +8,7 @@ export interface CapturedValue { rect: DOMRect; html: string }
 interface AnimationContext {
   ms: (duration: number) => number;
   fly: (html: string, from: DOMRect, to: DOMRect, delay: number, align: 'center' | 'start') => number;
-  literalHtml: (value: Value, type: string) => string;
+  literalHtml: (value: StoredValue, type: string) => string;
   badge: (id: number) => HTMLElement | null;
 }
 

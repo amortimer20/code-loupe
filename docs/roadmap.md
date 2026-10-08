@@ -145,6 +145,10 @@ through a shared "where is this value on screen?" lookup.
       contents, mutation of only the copy, and outputs compared with aliasing.
 - [x] Flat dictionary fields: one referenced object with named scalar fields,
       an existing-field update, a field read, and reversible snapshots.
+- [x] First class-instance lesson: authored allocation, a constructor initializer
+      frame with self, scalar attribute initialization, and a constructor reference
+      result distinct from the initializer's None completion.
+- [ ] Two instances with independent state, then an instance-method lesson.
 - [ ] Nested objects, reference-valued returns,
       and memory lifetime/garbage-collection visuals.
 - [ ] Extend module boundaries to the remaining visuals as new features need them.
@@ -171,7 +175,7 @@ through a shared "where is this value on screen?" lookup.
        a conditional branch, a simple while loop, an accumulator loop, and a
        function call, nested calls, list iteration, element updates, append, and
        indexed removal, shared-list aliasing, a copying comparison, and named
-       dictionary fields.
+       dictionary fields and class-instance initialization.
        The initial five-lesson introductory sequence is complete.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
@@ -224,10 +228,10 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      twenty-seven reviewed screenshot references for themes, nested calls/returns,
+      twenty-nine reviewed screenshot references for themes, nested calls/returns,
       list selection/updates/length changes/aliasing/copying, the gallery, narrow player,
       short-laptop Focus lesson view, the final false while-loop condition, and
-      dictionary fields in all three presets;
+      dictionary fields in all three presets, and instance initialization/results;
       pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,

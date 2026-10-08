@@ -1,9 +1,10 @@
 import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type StoredValue, type Value } from './lesson';
-import { cloneValue, inferType, validateValue } from './values';
+import { cloneValue, inferType, isReference, validateValue } from './values';
 import { appendCollectionElement, checkCollectionIndex, removeCollectionElement, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
-import { collectionVariable, referenceIdentity, selectionMatches, storeCollectionValue, type HeapObject } from './visuals/heap-state';
-import { dictionaryField, replaceDictionaryField, type FieldTarget } from './visuals/dictionary-state';
+import { collectionVariable, referenceIdentity, replaceObjectField, selectionMatches, storeCollectionValue, type HeapObject } from './visuals/heap-state';
+import { dictionaryField, type FieldTarget } from './visuals/dictionary-state';
+import { constructedInstance, instanceAttribute, type AttributeTarget } from './visuals/instance-state';
 
 export type { CallFrame } from './visuals/call-stack-state';
 
@@ -12,7 +13,7 @@ export interface BadgeState {
   line: number;
   over: string;
   nth: number;
-  value: Value;
+  value: StoredValue;
   type: string;
 }
 
@@ -29,7 +30,7 @@ export interface ConsoleChunk {
   fromBadge?: number;
 }
 
-export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number; index?: number; key?: string; ref?: string };
+export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number; index?: number; key?: string; attribute?: string; ref?: string };
 
 /** What changed in the step that produced a snapshot; used only to animate forward steps. */
 export interface StepEvents {
@@ -38,7 +39,7 @@ export interface StepEvents {
   badgeAdded?: { id: number; from?: BadgeOrigin };
   converted?: { id: number; from: BadgeState };
   assigned?: { name: string; frameId: number; fromBadge?: number; isNew: boolean };
-  updated?: (CollectionSelection | FieldTarget) & { fromBadge?: number };
+  updated?: (CollectionSelection | FieldTarget | AttributeTarget) & { fromBadge?: number };
   appended?: CollectionSelection & { fromBadge?: number };
   removed?: CollectionSelection;
   called?: { frameId: number; args: { name: string; fromBadge?: number }[] };
@@ -128,9 +129,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.allocate !== undefined) {
       const object = step.allocate;
       if (!isRecord(object)) fail('`allocate` needs a mapping with id and value.');
-      checkKeys(object, ['id', 'value', 'fields'], 'allocate', fail);
+      checkKeys(object, ['id', 'value', 'fields', 'class'], 'allocate', fail);
       if (typeof object.id !== 'string' || !object.id.length) fail('`allocate.id` must be nonempty text.');
       if (s.heap.some(item => item.id === object.id)) fail(`object \`${object.id}\` already exists; allocate a new id.`);
+      if ('class' in object && (typeof object.class !== 'string' || !object.class.length)) fail('`allocate.class` must be nonempty text.');
+      if ('class' in object && !('fields' in object)) fail('class instances require `fields`, not list values.');
       if ('fields' in object) {
         if ('value' in object) fail('`allocate` accepts either value or fields, not both.');
         if (!isRecord(object.fields)) fail('`allocate.fields` must be a mapping of string keys to scalar values.');
@@ -139,7 +142,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
           validateValue(value, fail, 'dictionary field');
           if (Array.isArray(value)) fail('dictionary fields must be scalars; nested values are not supported.');
         }
-        s.heap.push({ id: object.id, fields: { ...object.fields }, type: ['python', 'py'].includes(lang.toLowerCase()) ? 'dict' : 'object' });
+        s.heap.push({ id: object.id, fields: { ...object.fields }, type: object.class ?? (['python', 'py'].includes(lang.toLowerCase()) ? 'dict' : 'object'), ...('class' in object ? { class: object.class } : {}) });
       } else {
         validateValue(object.value, fail, 'allocate');
         if (!Array.isArray(object.value)) fail('`allocate.value` must be a flat list.');
@@ -148,6 +151,12 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     }
 
     const readBinding = (spec: Omit<AssignSpec, 'var'>, label: string): { value: StoredValue; type: string; fromBadge?: number } => {
+      const badge = spec.from === 'badge' && spec.value === undefined ? s.badges.at(-1) : undefined;
+      if (spec.ref === undefined && badge && isReference(badge.value)) {
+        if (spec.type !== undefined) fail('reference bindings cannot override the object type.');
+        const object = s.heap.find(item => item.id === (badge.value as { ref: string }).ref)!;
+        return { value: cloneValue(badge.value), type: object.type, fromBadge: badge.id };
+      }
       if (spec.ref === undefined) return readValue(spec, label);
       if (typeof spec.ref !== 'string' || !spec.ref.length) fail(`${label} \`ref\` must be nonempty text.`);
       if (spec.value !== undefined || spec.from !== undefined || spec.type !== undefined) fail(`${label} \`ref\` cannot be combined with value, from, or type.`);
@@ -158,7 +167,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.call !== undefined) {
       const call = step.call;
       if (!isRecord(call)) fail('`call` needs a mapping with name, line, and over.');
-      checkKeys(call, ['name', 'line', 'over', 'nth', 'args'], 'call', fail);
+      checkKeys(call, ['name', 'line', 'over', 'nth', 'args', 'construct'], 'call', fail);
       if (typeof call.name !== 'string' || !call.name.length) fail('`call` needs a nonempty function `name`.');
       checkLine(call.line);
       const callerLine = s.line ?? fail('`call` needs an active caller line.');
@@ -174,11 +183,17 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
         names.add(arg.var);
         return { name: arg.var, ...readBinding(arg, 'call argument') };
       });
+      if ('construct' in call) {
+        const instance = constructedInstance(s, call.construct, fail);
+        const self = args.find(arg => arg.name === 'self');
+        if (!self || !isReference(self.value) || self.value.ref !== instance.id) fail('constructor args must bind `self` to the constructed instance.');
+      }
       const frame: CallFrame = {
         id: nextFrameId++, name: call.name,
         vars: args.map(({ name, value, type }) => ({ name, value, type })),
         returnTo: { line: callerLine, over: call.over, nth },
         callerBadges: s.badges.map(b => ({ ...b, value: cloneValue(b.value) })),
+        ...('construct' in call ? { construct: call.construct } : {}),
       };
       s.frames.push(frame);
       s.badges = [];
@@ -192,9 +207,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       checkKeys(step.return, ['value', 'type', 'from'], 'return', fail);
       const frame = s.frames.at(-1) ?? fail('`return` needs an active function call.');
       const result = readValue(step.return, 'return');
+      if (frame.construct !== undefined && result.value !== null) fail('an initializer must finish with null (Python None), not return the instance.');
+      const instance = frame.construct === undefined ? undefined : constructedInstance(s, frame.construct, fail);
       s.frames.pop();
       if (s.selection?.frameId === frame.id) s.selection = null;
-      const badge: BadgeState = { id: nextBadgeId++, ...frame.returnTo, value: result.value, type: result.type };
+      const badge: BadgeState = { id: nextBadgeId++, ...frame.returnTo, value: instance ? { ref: instance.id } : result.value, type: instance?.type ?? result.type };
       const callerCode = codeLines[frame.returnTo.line - 1];
       const callStart = findNth(callerCode, frame.returnTo.over, frame.returnTo.nth);
       const callEnd = callStart + frame.returnTo.over.length;
@@ -208,7 +225,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       s.badges = [...surroundingBadges, badge];
       s.line = frame.returnTo.line;
       s.events.lineChanged = s.line !== current.line;
-      s.events.returned = { frameId: frame.id, badgeId: badge.id, fromBadge: result.fromBadge };
+      s.events.returned = { frameId: frame.id, badgeId: badge.id, fromBadge: instance ? undefined : result.fromBadge };
     }
 
     if (step.line !== undefined) {
@@ -236,7 +253,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const { text, from } = typeof spec === 'object' && spec !== null ? spec : { text: spec, from: undefined };
       if (text === undefined) fail('output needs `text`, e.g. `print: { text: Hi, from: badge }`.');
       const chunk: ConsoleChunk = { kind: 'out', text: `${text}${newline}` };
-      if (from === 'badge') chunk.fromBadge = (s.badges.at(-1) ?? fail('`from: badge` but there is no badge to print.')).id;
+      if (from === 'badge') {
+        const badge = s.badges.at(-1) ?? fail('`from: badge` but there is no badge to print.');
+        if (isReference(badge.value)) fail('printing reference badges is not supported; read a scalar attribute first.');
+        chunk.fromBadge = badge.id;
+      }
       else if (from !== undefined) fail('output `from` must be `badge`.');
       s.console.push(chunk);
     };
@@ -259,6 +280,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
 
     if (step.convert) {
       const badge = s.badges.at(-1) ?? fail('`convert` needs a badge to convert. Add a `badge` step first.');
+      if (isReference(badge.value)) fail('`convert` cannot transform an object reference badge.');
       if (step.convert.value === undefined) fail('`convert` needs a `value`.');
       validateValue(step.convert.value, fail, 'convert');
       const from = { ...badge, value: cloneValue(badge.value) };
@@ -290,16 +312,22 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.update !== undefined) {
       const update = step.update;
       if (!isRecord(update)) fail('`update` needs a mapping with var, index, and value or from.');
-      checkKeys(update, ['var', 'index', 'key', 'value', 'from', 'scope'], 'update', fail);
+      checkKeys(update, ['var', 'index', 'key', 'attribute', 'value', 'from', 'scope'], 'update', fail);
       if (typeof update.var !== 'string' || !update.var.length) fail('`update` needs a nonempty `var` name.');
       if (update.scope !== undefined && update.scope !== 'global') fail('`update.scope` must be `global` when supplied.');
       const found = findVariable(s, update.var, update.scope === 'global') ?? fail(`no variable named ${update.var} in the active scope or globals.`);
       const { value, fromBadge } = readValue(update, 'update');
-      if ('key' in update) {
+      if ('attribute' in update) {
+        if ('key' in update || 'index' in update) fail('`update.attribute` cannot combine with key or index.');
+        const object = instanceAttribute(s, found.variable, update.attribute, false, fail);
+        if (Array.isArray(value)) return fail('instance attributes need scalar values.');
+        replaceObjectField(object, update.attribute!, value);
+        s.events.updated = { name: update.var, frameId: found.frameId, attribute: update.attribute!, ref: object.id, fromBadge };
+      } else if ('key' in update) {
         if ('index' in update) fail('`update` cannot combine key and index.');
         const object = dictionaryField(s, found.variable, update.key, fail);
         if (Array.isArray(value)) return fail('dictionary updates need a scalar field value.');
-        replaceDictionaryField(object, update.key!, value);
+        replaceObjectField(object, update.key!, value);
         s.events.updated = { name: update.var, frameId: found.frameId, key: update.key!, ref: object.id, fromBadge };
       } else {
         checkCollectionIndex(collectionVariable(s, found.variable), update.index, fail);
@@ -347,11 +375,16 @@ function resolveOrigin(from: unknown, s: Snapshot, fail: (msg: string) => never)
     return { kind: 'console', chunk };
   }
   if (typeof from === 'object' && from !== null && 'var' in from && typeof from.var === 'string') {
-    checkKeys(from, ['var', 'scope', 'index', 'key'], 'variable source', fail);
+    checkKeys(from, ['var', 'scope', 'index', 'key', 'attribute'], 'variable source', fail);
     const scope = 'scope' in from ? from.scope : undefined;
     if (scope !== undefined && scope !== 'global') fail('variable source `scope` must be `global` when supplied.');
     const found = findVariable(s, from.var, scope === 'global');
     if (!found) fail(`\`from: { var: ${from.var} }\` but there is no variable named ${from.var} in the active scope or globals.`);
+    if ('attribute' in from) {
+      if ('key' in from || 'index' in from) fail('attribute sources cannot combine with key or index.');
+      const object = instanceAttribute(s, found!.variable, from.attribute, true, fail);
+      return { kind: 'var', name: from.var, frameId: found!.frameId, attribute: from.attribute as string, ref: object.id };
+    }
     if ('key' in from) {
       if ('index' in from) fail('variable source cannot combine key and index.');
       const object = dictionaryField(s, found!.variable, from.key, fail);
@@ -362,6 +395,11 @@ function resolveOrigin(from: unknown, s: Snapshot, fail: (msg: string) => never)
       return { kind: 'var', name: from.var, frameId: found!.frameId, index: from.index, ...referenceIdentity(found!.variable) };
     }
     const resolved = collectionVariable(s, found!.variable).value;
+    if (isReference(found!.variable.value)) {
+      const ref = found!.variable.value.ref;
+      const object = s.heap.find(item => item.id === ref)!;
+      if ('fields' in object && object.class !== undefined) fail('instance sources require an `attribute`; whole-instance value badges are not supported.');
+    }
     if (!Array.isArray(resolved) && typeof resolved === 'object' && resolved !== null) fail('dictionary sources require a `key`; whole-dictionary badges are not supported.');
     return { kind: 'var', name: from.var, frameId: found!.frameId, ...referenceIdentity(found!.variable) };
   }

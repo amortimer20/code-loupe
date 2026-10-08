@@ -31,8 +31,8 @@ This is an npm workspace monorepo:
   themes shared with the site. Keep regular Shiki theme names working.
 - `packages/player/src/visuals/`: pure call-frame scope helpers, the Call stack
   panel and its animations, collection helpers/transitions, dictionary field
-  helpers, and object identity helpers/panel. Variables hold references;
-  list contents or scalar dictionary fields live once in each
+  and instance attribute/constructor helpers, and object identity helpers/panel.
+  Variables hold references; list contents or scalar named fields live once in each
   snapshot's heap. Ordinary list values remain independent authored values.
   Keep browser panel imports out of the pure state path.
 - `apps/site/`: Astro static gallery, sample pages, authoring guide, and playground.

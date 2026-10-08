@@ -9,13 +9,13 @@ export type ListReference = ObjectReference;
 export type StoredValue = Value | ObjectReference;
 
 /** Create a list or flat dictionary with an author-chosen, stable identity. */
-export type AllocateSpec = { id: string; value: ScalarValue[] } | { id: string; fields: Record<string, ScalarValue> };
+export type AllocateSpec = { id: string; value: ScalarValue[] } | { id: string; fields: Record<string, ScalarValue>; class?: string };
 
 /**
  * Where a value travels from: the user's most recent console input, or a variable
  * in the Variables panel.
  */
-export type ValueSource = 'console' | { var: string; scope?: 'global'; index?: number; key?: string };
+export type ValueSource = 'console' | { var: string; scope?: 'global'; index?: number; key?: string; attribute?: string };
 
 /** Highlight an indexed element until another selection or explicit clearing. */
 export interface SelectSpec {
@@ -61,6 +61,7 @@ export interface UpdateSpec {
   scope?: 'global';
   index?: number;
   key?: string;
+  attribute?: string;
   value?: ScalarValue;
   from?: 'badge';
 }
@@ -80,6 +81,8 @@ export interface CallSpec {
   over: string;
   nth?: number;
   args?: AssignSpec[];
+  /** The allocated instance whose initializer this call models. */
+  construct?: string;
 }
 
 /** Leave the active function and show its result over the saved caller target. */

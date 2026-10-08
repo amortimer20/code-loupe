@@ -4,8 +4,14 @@ import { isReference } from '../values';
 import type { CollectionSelection } from './collection-state';
 
 export interface SharedList { id: string; value: ScalarValue[]; type: string }
-export interface DictionaryObject { id: string; fields: Record<string, ScalarValue>; type: string }
-export type HeapObject = SharedList | DictionaryObject;
+export interface FieldObject { id: string; fields: Record<string, ScalarValue>; type: string; class?: string }
+export type DictionaryObject = FieldObject;
+export type HeapObject = SharedList | FieldObject;
+
+/** Copy a named field on either a dictionary or instance, preserving older snapshots. */
+export function replaceObjectField(object: FieldObject, key: string, value: ScalarValue) {
+  object.fields = { ...object.fields, [key]: value };
+}
 
 /** Variables store references; object contents live once in the heap. */
 export function resolveVariableValue(state: Pick<Snapshot, 'heap'>, variable: VarState): Value | DictionaryObject['fields'] {

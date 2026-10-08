@@ -1,0 +1,40 @@
+title: Creating a class instance
+language: python
+code: |
+  class Student:
+      def __init__(self, name):
+          self.name = name
+
+  student = Student("Ada")
+  print(student.name)
+steps:
+  - line: 1
+    caption: Student has an initializer named __init__. No Student instance exists yet; the initializer runs when we create one.
+  - line: 5
+    badge: { over: '"Ada"', value: Ada }
+    caption: Evaluate the argument "Ada" before constructing a Student.
+  - allocate: { id: student-1, class: Student, fields: {} }
+    caption: Allocate a new Student instance. It has no name attribute yet, and student has not been assigned.
+  - call:
+      name: Student.__init__
+      line: 2
+      over: 'Student("Ada")'
+      construct: student-1
+      args:
+        - { var: self, ref: student-1 }
+        - { var: name, from: badge }
+    caption: Enter __init__. self points to the new instance, while the local parameter name holds "Ada".
+  - line: 3
+    badge: { over: name, nth: 2, value: Ada, from: { var: name } }
+    caption: Read the local parameter name on the right-hand side. It is separate from the instance attribute self.name.
+  - update: { var: self, attribute: name, from: badge }
+    caption: Store "Ada" in the instance's name attribute. self still points to the same object.
+  - return: { value: null }
+    caption: __init__ finishes with None. The enclosing Student("Ada") constructor call produces the initialized instance, shown by its reference badge.
+  - assign: { var: student, from: badge }
+    caption: Bind student to the constructed instance. The initializer's local self and name no longer exist.
+  - line: 6
+    badge: { over: student.name, value: Ada, from: { var: student, attribute: name } }
+    caption: Read student.name from the instance. Dot notation accesses an attribute, rather than a dictionary key.
+  - print: { text: Ada, from: badge }
+    caption: The console shows Ada. student still points to the Student instance with its name attribute.

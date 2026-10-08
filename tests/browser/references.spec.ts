@@ -17,8 +17,8 @@ test('two names share one visible list through mutation, backward stepping, scru
   await settle(player);
   await expect(object.locator('.collection-item')).toHaveText(['2', '4', '6']);
   await expect(player.locator('.heap-object')).toHaveCount(1);
-  await expect(player.locator('.globals [data-name="numbers"]')).toHaveAttribute('aria-label', 'numbers points to list object list-1');
-  await expect(player.locator('.globals [data-name="other"]')).toHaveAttribute('aria-label', 'other points to list object list-1');
+  await expect(player.locator('.globals [data-name="numbers"]')).toHaveAttribute('aria-label', 'numbers points to object list-1');
+  await expect(player.locator('.globals [data-name="other"]')).toHaveAttribute('aria-label', 'other points to object list-1');
   await player.getByRole('button', { name: 'Previous step', exact: true }).click();
   await settle(player);
   await expect(object.locator('.collection-item')).toHaveText(['2', '4']);

@@ -8,6 +8,8 @@ export interface CallFrame {
   returnTo: { line: number; over: string; nth: number };
   /** Suspended expression values to restore when the caller resumes. */
   callerBadges: BadgeState[];
+  /** Initializer completion makes this reference the enclosing constructor's result. */
+  construct?: string;
 }
 
 interface Scopes { vars: VarState[]; frames: CallFrame[] }

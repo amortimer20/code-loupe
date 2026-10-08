@@ -185,7 +185,7 @@ language; add `type: float` etc. to override.
 Flat lists of these scalar values are supported, including empty lists:
 `assign: { var: numbers, value: [2, 4, 6] }`. Python infers `list`; JavaScript
 infers `array`. Variable lists display indexed cells; list badges display a literal.
-Nested collections and class instances are not modeled yet. Shared lists use
+Nested collections are not modeled yet. Shared lists use
 explicit allocation and reference bindings, described below.
 
 See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
@@ -283,8 +283,47 @@ and `index`. List indexing, append, remove, and selection remain list-only.
 Bounded players reveal a field when it is updated or read.
 
 Adding/deleting keys, non-string keys, nested values/references, whole-dictionary
-badges, and class definitions are not supported yet. A missing key is an invalid
+badges, and executable class definitions are not supported. A missing key is an invalid
 authored step; the player does not execute Python or produce a runtime KeyError.
+
+### Class instances and initialization
+
+See [Creating a class instance](lessons/python/class-instance/lesson.yaml).
+Allocate a labeled instance with `class: Student` and `fields: {}`; its type tag
+is Student, and attribute names appear without dictionary-key quotation marks.
+
+```yaml
+- line: 5
+  allocate: { id: student-1, class: Student, fields: {} }
+- call:
+    name: Student.__init__
+    line: 2
+    over: 'Student("Ada")'
+    construct: student-1
+    args: [{ var: self, ref: student-1 }, { var: name, value: Ada }]
+- line: 3
+  update: { var: self, attribute: name, value: Ada }
+- return: { value: null }
+- assign: { var: student, from: badge }
+```
+
+`call.construct` names the already allocated instance. Bind `self` to that same
+id explicitly. The initializer must finish with null (Python None), while the
+enclosing constructor expression produces a reference badge to the instance.
+`assign.from: badge` can bind that result without copying the object. Reference
+bindings cannot override the object's type.
+
+`update.attribute` creates or replaces a scalar instance attribute; it accepts
+`value` or `from: badge`. `badge.from.attribute` reads an existing attribute as
+an animation origin, with a teacher-authored scalar badge value. Both support
+`scope: global`. Attribute, key, and index selectors cannot be combined, and
+dictionary keys and instance attributes remain distinct operations.
+
+Class names are authored labels: the player does not interpret class definitions,
+infer attributes, execute `__init__` or `__new__`, or model inheritance. Constructor
+references cannot be converted or printed as value badges; read a scalar
+attribute for output. General reference-valued function returns, nested instance
+references, and automatic implicit returns remain future work.
 
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.
@@ -297,7 +336,7 @@ to see one caller pause while another runs and two returns resume their callers.
 Highlight the caller line before a `call` step. Its `over` identifies the exact call
 text on that active line; `nth` chooses an occurrence. The call's `line` is the
 function entry line. `args` is an optional list of parameter bindings, each using
-`var` with `value`, `from: badge` (the latest caller badge), or `ref` (an allocated list or dictionary).
+`var` with `value`, `from: badge` (the latest caller badge), or `ref` (an allocated object).
 
 Assignments inside a function update its own locals. A badge source such as
 `from: { var: value }` looks in the active frame, then globals. Use

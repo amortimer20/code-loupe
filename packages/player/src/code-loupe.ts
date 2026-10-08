@@ -1,5 +1,5 @@
 import { codeToHtml, bundledThemes, type BundledTheme, type ThemeRegistration } from 'shiki';
-import { parseLesson, type Lesson, type Value } from './lesson';
+import { parseLesson, type Lesson, type StoredValue } from './lesson';
 import { buildSnapshots, findNth, type BadgeOrigin, type Snapshot } from './state';
 import { formatValue, isReference } from './values';
 import { styles } from './styles';
@@ -445,7 +445,7 @@ export class CodeLoupe extends HTMLElement {
         }
       }
       const from = snap.events.converted?.from;
-      if (from) texts.add(formatValue(from.value, lesson.language, from.type));
+      if (from && !isReference(from.value)) texts.add(formatValue(from.value, lesson.language, from.type));
     }
     const entries = await Promise.all(
       [...texts].map(async (text) => [text, await codeToHtml(text, { lang: lesson.language, theme, structure: 'inline' })] as const),
@@ -488,7 +488,8 @@ export class CodeLoupe extends HTMLElement {
     const ref = snap.events.updated?.ref ?? snap.events.appended?.ref ?? snap.events.removed?.ref
       ?? (source?.kind === 'var' ? source.ref : undefined)
       ?? (assigned ? this.#varRow(assigned.name, assigned.frameId)?.dataset.ref : undefined);
-    const key = snap.events.updated && 'key' in snap.events.updated ? snap.events.updated.key : source?.kind === 'var' ? source.key : undefined;
+    const update = snap.events.updated;
+    const key = update && 'attribute' in update ? update.attribute : update && 'key' in update ? update.key : source?.kind === 'var' ? source.attribute ?? source.key : undefined;
     const target = (ref !== undefined && key !== undefined ? this.#collectionRow('', 0, ref)?.querySelector<HTMLElement>(`.object-field[data-key="${CSS.escape(key)}"]`) : null)
       ?? pane.querySelector<HTMLElement>('.collection-cell[aria-current]')
       ?? (ref === undefined ? null : this.#els.heap.querySelector<HTMLElement>(`[data-ref="${CSS.escape(ref)}"]`));
@@ -551,8 +552,9 @@ export class CodeLoupe extends HTMLElement {
     );
   }
 
-  #badgeInner(value: Value, type: string) {
+  #badgeInner(value: StoredValue, type: string) {
     const inner = el('span', 'badge-inner');
+    if (isReference(value)) inner.classList.add('reference');
     inner.innerHTML = this.#literalHtml(value, type);
     inner.append(el('span', 'tag', type));
     return inner;
@@ -705,8 +707,9 @@ export class CodeLoupe extends HTMLElement {
     }
     if (ev.updated || ev.appended) {
       const update = (ev.updated ?? ev.appended)!;
-      const field = 'key' in update;
-      const cell = this.#collectionRow(update.name, update.frameId, update.ref)?.querySelector<HTMLElement>(field ? `.object-field[data-key="${CSS.escape(update.key)}"]` : `.collection-cell[data-index="${update.index}"]`);
+      const key = 'attribute' in update ? update.attribute : 'key' in update ? update.key : undefined;
+      const field = key !== undefined;
+      const cell = this.#collectionRow(update.name, update.frameId, update.ref)?.querySelector<HTMLElement>(field ? `.object-field[data-key="${CSS.escape(key)}"]` : `.collection-cell[data-index="${'index' in update ? update.index : ''}"]`);
       const value = cell?.querySelector<HTMLElement>(field ? '.field-value' : '.collection-item');
       const source = update.fromBadge !== undefined ? this.#badgeInnerEl(update.fromBadge) : null;
       if (cell && value) {
@@ -770,7 +773,8 @@ export class CodeLoupe extends HTMLElement {
   #originEl(from: BadgeOrigin | undefined) {
     if (from?.kind === 'console') return this.#els.console.querySelector<HTMLElement>(`.chunk[data-index="${from.chunk}"] .in`);
     if (from?.kind === 'var') {
-      const target = from.key !== undefined ? `.object-field[data-key="${CSS.escape(from.key)}"] .field-value` : from.index === undefined ? '.value' : `.collection-cell[data-index="${from.index}"] .collection-item`;
+      const key = from.attribute ?? from.key;
+      const target = key !== undefined ? `.object-field[data-key="${CSS.escape(key)}"] .field-value` : from.index === undefined ? '.value' : `.collection-cell[data-index="${from.index}"] .collection-item`;
       return this.#collectionRow(from.name, from.frameId, from.ref)?.querySelector<HTMLElement>(target) ?? null;
     }
     return null;
@@ -786,7 +790,7 @@ export class CodeLoupe extends HTMLElement {
   }
 
   /** How a value looks when printed: strings lose their quotes. */
-  #printedForm(value: Value, type: string) {
+  #printedForm(value: StoredValue, type: string) {
     return typeof value === 'string' ? value : formatValue(value, this.#lesson!.language, type);
   }
 
@@ -828,7 +832,7 @@ export class CodeLoupe extends HTMLElement {
     return range.getBoundingClientRect();
   }
 
-  #literalHtml(value: Value, type: string) {
+  #literalHtml(value: StoredValue, type: string) {
     const text = formatValue(value, this.#lesson!.language, type);
     return this.#literals.get(text) ?? escapeHtml(text);
   }
