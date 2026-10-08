@@ -1,0 +1,45 @@
+title: A simple while loop
+language: python
+code: |
+  count = 0
+  while count < 2:
+      print(count)
+      count = count + 1
+  print("Done")
+steps:
+  - line: 1
+    assign: { var: count, value: 0 }
+    caption: Start count at 0. The loop will check count before running its body.
+  - line: 2
+    badge: { over: "count < 2", value: true }
+    caption: With count at 0, 0 < 2 is True. Enter the loop body.
+  - line: 3
+    badge: { over: count, value: 0, from: { var: count } }
+    caption: Read count for the first print. Its value is 0.
+  - print: { text: "0", from: badge }
+    caption: The first iteration prints 0.
+  - line: 4
+    badge: { over: "count + 1", value: 1 }
+    caption: Evaluate 0 + 1 to get 1. count still holds 0 until assignment.
+  - assign: { var: count, from: badge }
+    caption: Store 1 in count, then return to the condition at the top of the loop.
+  - line: 2
+    badge: { over: "count < 2", value: true }
+    caption: Now 1 < 2 is True. Run the body again with count at 1.
+  - line: 3
+    badge: { over: count, value: 1, from: { var: count } }
+    caption: Read count for the second print. Its value is now 1.
+  - print: { text: "1", from: badge }
+    caption: The second iteration prints 1.
+  - line: 4
+    badge: { over: "count + 1", value: 2 }
+    caption: Evaluate 1 + 1 to get 2. count still holds 1 until assignment.
+  - assign: { var: count, from: badge }
+    caption: Store 2 in count, then check the condition again.
+  - line: 2
+    badge: { over: "count < 2", value: false }
+    caption: Now 2 < 2 is False. Skip the body; there is no third iteration and no printed 2.
+  - line: 5
+    caption: Leave the loop and continue at the unindented print after it. count remains 2.
+  - print: "Done"
+    caption: The console shows 0, 1, then Done. The final false condition ended the loop.

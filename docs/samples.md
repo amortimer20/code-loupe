@@ -89,6 +89,12 @@ Strings-and-numbers contrasts integer addition with string concatenation. Compar
 the badges at Steps 2 and 5, then both outputs at Step 6, before moving to input
 conversion.
 
+Boolean-comparisons introduces True and False with `bool` tags before the
+conditional lesson. While-loop revisits line 2 at Steps 2, 7, and 12: two True
+checks enter the body, then a False check skips it. Compare Steps 5–6 and 10–11
+for the counter's assignment boundaries, and Steps 12–14 for loop exit. Its
+two body iterations produce 0 and 1, followed by Done outside the loop.
+
 The function-call sample adds parameter binding, separate global/local scope,
 return-to-caller behavior, and a frame that can be restored by backward stepping.
 The nested-function-call sample adds a suspended caller, same-named locals in

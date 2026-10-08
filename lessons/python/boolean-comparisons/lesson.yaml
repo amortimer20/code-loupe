@@ -1,0 +1,18 @@
+title: Boolean comparisons
+language: python
+code: |
+  print(2 < 3)
+  print(2 == 3)
+steps:
+  - line: 1
+    caption: A comparison asks a question about values. Is 2 less than 3?
+  - badge: { over: "2 < 3", value: true }
+    caption: Yes. The comparison produces True, a Boolean value, rather than another number.
+  - print: { text: "True", from: badge }
+    caption: The console shows True, the result of the first comparison.
+  - line: 2
+    caption: Now ask whether 2 equals 3. The == operator compares values; it does not assign a value to a name.
+  - badge: { over: "2 == 3", value: false }
+    caption: The values are not equal, so this comparison produces False. Both results have the bool type.
+  - print: { text: "False", from: badge }
+    caption: The second console line shows False. Conditions can use these Boolean results to decide what runs next.

@@ -9,7 +9,7 @@ prerequisites:
   - Basic arithmetic
 topics: [Functions, Scope, Expressions, Input and output]
 mode: authored
-order: 9
+order: 11
 ---
 
 ## Teaching notes

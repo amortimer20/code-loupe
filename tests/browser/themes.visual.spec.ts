@@ -32,6 +32,14 @@ test('two separate lists after appending to the copy', async ({ page }) => {
   await expect(player).toHaveScreenshot('midnight-list-copying.png');
 });
 
+test('while loop exits on a false Boolean condition', async ({ page }) => {
+  await page.goto('/samples/python/while-loop/');
+  const player = await ready(page, 14);
+  await goTo(player, 12);
+  await page.mouse.move(0, 0);
+  await expect(player).toHaveScreenshot('midnight-while-false.png');
+});
+
 test('updated list cell and list-valued print badge', async ({ page }) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);

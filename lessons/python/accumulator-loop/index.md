@@ -9,10 +9,14 @@ prerequisites:
   - Addition
 topics: [Loops, Expressions, Input and output]
 mode: authored
-order: 7
+order: 10
 ---
 
 ## Teaching notes
+
+Compare with [A simple while loop](/samples/python/while-loop/): that lesson
+changes a counter and checks a condition, while this for loop supplies each
+value of `n` from `range(3)` and retains a running total.
 
 Before each addition, ask students to predict the new total. The execution arrow
 returns to the loop header while `total` keeps its value.

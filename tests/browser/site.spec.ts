@@ -11,6 +11,10 @@ test('gallery combines search and topic filters and reports empty results', asyn
   await expect(page.locator('.sample-card').nth(3)).toContainText('Changing a value');
   await expect(page.locator('.sample-card').nth(4)).toContainText('Strings and numbers');
   await expect(page.locator('.sample-card').nth(5)).toContainText('Converting input to a number');
+  await expect(page.locator('.sample-card').nth(6)).toContainText('Boolean comparisons');
+  await expect(page.locator('.sample-card').nth(7)).toContainText('Choosing a conditional branch');
+  await expect(page.locator('.sample-card').nth(8)).toContainText('A simple while loop');
+  await expect(page.locator('.sample-card').nth(9)).toContainText('Following an accumulator loop');
   await page.getByRole('combobox', { name: 'Topic', exact: true }).selectOption('Functions');
   await expect(page.locator('.sample-card:visible')).toHaveCount(2);
   await page.getByLabel('Search', { exact: true }).fill('nested');
@@ -107,6 +111,69 @@ test('number addition and string concatenation keep distinct badges and independ
   await goTo(player, 2);
   await expect(player.locator('.badge .tag')).toHaveText('int');
   await expect(player.locator('.console pre')).toHaveText('');
+});
+
+test('comparisons reveal true and false Boolean values before printing', async ({ page }) => {
+  await page.goto('/samples/python/boolean-comparisons/');
+  const player = await ready(page, 6);
+  await goTo(player, 2);
+  await expect(player.locator('.badge')).toContainText('True');
+  await expect(player.locator('.badge .tag')).toHaveText('bool');
+  await expect(player.locator('.console pre')).toHaveText('');
+  await goTo(player, 5);
+  await expect(player.locator('.badge')).toContainText('False');
+  await expect(player.locator('.badge .tag')).toHaveText('bool');
+  await expect(player.locator('.console pre')).toHaveText('True\n');
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.console pre')).toHaveText('True\nFalse\n');
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.console pre')).toHaveText('True\n');
+  await expect(player.locator('.badge')).toContainText('False');
+  await goTo(player, 2);
+  await expect(player.locator('.badge')).toContainText('True');
+  await expect(player.locator('.console pre')).toHaveText('');
+});
+
+test('while checks repeat before each body and a final false check skips the body', async ({ page }) => {
+  await page.goto('/samples/python/while-loop/');
+  const player = await ready(page, 14);
+  for (const [step, count, condition, output] of [[2, 0, 'True', ''], [7, 1, 'True', '0\n'], [12, 2, 'False', '0\n1\n']] as const) {
+    await goTo(player, step);
+    await expect(player.locator('.line.active')).toHaveText('while count < 2:');
+    await expect(player.locator('.badge')).toContainText(condition);
+    await expect(player.locator('.badge .tag')).toHaveText('bool');
+    await expect(player.locator('.globals [data-name="count"]')).toContainText(String(count));
+    await expect(player.locator('.console pre')).toHaveText(output);
+  }
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.line.active')).toHaveText('print("Done")');
+  await expect(player.locator('.badge')).toHaveCount(0);
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.console pre')).toHaveText('0\n1\nDone\n');
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.console pre')).toHaveText('0\n1\n');
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.badge')).toContainText('False');
+  await goTo(player, 7);
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.line.active')).toHaveText('    count = count + 1');
+  await expect(player.locator('.globals [data-name="count"]')).toContainText('1');
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.globals [data-name="count"]')).toContainText('0');
+  await expect(player.locator('.badge')).toContainText('1');
+  await expect(player.locator('.console pre')).toHaveText('0\n');
+  await player.getByRole('slider', { name: 'Step', exact: true }).focus();
+  await page.keyboard.press('Home');
+  await expect(player.locator('.console pre')).toHaveText('');
+  await expect(player.locator('.globals [data-name]')).toHaveCount(0);
 });
 
 for (const sample of corpus) {

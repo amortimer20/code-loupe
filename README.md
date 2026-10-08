@@ -50,8 +50,9 @@ docs/             Tutorial, contribution guide, roadmap, and journal
 Start with [Hello, world](lessons/python/hello-world/lesson.yaml) and
 [Simple arithmetic](lessons/python/simple-arithmetic/lesson.yaml), then naming
 and changing a value and comparing strings with numbers. The corpus
-continues with Python input conversion, an accumulator loop, a conditional
-branch, functions with separate locals and return values, and list operations,
+continues with Python input conversion, Boolean comparisons, a conditional
+branch, while and accumulator loops, functions with separate locals and return
+values, and list operations,
 aliasing, and copying.
 See [Adding samples](docs/samples.md) to contribute another
 lesson without editing the site routes. The site validates every lesson during

@@ -147,6 +147,12 @@ through a shared "where is this value on screen?" lookup.
       and memory lifetime/garbage-collection visuals.
 - [ ] Extend module boundaries to the remaining visuals as new features need them.
 - [ ] Closures, nonlocal/global assignment declarations, implicit returns, and exception unwinding.
+- [ ] **Syntax and runtime error lessons (after classes and objects):** explore
+      showing syntax failures before execution versus runtime failures after
+      earlier steps have run. Decide how to present error locations, messages,
+      preserved state, and stopped execution in authored lessons, keeping program
+      errors distinct from invalid lesson-YAML errors. The format and visuals
+      remain to be designed.
 
 ## 5. Authoring: tutorial, playground, visual editor
 
@@ -159,8 +165,8 @@ through a shared "where is this value on screen?" lookup.
        sample-specific playground drafts, and build-time lesson validation.
 4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
        Begins with Hello, world, simple arithmetic, naming a value, changing a value,
-       and strings versus numbers, followed by input conversion,
-       an accumulator loop, a conditional branch, and a
+       and strings versus numbers, followed by input conversion, Boolean comparisons,
+       a conditional branch, a simple while loop, an accumulator loop, and a
        function call, nested calls, list iteration, element updates, append, and
        indexed removal, shared-list aliasing, and a copying comparison.
        The initial five-lesson introductory sequence is complete.
@@ -215,9 +221,9 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      twenty-three reviewed screenshot references for themes, nested calls/returns,
+      twenty-four reviewed screenshot references for themes, nested calls/returns,
       list selection/updates/length changes/aliasing/copying, the gallery, narrow player,
-      and short-laptop Focus lesson view;
+      short-laptop Focus lesson view, and the final false while-loop condition;
       pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,

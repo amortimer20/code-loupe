@@ -257,3 +257,13 @@ lesson types and rendering and potentially shared playback and captions. Record
 it as an exploration, not a settled architecture or a solver commitment. Finish
 the introductory code sequence first; no math dependencies or renderer changes
 are part of this work.
+
+## 2026-10-08 — Comparisons before control flow
+
+Added Boolean comparisons and a simple while loop with existing authored actions.
+Place comparisons before the conditional lesson, then the while loop before the
+for-loop accumulator. The while lesson checks its condition three times but
+runs its body twice, making the final False result and skipped body explicit.
+Keep counter evaluation separate from assignment, and preserve all intermediate
+states when stepping backward. No automatic loop execution or new loop-specific
+player state is introduced.

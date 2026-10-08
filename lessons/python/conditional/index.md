@@ -14,6 +14,10 @@ order: 8
 
 ## Teaching notes
 
+Follow [Boolean comparisons](/samples/python/boolean-comparisons/) to use a
+comparison result for a decision. Continue with
+[A simple while loop](/samples/python/while-loop/) to check a condition repeatedly.
+
 Ask students to predict `age >= 18` before revealing its Boolean badge. Separate
 evaluating the condition from executing the selected branch.
 

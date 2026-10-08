@@ -9,7 +9,7 @@ prerequisites:
   - Appending to a list
 topics: [Collections, References, Assignment, Input and output]
 mode: authored
-order: 15
+order: 17
 ---
 
 ## Teaching notes

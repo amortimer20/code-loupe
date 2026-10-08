@@ -180,6 +180,8 @@ test('existing corpus lessons keep their final globals, console, and empty call 
     ['changing-value', { score: 7 }, '7\n'],
     ['strings-and-numbers', {}, '5\n23\n'],
     ['numeric-input', { text: '30', age: 30 }, 'Enter your age: 30You will be 100 in 70 years!\n'],
+    ['boolean-comparisons', {}, 'True\nFalse\n'],
+    ['while-loop', { count: 2 }, '0\n1\nDone\n'],
     ['accumulator-loop', { total: 3, n: 2 }, '3\n'],
     ['conditional', { age: 16 }, 'Under 18\n'],
   ] as const;
@@ -208,4 +210,17 @@ test('introductory examples separate old-value reads, assignment, and string con
   assert.equal(types[5].badges.at(-1)?.value, '23');
   assert.equal(types[5].badges.at(-1)?.type, 'str');
   assert.equal(types[5].console.map(chunk => chunk.text).join(''), '5\n');
+});
+
+test('control-flow examples preserve Boolean types and end a while loop on its third check', () => {
+  const comparisons = buildSnapshots(sample('boolean-comparisons'));
+  assert.deepEqual([comparisons[2], comparisons[5]].map(s => [s.badges[0].value, s.badges[0].type]), [[true, 'bool'], [false, 'bool']]);
+  const loop = buildSnapshots(sample('while-loop'));
+  assert.equal(loop.length, 15);
+  assert.deepEqual([loop[2], loop[7], loop[12]].map(s => [s.line, s.vars[0].value, s.badges[0].value]), [[2, 0, true], [2, 1, true], [2, 2, false]]);
+  assert.deepEqual([loop[5], loop[6], loop[10], loop[11]].map(s => s.vars[0].value), [0, 1, 1, 2]);
+  assert.equal(loop[12].console.map(chunk => chunk.text).join(''), '0\n1\n');
+  assert.equal(loop[13].line, 5);
+  assert.equal(loop[13].badges.length, 0);
+  assert.equal(loop[14].console.map(chunk => chunk.text).join(''), '0\n1\nDone\n');
 });

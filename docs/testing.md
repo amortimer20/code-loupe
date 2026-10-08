@@ -38,6 +38,9 @@ restoration of the empty console and intermediate badge.
 The remaining introductory checks cover one binding reused on reassignment,
 old-value reads before assignment, restored bindings, integer versus string
 badges, and preservation of the first console line when undoing the second.
+Control-flow checks cover True/False Boolean badges, repeated while-condition
+checks, counter assignment boundaries, backward line jumps, restoration of
+console history, and skipping the body after the final false condition.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -98,8 +101,9 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains twenty-three PNGs, including indexed list selection and aliasing in all three presets
-and element update, list print badge, append, removal, and separate copies in Midnight.
+The set contains twenty-four PNGs, including indexed list selection and aliasing in all three presets
+and element update, list print badge, append, removal, separate copies, and a
+false while-loop condition in Midnight.
 Desktop captures use 1280×960, the narrow
 case uses 390×844, and the focused laptop uses 1280×600. Visual tests disable animations and move the pointer away from
 controls. Comparisons permit no differing pixels beyond Playwright's default
