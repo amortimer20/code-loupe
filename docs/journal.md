@@ -199,3 +199,24 @@ captures the old cell layout, fades out the removed cell in an overlay, and move
 survivors to their new positions. Reduced motion, backward stepping, and
 scrubbing show snapshot values directly. Empty lists remain valid, while negative
 indices and nested values are rejected. Shared references remain future work.
+
+## 2026-10-08 — Explicit shared-list identity
+
+Added `allocate: { id, value }` and reference bindings through `assign.ref`.
+Variables store an object identity; contents live once in a snapshot's heap.
+Clone each heap object per snapshot, keeping its id stable, so alias mutations
+and backward stepping restore both sharing and contents. Existing flat list
+values and badge illustrations retain their independent value semantics.
+
+The first lesson binds `numbers` and `other` to one list, appends through `other`,
+then prints through `numbers`. Render one Shared lists card and name-to-id arrows;
+author-chosen ids are teaching labels, not runtime addresses. Existing collection
+actions, scoped sources, and selection resolve references consistently. Rebinding
+a variable changes its arrow, while mutation changes the shared object. Function
+parameters can use explicit references too; return badges remain values.
+
+A narrow-screen check exposed that shared objects could be below the visible
+data pane. Bounded viewing now follows the selected cell or relevant shared-list
+card within that pane without moving the host page. Objects with no remaining
+bindings stay visible; garbage collection, nested references, and a copying
+comparison are separate future work.

@@ -1,12 +1,13 @@
 import { codeToHtml, bundledThemes, type BundledTheme, type ThemeRegistration } from 'shiki';
 import { parseLesson, type Lesson, type Value } from './lesson';
 import { buildSnapshots, findNth, type BadgeOrigin, type Snapshot } from './state';
-import { formatValue } from './values';
+import { formatValue, isReference } from './values';
 import { styles } from './styles';
 import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
 import { renderVariables } from './visuals/variables';
 import { animateCollectionAppend, animateCollectionRemoval, animateCollectionUpdate, captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
+import { heapStyles, renderHeap } from './visuals/heap-panel';
 
 const DEFAULT_THEME = 'dark-plus';
 
@@ -31,7 +32,7 @@ const ICONS = {
 };
 
 const TEMPLATE = `
-<style>${styles}${callStackStyles}${collectionStyles}</style>
+<style>${styles}${callStackStyles}${collectionStyles}${heapStyles}</style>
 <div class="ca" part="container">
   <div class="viewer-actions"><slot name="viewer-actions"></slot></div>
   <div class="title" part="title" hidden></div>
@@ -42,6 +43,7 @@ const TEMPLATE = `
         <div class="vars globals"></div>
       </section>
       <section class="call-stack" aria-label="Call stack" hidden></section>
+      <section class="heap-panel" aria-label="Shared lists" hidden></section>
     </div>
     <section class="code" aria-label="Code">
       <div class="code-scroll">
@@ -99,6 +101,7 @@ export class CodeLoupe extends HTMLElement {
     ca: HTMLElement;
     title: HTMLElement;
     vars: HTMLElement;
+    heap: HTMLElement;
     scroll: HTMLElement;
     arrow: HTMLElement;
     codeHost: HTMLElement;
@@ -125,6 +128,7 @@ export class CodeLoupe extends HTMLElement {
       ca: $('.ca'),
       title: $('.title'),
       vars: $('.vars'),
+      heap: $('.heap-panel'),
       scroll: $('.code-scroll'),
       arrow: $('.arrow'),
       codeHost: $('.code-host'),
@@ -428,8 +432,13 @@ export class CodeLoupe extends HTMLElement {
     const texts = new Set<string>();
     for (const snap of snapshots) {
       for (const v of [...snap.vars, ...snap.frames.flatMap(f => f.vars), ...snap.badges]) {
+        if (isReference(v.value)) continue;
         texts.add(formatValue(v.value, lesson.language, v.type));
         if (Array.isArray(v.value)) for (const item of v.value) texts.add(formatValue(item, lesson.language));
+      }
+      for (const object of snap.heap) {
+        texts.add(formatValue(object.value, lesson.language, object.type));
+        for (const item of object.value) texts.add(formatValue(item, lesson.language));
       }
       const from = snap.events.converted?.from;
       if (from) texts.add(formatValue(from.value, lesson.language, from.type));
@@ -449,7 +458,7 @@ export class CodeLoupe extends HTMLElement {
     for (const animation of this.#root.getAnimations()) animation.finish();
     const oldBadges = animate ? this.#captureBadges() : new Map<number, CapturedValue>();
     const removed = snap.events.removed;
-    const oldCells = animate && removed ? captureCollectionCells(this.#varRow(removed.name, removed.frameId)) : [];
+    const oldCells = animate && removed ? captureCollectionCells(this.#collectionRow(removed.name, removed.frameId, removed.ref)) : [];
     this.#els.overlay.replaceChildren();
 
     this.#renderLine(snap, animate);
@@ -457,12 +466,31 @@ export class CodeLoupe extends HTMLElement {
     const stackEnabled = this.#lesson.steps.some(step => step.call !== undefined);
     this.#root.querySelector('.vars-label')!.textContent = stackEnabled ? 'Global variables' : 'Variables';
     this.#callStack.render(snap, stackEnabled, { language: this.#lesson.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
+    renderHeap(this.#els.heap, snap, { language: this.#lesson.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
     this.#renderBadges(snap);
     this.#renderConsole(snap);
     this.#els.caption.textContent = snap.caption ?? '';
     this.#renderControls();
+    this.#revealData(snap);
 
     if (animate) this.#animateStep(snap, oldBadges, oldCells);
+  }
+
+  #revealData(snap: Snapshot) {
+    if (!this.hasAttribute('fit')) return;
+    const pane = this.#root.querySelector<HTMLElement>('.data')!;
+    const assigned = snap.events.assigned;
+    const source = snap.events.badgeAdded?.from;
+    const ref = snap.events.updated?.ref ?? snap.events.appended?.ref ?? snap.events.removed?.ref
+      ?? (source?.kind === 'var' ? source.ref : undefined)
+      ?? (assigned ? this.#varRow(assigned.name, assigned.frameId)?.dataset.ref : undefined);
+    const target = pane.querySelector<HTMLElement>('.collection-cell[aria-current]')
+      ?? (ref === undefined ? null : this.#els.heap.querySelector<HTMLElement>(`[data-ref="${CSS.escape(ref)}"]`));
+    if (!target) return;
+    const top = target.getBoundingClientRect().top - pane.getBoundingClientRect().top + pane.scrollTop;
+    if (top + target.offsetHeight - pane.scrollTop > pane.clientHeight - 8) {
+      pane.scrollTop = top + target.offsetHeight - pane.clientHeight + 8;
+    } else if (top - pane.scrollTop < 8) pane.scrollTop = Math.max(0, top - 8);
   }
 
   #lineEls() {
@@ -659,7 +687,7 @@ export class CodeLoupe extends HTMLElement {
             fill: 'backwards',
           });
         }
-        if (source) {
+        if (source && !isReference(variable.value)) {
           t += this.#fly(this.#literalHtml(variable.value, variable.type), source.getBoundingClientRect(), valueEl.getBoundingClientRect(), t, 'start');
           valueEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(150), delay: t - this.#ms(60), fill: 'backwards' });
         }
@@ -671,7 +699,7 @@ export class CodeLoupe extends HTMLElement {
     }
     if (ev.updated || ev.appended) {
       const update = (ev.updated ?? ev.appended)!;
-      const cell = this.#varRow(update.name, update.frameId)?.querySelector<HTMLElement>(`.collection-cell[data-index="${update.index}"]`);
+      const cell = this.#collectionRow(update.name, update.frameId, update.ref)?.querySelector<HTMLElement>(`.collection-cell[data-index="${update.index}"]`);
       const value = cell?.querySelector<HTMLElement>('.collection-item');
       const source = update.fromBadge !== undefined ? this.#badgeInnerEl(update.fromBadge) : null;
       if (cell && value) {
@@ -684,7 +712,7 @@ export class CodeLoupe extends HTMLElement {
       }
     }
     if (ev.removed) {
-      const row = this.#varRow(ev.removed.name, ev.removed.frameId);
+      const row = this.#collectionRow(ev.removed.name, ev.removed.frameId, ev.removed.ref);
       if (row) animateCollectionRemoval(row, oldCells, ev.removed.index, this.#els.overlay, t, this.#ms(300));
     }
   }
@@ -736,7 +764,7 @@ export class CodeLoupe extends HTMLElement {
     if (from?.kind === 'console') return this.#els.console.querySelector<HTMLElement>(`.chunk[data-index="${from.chunk}"] .in`);
     if (from?.kind === 'var') {
       const target = from.index === undefined ? '.value' : `.collection-cell[data-index="${from.index}"] .collection-item`;
-      return this.#varRow(from.name, from.frameId)?.querySelector<HTMLElement>(target) ?? null;
+      return this.#collectionRow(from.name, from.frameId, from.ref)?.querySelector<HTMLElement>(target) ?? null;
     }
     return null;
   }
@@ -744,6 +772,10 @@ export class CodeLoupe extends HTMLElement {
   #varRow(name: string, frameId: number) {
     const host = frameId === 0 ? this.#els.vars : this.#callStack.host.querySelector<HTMLElement>(`[data-frame-id="${frameId}"]`);
     return host?.querySelector<HTMLElement>(`[data-name="${CSS.escape(name)}"]`) ?? null;
+  }
+
+  #collectionRow(name: string, frameId: number, ref?: string) {
+    return ref === undefined ? this.#varRow(name, frameId) : this.#els.heap.querySelector<HTMLElement>(`[data-ref="${CSS.escape(ref)}"]`);
   }
 
   /** How a value looks when printed: strings lose their quotes. */

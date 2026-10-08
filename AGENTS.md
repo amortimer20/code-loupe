@@ -30,7 +30,9 @@ This is an npm workspace monorepo:
 - `packages/player/src/themes.ts`: DOM-independent starter palettes and syntax
   themes shared with the site. Keep regular Shiki theme names working.
 - `packages/player/src/visuals/`: pure call-frame scope helpers, the Call stack
-  panel and its animations, and variable rows shared by globals and locals.
+  panel and its animations, collection helpers/transitions, and shared-list
+  identity helpers/panel. Variables hold references; contents live once in each
+  snapshot's heap. Ordinary list values remain independent authored values.
   Keep browser panel imports out of the pure state path.
 - `apps/site/`: Astro static gallery, sample pages, authoring guide, and playground.
   Import the browser player only in client scripts; its entry depends on DOM globals.

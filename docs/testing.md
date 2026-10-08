@@ -7,11 +7,11 @@ execute the Python displayed in a lesson.
 
 | Layer | Coverage |
 | --- | --- |
-| Node tests | Snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, preserved earlier snapshots, and corpus outcomes |
+| Node tests | Snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, shared-list identity/rebinding, preserved earlier snapshots, and corpus outcomes |
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
 | Type checks and builds | Player and site code, browser tests/configuration, canonical lesson metadata and semantic validation, independent player bundle and static site |
 | Playwright behavior | Gallery filters, all samples' outcomes and downloads, draft restoration/isolation, invalid draft recovery/download, nested frames, both returns, backward stepping, scrubbing, keyboard navigation, autoplay, animations, theme/draft/load races, storage failure, and narrow layouts |
-| Screenshot comparisons | Paper/Midnight/Terminal at nested locals, both return destinations, and indexed list selection; Midnight gallery, narrow nested-call player, and focused player on a short laptop |
+| Screenshot comparisons | Paper/Midnight/Terminal at nested locals, both return destinations, indexed list selection, and shared-list aliasing; Midnight gallery, narrow nested-call player, and focused player on a short laptop |
 
 Behavioral tests run in separate Chromium projects for normal motion and OS
 reduced motion. Each test starts with a fresh browser context and checks for
@@ -28,6 +28,9 @@ backward stepping/scrubbing, and a list-valued print badge.
 Append/removal checks cover empty lists, boundary deletions, shifted selection,
 local/global scope, invalid operations, forward transitions, restored lengths
 and indices, reduced motion, and laptop/narrow fullscreen views.
+Reference checks cover one object shared by two bindings, mutations through
+aliases, rebinding, distinct objects, local/global references, restored identities,
+selection through another alias, and bounded data-pane following.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -88,7 +91,7 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains nineteen PNGs, including indexed list selection in all three presets
+The set contains twenty-two PNGs, including indexed list selection and aliasing in all three presets
 and element update, list print badge, append, and removal in Midnight.
 Desktop captures use 1280×960, the narrow
 case uses 390×844, and the focused laptop uses 1280×600. Visual tests disable animations and move the pointer away from

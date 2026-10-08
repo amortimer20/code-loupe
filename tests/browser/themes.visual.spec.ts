@@ -13,6 +13,17 @@ for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
   });
 }
 
+for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
+  test(`${theme}: two references to one shared list`, async ({ page }) => {
+    await page.goto('/samples/python/list-aliasing/');
+    const player = await ready(page, 7);
+    await selectTheme(page, theme);
+    await goTo(player, 5);
+    await page.mouse.move(0, 0);
+    await expect(player).toHaveScreenshot(`${theme}-list-aliasing.png`);
+  });
+}
+
 test('updated list cell and list-valued print badge', async ({ page }) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);

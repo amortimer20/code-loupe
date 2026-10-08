@@ -3,6 +3,11 @@ import { parse } from 'yaml';
 /** A runtime value as written in a lesson file. YAML strings become language strings, numbers stay numbers. */
 export type ScalarValue = string | number | boolean | null;
 export type Value = ScalarValue | ScalarValue[];
+export interface ListReference { ref: string }
+export type StoredValue = Value | ListReference;
+
+/** Create a shared list with an author-chosen, stable identity. */
+export interface AllocateSpec { id: string; value: ScalarValue[] }
 
 /**
  * Where a value travels from: the user's most recent console input, or a variable
@@ -45,6 +50,7 @@ export interface AssignSpec {
   value?: Value;
   type?: string;
   from?: 'badge';
+  ref?: string;
 }
 
 /** Replace one existing list element; this does not resize the list. */
@@ -86,6 +92,7 @@ export interface Step {
   badge?: BadgeSpec;
   convert?: ConvertSpec;
   assign?: AssignSpec;
+  allocate?: AllocateSpec;
   select?: SelectSpec | null;
   update?: UpdateSpec;
   append?: AppendSpec;
@@ -103,7 +110,7 @@ export interface Lesson {
 
 export class LessonError extends Error {}
 
-const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'select', 'update', 'append', 'remove', 'call', 'return'];
+const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'allocate', 'select', 'update', 'append', 'remove', 'call', 'return'];
 
 export function parseLesson(source: string): Lesson {
   let data: unknown;

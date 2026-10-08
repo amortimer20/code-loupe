@@ -1,0 +1,28 @@
+title: Two names for one list
+language: python
+code: |
+  numbers = [2, 4]
+  other = numbers
+  other.append(6)
+  print(numbers)
+steps:
+  - line: 1
+    allocate: { id: list-1, value: [2, 4] }
+    assign: { var: numbers, ref: list-1 }
+    caption: Create one list. The name numbers points to it; list-1 is our label for this object.
+  - line: 2
+    assign: { var: other, ref: list-1 }
+    caption: Bind other to the same list. Both arrows point to list-1; no second list is created.
+  - line: 3
+    badge: { over: "6", value: 6 }
+    caption: We will append 6 through other. Predict what printing numbers will show.
+  - append: { var: other, from: badge }
+    caption: Change the shared list to [2, 4, 6]. The two names still point to the same object.
+  - select: { var: numbers, index: 2 }
+    caption: Through numbers, we can see the new element at index 2. It is the very same list.
+  - line: 4
+    select: null
+    badge: { over: numbers, value: [2, 4, 6], from: { var: numbers } }
+    caption: Read the list through numbers, even though the append used other.
+  - print: { text: "[2, 4, 6]", from: badge }
+    caption: The console shows [2, 4, 6]. Assignment gave the list another name; it did not copy its contents.

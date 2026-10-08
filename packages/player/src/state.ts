@@ -1,7 +1,8 @@
-import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type Value } from './lesson';
+import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type StoredValue, type Value } from './lesson';
 import { cloneValue, inferType, validateValue } from './values';
 import { appendCollectionElement, checkCollectionIndex, removeCollectionElement, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
+import { collectionVariable, referenceIdentity, selectionMatches, storeCollectionValue, type SharedList } from './visuals/heap-state';
 
 export type { CallFrame } from './visuals/call-stack-state';
 
@@ -16,7 +17,7 @@ export interface BadgeState {
 
 export interface VarState {
   name: string;
-  value: Value;
+  value: StoredValue;
   type: string;
 }
 
@@ -27,7 +28,7 @@ export interface ConsoleChunk {
   fromBadge?: number;
 }
 
-export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number; index?: number };
+export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number; index?: number; ref?: string };
 
 /** What changed in the step that produced a snapshot; used only to animate forward steps. */
 export interface StepEvents {
@@ -52,6 +53,7 @@ export interface Snapshot {
   badges: BadgeState[];
   console: ConsoleChunk[];
   selection: CollectionSelection | null;
+  heap: SharedList[];
   events: StepEvents;
 }
 
@@ -65,7 +67,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
   let nextBadgeId = 1;
   let nextFrameId = 1;
 
-  let current: Snapshot = { line: null, caption: null, vars: [], frames: [], badges: [], console: [], selection: null, events: { lineChanged: false, consoleFrom: 0 } };
+  let current: Snapshot = { line: null, caption: null, vars: [], frames: [], badges: [], console: [], selection: null, heap: [], events: { lineChanged: false, consoleFrom: 0 } };
   const snapshots = [current];
 
   lesson.steps.forEach((step, i) => {
@@ -94,6 +96,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       badges: current.badges.map((b) => ({ ...b, value: cloneValue(b.value) })),
       console: [...current.console],
       selection: current.selection ? { ...current.selection } : null,
+      heap: current.heap.map(object => ({ ...object, value: [...object.value] })),
       events: { lineChanged: false, consoleFrom: current.console.length },
     };
 
@@ -121,6 +124,25 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       };
     };
 
+    if (step.allocate !== undefined) {
+      const object = step.allocate;
+      if (!isRecord(object)) fail('`allocate` needs a mapping with id and value.');
+      checkKeys(object, ['id', 'value'], 'allocate', fail);
+      if (typeof object.id !== 'string' || !object.id.length) fail('`allocate.id` must be nonempty text.');
+      if (s.heap.some(item => item.id === object.id)) fail(`shared list \`${object.id}\` already exists; allocate a new id.`);
+      validateValue(object.value, fail, 'allocate');
+      if (!Array.isArray(object.value)) fail('`allocate.value` must be a flat list.');
+      s.heap.push({ id: object.id, value: [...object.value], type: inferType(object.value, lang) });
+    }
+
+    const readBinding = (spec: Omit<AssignSpec, 'var'>, label: string): { value: StoredValue; type: string; fromBadge?: number } => {
+      if (spec.ref === undefined) return readValue(spec, label);
+      if (typeof spec.ref !== 'string' || !spec.ref.length) fail(`${label} \`ref\` must be nonempty text.`);
+      if (spec.value !== undefined || spec.from !== undefined || spec.type !== undefined) fail(`${label} \`ref\` cannot be combined with value, from, or type.`);
+      const object = s.heap.find(item => item.id === spec.ref) ?? fail(`shared list \`${spec.ref}\` has not been allocated.`);
+      return { value: { ref: object.id }, type: object.type };
+    };
+
     if (step.call !== undefined) {
       const call = step.call;
       if (!isRecord(call)) fail('`call` needs a mapping with name, line, and over.');
@@ -134,11 +156,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const names = new Set<string>();
       const args = (call.args ?? []).map(arg => {
         if (!isRecord(arg)) fail('each call argument must be a mapping.');
-        checkKeys(arg, ['var', 'value', 'type', 'from'], 'call argument', fail);
+        checkKeys(arg, ['var', 'value', 'type', 'from', 'ref'], 'call argument', fail);
         if (typeof arg.var !== 'string' || !arg.var.length) fail('each call argument needs a nonempty `var` parameter name.');
         if (names.has(arg.var)) fail(`duplicate parameter \`${arg.var}\`.`);
         names.add(arg.var);
-        return { name: arg.var, ...readValue(arg, 'call argument') };
+        return { name: arg.var, ...readBinding(arg, 'call argument') };
       });
       const frame: CallFrame = {
         id: nextFrameId++, name: call.name,
@@ -193,7 +215,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
         checkKeys(step.select, ['var', 'index', 'scope'], 'select', fail);
         const origin = resolveOrigin(step.select, s, fail);
         if (origin?.kind === 'var' && origin.index !== undefined) {
-          s.selection = { name: origin.name, frameId: origin.frameId, index: origin.index };
+          s.selection = { name: origin.name, frameId: origin.frameId, index: origin.index, ...('ref' in origin && origin.ref !== undefined ? { ref: origin.ref } : {}) };
         } else fail('`select` needs a variable and index.');
       }
     }
@@ -239,10 +261,12 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       s.events.converted = { id: badge.id, from };
     }
 
-    if (step.assign) {
+    if (step.assign !== undefined) {
+      if (!isRecord(step.assign)) fail('`assign` needs a mapping with var and value, from, or ref.');
+      checkKeys(step.assign, ['var', 'value', 'type', 'from', 'ref'], 'assign', fail);
       const name = step.assign.var;
       if (typeof name !== 'string') fail('`assign` needs `var`: the variable name.');
-      const { value, type, fromBadge } = readValue(step.assign, 'assign');
+      const { value, type, fromBadge } = readBinding(step.assign, 'assign');
       const { vars, frameId } = activeScope(s);
       if (s.selection?.name === name && s.selection.frameId === frameId) s.selection = null;
       const existing = vars.find((v) => v.name === name);
@@ -259,8 +283,8 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       if (update.scope !== undefined && update.scope !== 'global') fail('`update.scope` must be `global` when supplied.');
       const found = findVariable(s, update.var, update.scope === 'global') ?? fail(`no variable named ${update.var} in the active scope or globals.`);
       const { value, fromBadge } = readValue(update, 'update');
-      found.variable.value = replaceCollectionElement(found.variable, update.index, value, fail);
-      s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge };
+      storeCollectionValue(s, found.variable, replaceCollectionElement(collectionVariable(s, found.variable), update.index, value, fail));
+      s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge, ...referenceIdentity(found.variable) };
     }
 
     for (const action of ['append', 'remove'] as const) {
@@ -273,13 +297,14 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const found = findVariable(s, spec.var, spec.scope === 'global') ?? fail(`no variable named ${spec.var} in the active scope or globals.`);
       if (action === 'append') {
         const { value, fromBadge } = readValue(step.append!, 'append');
-        found.variable.value = appendCollectionElement(found.variable, value, fail);
-        s.events.appended = { name: spec.var, frameId: found.frameId, index: found.variable.value.length - 1, fromBadge };
+        const items = appendCollectionElement(collectionVariable(s, found.variable), value, fail);
+        storeCollectionValue(s, found.variable, items);
+        s.events.appended = { name: spec.var, frameId: found.frameId, index: items.length - 1, fromBadge, ...referenceIdentity(found.variable) };
       } else {
         const index = step.remove!.index;
-        found.variable.value = removeCollectionElement(found.variable, index, fail);
-        s.events.removed = { name: spec.var, frameId: found.frameId, index };
-        if (s.selection?.name === spec.var && s.selection.frameId === found.frameId) {
+        storeCollectionValue(s, found.variable, removeCollectionElement(collectionVariable(s, found.variable), index, fail));
+        s.events.removed = { name: spec.var, frameId: found.frameId, index, ...referenceIdentity(found.variable) };
+        if (selectionMatches(s.selection, found.variable, spec.var, found.frameId) && s.selection) {
           if (s.selection.index === index) s.selection = null;
           else if (s.selection.index > index) s.selection.index--;
         }
@@ -307,10 +332,10 @@ function resolveOrigin(from: unknown, s: Snapshot, fail: (msg: string) => never)
     const found = findVariable(s, from.var, scope === 'global');
     if (!found) fail(`\`from: { var: ${from.var} }\` but there is no variable named ${from.var} in the active scope or globals.`);
     if ('index' in from) {
-      checkCollectionIndex(found!.variable, from.index, fail);
-      return { kind: 'var', name: from.var, frameId: found!.frameId, index: from.index };
+      checkCollectionIndex(collectionVariable(s, found!.variable), from.index, fail);
+      return { kind: 'var', name: from.var, frameId: found!.frameId, index: from.index, ...referenceIdentity(found!.variable) };
     }
-    return { kind: 'var', name: from.var, frameId: found!.frameId };
+    return { kind: 'var', name: from.var, frameId: found!.frameId, ...referenceIdentity(found!.variable) };
   }
   return fail('`from` must be `console` or `{ var: name }`.');
 }

@@ -63,6 +63,9 @@ it for this toggle and adds title padding through the `title` CSS part.
 Fullscreen here fills the browser viewport; it does not hide browser chrome.
 Code and data panes scroll internally, with captions, console, and controls below
 them. The active code line is kept in view, with room above it for badges.
+In bounded players, the data pane also reveals the selected cell or the shared
+list involved in a binding, mutation, or read. This scrolls the pane, not the page;
+other variables remain reachable within it.
 
 Embeds can opt into the same bounded layout with `fit` and a definite host height:
 

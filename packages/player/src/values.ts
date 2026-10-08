@@ -1,4 +1,4 @@
-import type { Value } from './lesson';
+import type { ListReference, StoredValue, Value } from './lesson';
 
 interface LanguageWords {
   true: string;
@@ -35,7 +35,8 @@ function words(language: string): LanguageWords {
 const FLOAT_TYPES = ['float', 'double', 'decimal', 'Float', 'Double'];
 
 /** Format a value as a literal in the lesson's language, e.g. True/None in Python. */
-export function formatValue(value: Value, language: string, type?: string): string {
+export function formatValue(value: StoredValue, language: string, type?: string): string {
+  if (isReference(value)) return `→ ${value.ref}`;
   if (Array.isArray(value)) return `[${value.map(item => formatValue(item, language)).join(', ')}]`;
   if (typeof value === 'string') return JSON.stringify(value);
   if (typeof value === 'number') {
@@ -64,6 +65,12 @@ export function validateValue(value: unknown, fail: (message: string) => never, 
   }
 }
 
-export function cloneValue(value: Value): Value {
-  return Array.isArray(value) ? [...value] : value;
+export function isReference(value: StoredValue): value is ListReference {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function cloneValue(value: Value): Value;
+export function cloneValue(value: StoredValue): StoredValue;
+export function cloneValue(value: StoredValue): StoredValue {
+  return Array.isArray(value) ? [...value] : isReference(value) ? { ...value } : value;
 }

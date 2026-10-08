@@ -1,5 +1,6 @@
 import type { Value } from '../lesson';
 import type { Snapshot } from '../state';
+import { isReference } from '../values';
 import { renderVariables, type ValueRenderer } from './variables';
 
 export interface CapturedValue { rect: DOMRect; html: string }
@@ -74,7 +75,7 @@ export class CallStackPanel {
         const source = arg.fromBadge !== undefined ? oldBadges.get(arg.fromBadge) : undefined;
         if (source) {
           const parameter = frame.vars.find(v => v.name === arg.name)!;
-          delay += ctx.fly(ctx.literalHtml(parameter.value, parameter.type), source.rect, value.getBoundingClientRect(), delay, 'start');
+          if (!isReference(parameter.value)) delay += ctx.fly(ctx.literalHtml(parameter.value, parameter.type), source.rect, value.getBoundingClientRect(), delay, 'start');
           value.animate([{ opacity: 0 }, { opacity: 1 }], { duration: ctx.ms(150), delay: delay - ctx.ms(60), fill: 'backwards' });
         }
       }

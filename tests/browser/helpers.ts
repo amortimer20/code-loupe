@@ -24,6 +24,7 @@ export const corpus = [
   { id: 'list-update', steps: 6, output: '[2, 10, 6]', vars: /numbers\s*=/ },
   { id: 'list-append', steps: 6, output: '[2, 4, 6]', vars: /numbers\s*=/ },
   { id: 'list-removal', steps: 6, output: '[2, 6]', vars: /numbers\s*=/ },
+  { id: 'list-aliasing', steps: 7, output: '[2, 4, 6]', vars: /numbers\s*=\s*→ list-1/ },
 ];
 
 export async function canonical(id: string) {

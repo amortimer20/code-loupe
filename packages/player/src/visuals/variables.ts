@@ -1,6 +1,6 @@
 import type { Value } from '../lesson';
 import type { VarState } from '../state';
-import { formatValue } from '../values';
+import { formatValue, isReference } from '../values';
 import { renderCollection } from './collection';
 import type { CollectionSelection } from './collection-state';
 
@@ -19,15 +19,20 @@ export function renderVariables(host: HTMLElement, vars: VarState[], renderer: V
     for (const [className, text] of [['name', v.name], ['eq', '='], ['value', ''], ['tag', v.type]]) {
       const span = document.createElement('span');
       span.className = className;
-      if (className === 'value' && Array.isArray(v.value)) {
+      if (className === 'value' && isReference(v.value)) {
+        span.classList.add('reference');
+        row.dataset.ref = v.value.ref;
+        span.textContent = `→ ${v.value.ref}`;
+      }
+      else if (className === 'value' && Array.isArray(v.value)) {
         const selected = selection?.name === v.name && selection.frameId === frameId ? selection.index : undefined;
         span.append(renderCollection(v.name, v.value, selected, renderer));
       }
-      else if (className === 'value') span.innerHTML = renderer.literalHtml(v.value, v.type);
+      else if (className === 'value' && !isReference(v.value)) span.innerHTML = renderer.literalHtml(v.value, v.type);
       else span.textContent = text;
       row.append(span);
     }
-    row.setAttribute('aria-label', `${v.name} is the ${v.type} ${formatValue(v.value, renderer.language, v.type)}`);
+    row.setAttribute('aria-label', isReference(v.value) ? `${v.name} points to shared list ${v.value.ref}` : `${v.name} is the ${v.type} ${formatValue(v.value, renderer.language, v.type)}`);
     return row;
   }));
 }

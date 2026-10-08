@@ -152,6 +152,8 @@ steps:
 Ordinary steps can combine actions. They animate in this order: console → badge →
 convert → assign → collection mutation. Use at most one `update`, `append`, or
 `remove` per step. `call` and `return` each require their own step, with an optional caption.
+Allocation precedes these value actions, so a step can allocate a list and bind
+a name to it.
 
 | Key       | Example                                         | What it does |
 | --------- | ----------------------------------------------- | ------------ |
@@ -163,6 +165,7 @@ convert → assign → collection mutation. Use at most one `update`, `append`, 
 | `badge`   | `badge: { over: int(text), value: 30 }`         | Float a value above code on the current line (`line:` and `nth:` pick another spot). Add `from: console` to fly it up from the user's input, or `from: { var: text }` to fly it from a variable. |
 | `convert` | `convert: { over: int(text), value: 30 }`       | Turn the latest badge into a new value, optionally moving it. |
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
+| `allocate` | `allocate: { id: list-1, value: [2, 4] }` | Create a shared list with a unique, author-chosen identity. `assign: { var: numbers, ref: list-1 }` binds a name to it. |
 | `select` | `select: { var: numbers, index: 0 }` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
 | `update` | `update: { var: numbers, index: 1, value: 10 }` | Replace an existing list element. `from: badge` transfers the latest badge's scalar value into that cell. |
 | `append` | `append: { var: numbers, value: 6 }` | Add a scalar at the end of a list, including an empty one. Alternatively use `from: badge`. |
@@ -177,7 +180,8 @@ language; add `type: float` etc. to override.
 Flat lists of these scalar values are supported, including empty lists:
 `assign: { var: numbers, value: [2, 4, 6] }`. Python infers `list`; JavaScript
 infers `array`. Variable lists display indexed cells; list badges display a literal.
-Nested lists, objects, and shared-reference identity are not modeled yet.
+Nested collections and general objects are not modeled yet. Shared lists use
+explicit allocation and reference bindings, described below.
 
 See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
 indexed source such as `badge: { over: numbers, value: 2, from: { var: numbers, index: 0 } }`
@@ -187,7 +191,8 @@ integers within an existing list. Both `select` and indexed sources look up loca
 then globals; `scope: global` selects a shadowed global explicitly.
 Selection is applied before badge animation and remains through the loop body.
 Reassigning the selected list or returning from its owning frame clears it.
-Lists are snapshot values, not a model of Python object identity or aliasing.
+Ordinary list literals and list badges remain snapshot values. To teach identity
+and aliasing, use explicit shared-list references rather than repeated literals.
 
 The [element-update lesson](lessons/python/list-update/lesson.yaml) replaces one
 cell while preserving its neighbors and list length. `update` requires an existing
@@ -210,6 +215,38 @@ its index when a selected surviving element shifts. Use a later `select` step to
 mark a newly appended cell. One mutation per step keeps transitions unambiguous;
 backward stepping and scrubbing restore the complete earlier list.
 
+## Shared lists and references
+
+See [Two names for one list](lessons/python/list-aliasing/lesson.yaml):
+
+```yaml
+- line: 1
+  allocate: { id: list-1, value: [2, 4] }
+  assign: { var: numbers, ref: list-1 }
+- line: 2
+  assign: { var: other, ref: list-1 }
+- line: 3
+  append: { var: other, value: 6 }
+```
+
+Both names point to one list in the Shared lists panel. Mutation through either
+name changes that object; assigning another value or reference to a name changes
+the binding instead. Each snapshot stores the list contents once and preserves
+its identity, so backward stepping restores sharing as well as values.
+
+`allocate` accepts a flat list and a unique nonempty `id`. These labels are
+teaching identifiers, not memory addresses. Reference bindings require an already
+allocated id and cannot combine `ref` with `value`, `from`, or `type`. Function
+parameters can also use `ref`. Selection and indexed badge sources resolve the
+same shared object through either alias, including local/global scope lookup.
+Badges still contain teacher-authored values: reading from a shared list identifies
+an animation origin, and does not automatically compute the badge's contents.
+
+Allocated objects remain visible if all their bindings disappear; garbage
+collection, nested references, and reference-valued returns are not modeled.
+Bounded players reveal the selected cell or relevant shared list inside the data
+pane, while preserving the host page's position.
+
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.
 
@@ -221,7 +258,7 @@ to see one caller pause while another runs and two returns resume their callers.
 Highlight the caller line before a `call` step. Its `over` identifies the exact call
 text on that active line; `nth` chooses an occurrence. The call's `line` is the
 function entry line. `args` is an optional list of parameter bindings, each using
-`var` with either `value` or `from: badge` (the latest caller badge).
+`var` with `value`, `from: badge` (the latest caller badge), or `ref` (an allocated shared list).
 
 Assignments inside a function update its own locals. A badge source such as
 `from: { var: value }` looks in the active frame, then globals. Use
