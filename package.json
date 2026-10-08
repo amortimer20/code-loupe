@@ -14,9 +14,18 @@
     "build:site": "npm run build --workspace @code-loupe/site",
     "build:playground": "npm run build:site",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspace code-loupe"
+    "test": "npm run test --workspace code-loupe",
+    "typecheck:browser": "tsc --project tests/browser/tsconfig.json --noEmit",
+    "test:browser": "npm run build && npm run test:browser:built",
+    "test:browser:built": "playwright test",
+    "test:e2e": "npm run build && playwright test --project=chromium --project=chromium-reduced",
+    "test:docker": "node scripts/test-browser-docker.mjs",
+    "test:visual:update": "node scripts/test-browser-docker.mjs npm run test:visual:update:local",
+    "test:visual:update:local": "npm run build && playwright test --project=visual --update-snapshots",
+    "verify": "npm test && npm run typecheck:browser && npm run build && npm run test:browser:built"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "typescript": "^5.9.3"
   }
 }

@@ -97,10 +97,10 @@ export class CallStackPanel {
 export const callStackStyles = /* css */ `
 .call-stack[hidden] { display: none; }
 .call-stack { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--ca-line); }
-.frame { margin-top: 0.5rem; padding: 0.65rem; border: 1px solid var(--ca-line); border-radius: 7px; }
+.frame { margin-top: 0.5rem; padding: 0.65rem; border: 1px solid var(--ca-line); border-radius: 0; }
 .frame.active { border-color: var(--ca-accent); background: color-mix(in srgb, var(--ca-accent) 8%, transparent); }
 .frame-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.5rem; margin: 0; font-size: 0.85rem; overflow-wrap: anywhere; }
-.frame-status { font-size: 0.65rem; font-weight: 400; opacity: 0.7; }
-.frame-detail { font-size: 0.7rem; opacity: 0.65; margin: 0.25rem 0; }
+.frame-status { font-size: 0.65rem; font-weight: 400; color: var(--ca-muted); }
+.frame-detail { font-size: 0.7rem; color: var(--ca-muted); margin: 0.25rem 0; }
 .frame .vars { margin-top: 0.5rem; font-size: 0.9rem; }
 `;

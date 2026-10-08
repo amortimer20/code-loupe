@@ -1,16 +1,33 @@
 ---
 import '../site.css';
 import { sitePath } from '../lib/samples';
+import { themePresets } from 'code-loupe/themes';
 interface Props { title: string; description: string; wide?: boolean }
 const { title, description, wide = false } = Astro.props;
+const themeIds = themePresets.map(theme => theme.id);
+const themeCss = themePresets.map(({ id, variant, palette: p }) => `
+  :root[data-theme="${id}"] {
+    color-scheme: ${variant};
+    --bg: ${p.bg}; --panel: ${p.panel}; --soft: ${p.raised};
+    --text: ${p.fg}; --muted: ${p.muted}; --border: ${p.border};
+    --accent: ${p.accent}; --on-accent: ${p.onAccent}; --error: ${p.error};
+  }
+`).join('\n');
 ---
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="midnight">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title} · Code Loupe</title>
+    <style is:inline set:html={themeCss}></style>
+    <script is:inline define:vars={{ themeIds }}>
+      try {
+        const saved = localStorage.getItem('code-loupe:site-theme');
+        if (themeIds.includes(saved)) document.documentElement.dataset.theme = saved;
+      } catch { /* Use Midnight when storage is unavailable. */ }
+    </script>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -21,8 +38,12 @@ const { title, description, wide = false } = Astro.props;
         <a href={sitePath('playground/')}>Playground</a>
         <a href={sitePath('docs/')}>Guide</a>
       </nav>
+      <label class="theme-picker" for="site-theme">Theme
+        <select id="site-theme">{themePresets.map(theme => <option value={theme.id} selected={theme.id === 'midnight'}>{theme.label}</option>)}</select>
+      </label>
     </header>
     <main id="main" class:list={['site-main', { wide }]}><slot /></main>
     <footer class="site-footer">Step-through code animations for teaching. <a href="https://github.com/amortimer20/code-loupe">Source on GitHub</a> · MIT License</footer>
   </body>
 </html>
+<script>import '../theme';</script>

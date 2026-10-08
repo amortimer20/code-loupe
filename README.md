@@ -20,6 +20,8 @@ npm run build:player # packages/player/dist/code-loupe.js and accompanying asset
 npm run build:site   # apps/site/dist/ — deploy this folder to a static host
 npm run typecheck    # check both workspaces
 npm test             # snapshot and call-frame tests
+npm run test:e2e      # build + behavioral Chromium checks (full and reduced motion)
+npm run test:docker   # complete pipeline, including visual comparisons, in Docker
 ```
 
 The home page is a searchable sample library. Each lesson has a player, teaching
@@ -40,7 +42,7 @@ docs/             Tutorial, contribution guide, roadmap, and journal
 ```
 
 The corpus includes Python input conversion, an accumulator loop, a conditional
-branch, and a function call with local variables and a return value.
+branch, a function call, and nested calls with separate locals and return values.
 See [Adding samples](docs/samples.md) to contribute another
 lesson without editing the site routes. The site validates every lesson during
 its build and generates download files from the canonical YAML.
@@ -48,6 +50,19 @@ its build and generates download files from the canonical YAML.
 The player builds independently of Astro. `npm run build:playground` is retained
 as an alias for the site build. The workspaces are private while distribution
 is still being designed.
+
+## Verification pipeline
+
+GitHub Actions runs unit tests, browser-test type checking, production builds
+(including player/site type checks and corpus validation), and Playwright checks
+on pushes and pull requests. Chromium behavioral tests cover full and reduced
+motion; visual references cover the three themes, nested calls and returns, the
+gallery, and a narrow player. Failures retain an HTML report, traces, and screenshots.
+
+Run `npm run test:docker` for the complete CI-matched pipeline. For browser checks
+without visual comparisons, install Chromium with `npx playwright install chromium`
+and run `npm run test:e2e`. See [Testing](docs/testing.md) for setup, focused runs,
+baseline review, and current coverage limits.
 
 ## Embed it
 
@@ -72,7 +87,7 @@ is still being designed.
 | Attribute     | Meaning                                                      |
 | ------------- | ------------------------------------------------------------ |
 | `src`         | URL of a YAML lesson                                         |
-| `theme`       | Any [Shiki theme](https://shiki.style/themes); default `dark-plus` |
+| `theme`       | Starter preset `paper`, `midnight`, or `terminal`, or any [Shiki theme](https://shiki.style/themes); default `dark-plus` |
 | `speed`       | Default playback speed, e.g. `0.75`. A viewer's own choice from the speed menu is remembered and wins. |
 | `motion`      | `full` animates even when the OS asks for reduced motion (Windows "Animation effects" off); `reduced` starts with animations off. Viewers can always flip the animations button, and their choice is remembered. |
 | `no-keyboard` | Don't handle ← → Home End Space (e.g. when a host page does) |
@@ -84,8 +99,32 @@ For live authoring, `await player.loadLesson(yaml)` loads YAML directly and retu
 `true` on success or `false` if loading fails or a newer load supersedes it. Successful
 loads restart at Step 0 and emit `stepchange`; failed loads show an error and emit
 `lessonerror` with `{ message }`. Event payloads are in `event.detail`.
-Direct loads don't change the `src` attribute; changing `src` or `theme`, or reconnecting
-the element, loads its configured URL or inline lesson again.
+Direct loads don't change the `src` attribute. Changing `src` or reconnecting the
+element loads its configured URL or inline lesson again. Changing `theme` pauses
+playback and recolors the current lesson, preserving its step and directly loaded draft.
+
+## Starter themes
+
+```html
+<code-loupe src="lesson.yaml" theme="paper"></code-loupe>
+<code-loupe src="lesson.yaml" theme="midnight"></code-loupe>
+<code-loupe src="lesson.yaml" theme="terminal"></code-loupe>
+```
+
+Paper uses warm surfaces and inky colors; Midnight uses navy surfaces and bright
+syntax colors; Terminal uses charcoal-green surfaces with green accents. Each
+preset coordinates code, runtime values, panels, badges, console input, errors,
+and controls. Corners are square throughout, and code ligatures are disabled.
+
+The sample site's header picker changes the site and its players together. Its
+choice is remembered in this browser when storage is available; Midnight is the
+site default. Independent embeds keep their own `theme` attribute and do not use
+the site's saved preference. There is no automatic system-theme switching yet.
+
+The site's square panes, thin dividers, and typography take their direction from
+[Phosphor](https://github.com/amortimer20/phosphor). The presets are a starting point;
+a host-provided token API, font controls, and lesson-aware resizing remain future
+work. See the [styling notes](docs/styling.md) for the current boundaries.
 
 ## Lesson format
 

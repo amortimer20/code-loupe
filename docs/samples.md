@@ -82,6 +82,9 @@ return-to-caller behavior, and a frame that can be restored by backward stepping
 The nested-function-call sample adds a suspended caller, same-named locals in
 independent frames, and two returns that resume different lines. Compare Steps 8,
 11, and 14 to see the inner result become an independently owned outer result.
-Snapshot regression tests now cover these foundations and the earlier corpus
-outcomes; visual regression tests remain future work. Run `npm test` after changing
-the state model or updating a tested sample's authored outcomes.
+Snapshot regression tests cover these foundations and the earlier corpus outcomes.
+Checked-in Playwright tests cover the library/player/playground, with focused
+theme and nested-call screenshot references. Run `npm test` after changing the
+state model or a tested sample's authored outcomes, and `npm run test:docker`
+for browser changes. Add a new sample's expected steps/output to the browser corpus
+in `tests/browser/helpers.ts`; see [Testing](testing.md) for baseline review.

@@ -14,7 +14,9 @@ export const styles = /* css */ `
   --ca-name: #9cdcfe;
   --ca-input: #dcdcaa;
   --ca-error: #f48771;
-  --ca-font: 'Cascadia Code', 'JetBrains Mono', Consolas, 'Courier New', monospace;
+  --ca-font: 'JetBrains Mono', 'Cascadia Code', ui-monospace, Consolas, monospace;
+  --ca-muted: color-mix(in srgb, var(--ca-fg) 75%, var(--ca-bg));
+  --ca-raised: color-mix(in srgb, var(--ca-fg) 9%, var(--ca-bg));
   --ca-line: color-mix(in srgb, var(--ca-fg) 18%, transparent);
   --ca-panel: color-mix(in srgb, var(--ca-fg) 4%, var(--ca-bg));
 
@@ -22,7 +24,7 @@ export const styles = /* css */ `
   background: var(--ca-bg);
   color: var(--ca-fg);
   border: 1px solid var(--ca-line);
-  border-radius: 12px;
+  border-radius: 0;
   overflow: hidden;
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
@@ -39,7 +41,7 @@ export const styles = /* css */ `
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  opacity: 0.65;
+  color: var(--ca-muted);
 }
 
 /* ---- Stage: variables + code ---- */
@@ -77,7 +79,7 @@ export const styles = /* css */ `
   gap: 0.6ch;
   padding: 0.2rem 0.4rem;
   margin: 0 -0.4rem;
-  border-radius: 6px;
+  border-radius: 0;
 }
 .var .name { color: var(--ca-name); }
 .var .eq { opacity: 0.7; }
@@ -89,7 +91,7 @@ export const styles = /* css */ `
   line-height: 1.5;
   padding: 0 0.4rem;
   border: 1px solid var(--ca-line);
-  border-radius: 999px;
+  border-radius: 0;
   opacity: 0.8;
 }
 .var .tag { margin-left: auto; }
@@ -108,13 +110,14 @@ export const styles = /* css */ `
   line-height: 3;
   counter-reset: ln;
 }
+.vars, .code-host, .console pre, .badge-inner { font-variant-ligatures: none; }
 .code-host code { display: block; width: max-content; min-width: 100%; font: inherit; }
 .code-host .line {
   display: block;
   position: relative;
   min-height: 3em;
   padding: 0 1rem 0 4.75rem;
-  border-radius: 6px;
+  border-radius: 0;
   counter-increment: ln;
   transition: background-color var(--ca-line-ms, 500ms);
 }
@@ -164,10 +167,9 @@ export const styles = /* css */ `
   font-size: 0.95rem;
   line-height: 1.45;
   white-space: nowrap;
-  background: color-mix(in srgb, var(--ca-fg) 9%, var(--ca-bg));
+  background: var(--ca-raised);
   border: 1px solid color-mix(in srgb, var(--ca-accent) 65%, transparent);
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+  border-radius: 0;
 }
 
 /* ---- Caption ---- */
@@ -183,7 +185,7 @@ export const styles = /* css */ `
 .console {
   padding: 0.6rem 1rem 0.75rem;
   border-top: 1px solid var(--ca-line);
-  background: color-mix(in srgb, #000 28%, var(--ca-bg));
+  background: var(--ca-panel);
 }
 .console pre {
   margin: 0;
@@ -208,7 +210,7 @@ export const styles = /* css */ `
   font-family: system-ui, sans-serif;
   font-size: 0.7em;
   border: 1px solid var(--ca-line);
-  border-radius: 4px;
+  border-radius: 0;
   opacity: 0.75;
 }
 
@@ -227,7 +229,7 @@ export const styles = /* css */ `
   place-items: center;
   width: 2.25rem;
   height: 2.25rem;
-  border-radius: 8px;
+  border-radius: 0;
   color: var(--ca-fg);
   cursor: pointer;
 }
@@ -261,7 +263,7 @@ export const styles = /* css */ `
   color: var(--ca-fg);
   background: var(--ca-bg);
   border: 1px solid var(--ca-line);
-  border-radius: 6px;
+  border-radius: 0;
   cursor: pointer;
 }
 .speed:focus-visible { outline: 2px solid var(--ca-accent); outline-offset: 1px; }

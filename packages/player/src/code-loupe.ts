@@ -1,10 +1,11 @@
-import { codeToHtml } from 'shiki';
+import { codeToHtml, bundledThemes, type BundledTheme, type ThemeRegistration } from 'shiki';
 import { parseLesson, type Lesson, type Value } from './lesson';
 import { buildSnapshots, findNth, type BadgeOrigin, type Snapshot } from './state';
 import { formatValue } from './values';
 import { styles } from './styles';
 import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
 import { renderVariables } from './visuals/variables';
+import { getThemePreset, type ThemePreset } from './themes';
 
 const DEFAULT_THEME = 'dark-plus';
 
@@ -71,7 +72,7 @@ const TEMPLATE = `
 
 /**
  * <code-loupe src="lesson.yaml"> — or put the YAML inside a
- * <script type="text/yaml"> child. Attributes: src, theme (any Shiki theme), speed,
+ * <script type="text/yaml"> child. Attributes: src, theme (preset or Shiki theme), speed,
  * motion ("full" to animate even when the OS asks for reduced motion), no-keyboard.
  * Fires `stepchange` with { step, total }. Methods: next(), prev(), goTo(n), play(), pause().
  */
@@ -85,6 +86,8 @@ export class CodeLoupe extends HTMLElement {
   #literals = new Map<string, string>();
   #loadId = 0;
   #loadQueued = false;
+  #loading = false;
+  #source: string | undefined;
   #playing = false;
   #playTimer: ReturnType<typeof setTimeout> | undefined;
   #speed = 1;
@@ -160,8 +163,9 @@ export class CodeLoupe extends HTMLElement {
       else if (act === 'next') this.next();
     });
     this.#els.scrub.addEventListener('input', () => {
+      const step = Number(this.#els.scrub.value);
       this.pause();
-      this.goTo(Number(this.#els.scrub.value));
+      this.goTo(step);
     });
     this.addEventListener('keydown', (e) => this.#onKey(e));
   }
@@ -178,12 +182,17 @@ export class CodeLoupe extends HTMLElement {
   }
 
   attributeChangedCallback(name: string, _old: string | null, value: string | null) {
+    if (_old === value) return;
     if (name === 'speed') {
       // A viewer's own saved choice wins over the page's default.
       if (readStoredSpeed() === null && value !== null) this.speed = Number(value);
       return;
     }
     if (name === 'motion') return this.#renderMotion();
+    if (name === 'theme') {
+      if (this.isConnected && !this.#loading && !this.#loadQueued) void this.#refreshTheme();
+      return;
+    }
     if (this.isConnected) this.#queueLoad();
   }
 
@@ -282,13 +291,18 @@ export class CodeLoupe extends HTMLElement {
 
   async #load(source?: string): Promise<boolean> {
     const loadId = ++this.#loadId;
+    this.#loading = true;
+    this.#source = source;
+    const preset = getThemePreset(this.getAttribute('theme') ?? DEFAULT_THEME);
+    if (!this.#lesson && preset) this.#applyPalette(preset);
     this.pause();
     try {
-      const lesson = parseLesson(source ?? await this.#readSource());
+      const yaml = source ?? await this.#readSource();
+      if (loadId !== this.#loadId) return false;
+      this.#source = yaml;
+      const lesson = parseLesson(yaml);
       const snapshots = buildSnapshots(lesson);
-      const theme = this.getAttribute('theme') ?? DEFAULT_THEME;
-      const codeHtml = await codeToHtml(lesson.code, { lang: lesson.language, theme });
-      const literals = await this.#highlightLiterals(lesson, snapshots, theme);
+      const { codeHtml, literals, preset, variant } = await this.#highlightTheme(lesson, snapshots);
       if (loadId !== this.#loadId) return false; // a newer load started while we were waiting
 
       this.#lesson = lesson;
@@ -305,9 +319,7 @@ export class CodeLoupe extends HTMLElement {
       // Lines are display:block, so the newlines between them would add blank rows.
       const code = codeHost.querySelector('code');
       code?.childNodes.forEach((node) => node.nodeType === Node.TEXT_NODE && node.remove());
-      const pre = codeHost.querySelector('pre');
-      if (pre?.style.backgroundColor) ca.style.setProperty('--ca-bg', pre.style.backgroundColor);
-      if (pre?.style.color) ca.style.setProperty('--ca-fg', pre.style.color);
+      this.#applyPalette(preset, variant);
       scrub.max = String(this.total);
 
       this.#render(false);
@@ -324,6 +336,75 @@ export class CodeLoupe extends HTMLElement {
       this.#els.error.textContent = `Couldn't load this lesson.\n\n${(err as Error).message}`;
       this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message: (err as Error).message }, bubbles: true }));
       return false;
+    } finally {
+      if (loadId === this.#loadId) this.#loading = false;
+    }
+  }
+
+  async #highlightTheme(lesson: Lesson, snapshots: Snapshot[]) {
+    // A theme can change while a lesson or its literals are highlighting.
+    // Finish with the latest choice without refetching or replacing a draft.
+    while (true) {
+      const name = this.getAttribute('theme') ?? DEFAULT_THEME;
+      const preset = getThemePreset(name);
+      try {
+        const theme = preset?.highlight ?? (await bundledThemes[name as BundledTheme]?.())?.default ?? name;
+        const [codeHtml, literals] = await Promise.all([
+          codeToHtml(lesson.code, { lang: lesson.language, theme }),
+          this.#highlightLiterals(lesson, snapshots, theme),
+        ]);
+        if (name === (this.getAttribute('theme') ?? DEFAULT_THEME)) {
+          return { codeHtml, literals, preset, variant: typeof theme === 'string' ? undefined : theme.type };
+        }
+      } catch (error) {
+        if (name === (this.getAttribute('theme') ?? DEFAULT_THEME)) throw error;
+      }
+    }
+  }
+
+  async #refreshTheme() {
+    if (!this.#lesson) return void this.#load(this.#source);
+    const lesson = this.#lesson;
+    const loadId = this.#loadId;
+    this.pause();
+    try {
+      const { codeHtml, literals, preset, variant } = await this.#highlightTheme(lesson, this.#snapshots);
+      if (loadId !== this.#loadId || lesson !== this.#lesson) return;
+      this.#literals = literals;
+      this.#els.codeHost.innerHTML = codeHtml;
+      this.#els.codeHost.querySelector('code')?.childNodes.forEach(node => node.nodeType === Node.TEXT_NODE && node.remove());
+      this.#applyPalette(preset, variant);
+      this.#els.ca.classList.remove('has-error');
+      this.#els.error.hidden = true;
+      this.#render(false);
+    } catch (error) {
+      if (loadId !== this.#loadId || lesson !== this.#lesson) return;
+      this.#els.ca.classList.add('has-error');
+      this.#els.error.hidden = false;
+      this.#els.error.textContent = `Couldn't apply this theme.\n\n${(error as Error).message}`;
+      this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message: (error as Error).message }, bubbles: true }));
+    }
+  }
+
+  #applyPalette(preset: ThemePreset | undefined, variant?: 'light' | 'dark') {
+    const { ca, codeHost } = this.#els;
+    // Clear every preset override when returning to a regular Shiki theme.
+    for (const token of ['bg', 'fg', 'panel', 'raised', 'muted', 'line', 'accent', 'name', 'input', 'error']) {
+      ca.style.removeProperty(`--ca-${token}`);
+    }
+    if (preset) {
+      const p = preset.palette;
+      const tokens = { bg: p.bg, fg: p.fg, panel: p.panel, raised: p.raised, muted: p.muted,
+        line: p.border, accent: p.accent, name: p.name, input: p.input, error: p.error };
+      for (const [token, color] of Object.entries(tokens)) {
+        ca.style.setProperty(`--ca-${token}`, color);
+      }
+      ca.style.colorScheme = preset.variant;
+    } else {
+      const pre = codeHost.querySelector('pre');
+      if (pre?.style.backgroundColor) ca.style.setProperty('--ca-bg', pre.style.backgroundColor);
+      if (pre?.style.color) ca.style.setProperty('--ca-fg', pre.style.color);
+      ca.style.colorScheme = variant ?? 'normal';
     }
   }
 
@@ -340,7 +421,7 @@ export class CodeLoupe extends HTMLElement {
   }
 
   /** Highlight every value that can appear so badges and variables match the code's colors. */
-  async #highlightLiterals(lesson: Lesson, snapshots: Snapshot[], theme: string) {
+  async #highlightLiterals(lesson: Lesson, snapshots: Snapshot[], theme: string | ThemeRegistration) {
     const texts = new Set<string>();
     for (const snap of snapshots) {
       for (const v of [...snap.vars, ...snap.frames.flatMap(f => f.vars), ...snap.badges]) texts.add(formatValue(v.value, lesson.language, v.type));

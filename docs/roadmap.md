@@ -153,8 +153,13 @@ through a shared "where is this value on screen?" lookup.
 
 ## 6. Styling Code Loupes
 
-- Today: the `theme` attribute sets any Shiki syntax-highlighting theme, and the panel
-  colors follow it. The player uses Shadow DOM; a supported styling API is still needed.
+- Today: `theme` selects Paper, Midnight, Terminal, or any Shiki theme. Starter
+  presets coordinate syntax and player colors, with square corners. The sample
+  site's remembered theme picker applies its choice to the site and its players.
+  Theme changes preserve the current lesson and step. See [styling notes](styling.md).
+  The player uses Shadow DOM; a supported host styling API is still needed.
+- [x] Three starter presets and a Phosphor-inspired demo site with square panes,
+      thin borders, coordinated surfaces, and monospace headings/labels.
 - [ ] **Host-page styling API:** documented CSS custom properties for fonts, sizes,
       colors, spacing, borders, and corner radii, so teachers can match a website or slide deck.
       Support page-wide defaults and overrides for individual `<code-loupe>` instances.
@@ -173,6 +178,9 @@ through a shared "where is this value on screen?" lookup.
 - [ ] A few curated themes with checked contrast; never rely on color alone to tell types apart (type tags already help)
 - [ ] **Styling guide and examples:** demonstrate a site-matched player and a compact
       slide player; verify light/dark themes, keyboard focus, reduced motion, and custom fonts.
+- [ ] **Lesson-aware responsive layouts (backlog):** explore constrained embed sizes,
+      long code, deep stacks, collections, resizable panes, and teacher-selected layouts.
+      Current narrow-width stacking remains the baseline; no layout API is settled yet.
 
 ## 7. Embedding and distribution
 
@@ -186,9 +194,14 @@ through a shared "where is this value on screen?" lookup.
 
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
-- [ ] Visual tests with Playwright, **including reduced motion**
+- [x] Checked-in Playwright behavior tests with full and reduced motion, plus
+      eleven reviewed screenshot references for themes, nested calls/returns,
+      the gallery, and a narrow player; pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
-- [ ] CI on GitHub
+- [x] GitHub Actions workflow: lockfile install, unit tests, browser types,
+      production builds/corpus validation, behavioral and visual tests, and
+      retained failure reports/traces. Runs on pushes and pull requests.
+- [ ] Extend browser coverage to Firefox and WebKit as embedding needs grow.
 
 ---
 

@@ -1,0 +1,61 @@
+# Starter styling
+
+Code Loupe has three coordinated presets selected with its `theme` attribute:
+
+| Preset | Appearance |
+| --- | --- |
+| `paper` | Warm paper, dark text, teal accents |
+| `midnight` | Deep navy, blue accents, colorful syntax |
+| `terminal` | Charcoal green, green accents, warm numeric values |
+
+Syntax highlighting and runtime literals use the same preset. Each also defines
+panel, badge, console, variable-name, error, and control colors. The presets are
+data in `packages/player/src/themes.ts`, shared with the static site. They are
+Code Loupe palettes, not ports of Phosphor's six themes or Omarchy theme files.
+
+Square corners apply to all presets and regular Shiki themes. Code, console,
+and runtime values use a monospace stack with ligatures off. JetBrains Mono is
+preferred if the host has installed or loaded it; no web font is bundled yet.
+
+## Theme selection
+
+The demo site's header picker changes its shell and every player, including a
+playground preview created later. It remembers a valid choice under
+`code-loupe:site-theme` in localStorage, with Midnight as the default. The saved
+shell theme is applied before first paint. Blocked storage still allows changing
+themes for the current page. This preference belongs to the demo site; independent
+embeds select their own theme.
+
+```html
+<code-loupe src="lesson.yaml" theme="paper"></code-loupe>
+```
+
+Regular Shiki theme names still work, and standalone players retain `dark-plus`
+as their default. A theme change pauses playback, re-highlights code and values,
+and preserves the current lesson and step. It does not fetch the lesson again
+or discard a directly loaded YAML draft. Rapid choices finish with the latest
+theme, including while a lesson is loading.
+
+## Checks and limits
+
+Automated checks cover the presets' text and syntax colors against their base,
+panel, badge, and active-line surfaces at a minimum 4.5:1 contrast ratio, plus
+accent-button text. Highlighting checks cover Python, JavaScript, and badge
+literals. These checks do not constitute a full accessibility audit of the
+rendered player, arbitrary Shiki themes, or real classroom projectors.
+
+Browser tests also cover remembered selection, rapid theme/load changes, draft
+preservation, regular Shiki themes, and blocked storage. Reviewed screenshot
+references cover the three presets, nested frames and returns, plus a narrow
+player and the gallery in Midnight. See [Testing](testing.md) for the canonical
+Docker environment and how to review intentional visual changes.
+
+The site follows Phosphor's square-pane design, thin borders, coordinated surfaces,
+and monospace labels. Code Loupe does not currently include Phosphor's CRT effects.
+
+The player already stacks its data panel below the code at narrow container widths;
+the playground stacks its editor and preview. A future responsive design session
+should consider long code lines, deeper stacks, collections, constrained embed
+heights, resizable panes, and teacher-selected layouts. That work is backlogged,
+along with a supported host-provided token API, typography controls, and stable
+CSS parts for embedding into Phosphor.

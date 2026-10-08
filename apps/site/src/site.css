@@ -1,12 +1,15 @@
 :root {
-  color-scheme: light dark;
-  --bg: #f5f5f0;
-  --panel: #fff;
-  --text: #202b28;
-  --muted: #59665f;
-  --border: #d9dfd8;
-  --accent: #146c53;
-  --soft: #e7efe6;
+  color-scheme: dark;
+  --bg: #191d2d;
+  --panel: #141724;
+  --text: #cbd5f3;
+  --muted: #9ba8ca;
+  --border: #424d69;
+  --accent: #90b4fa;
+  --on-accent: #141724;
+  --soft: #242a3d;
+  --error: #ff99ad;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', ui-monospace, Consolas, monospace;
   background: var(--bg);
   color: var(--text);
   font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -28,26 +31,26 @@ nav a { text-decoration: none; }
 .site-main.wide { max-width: 100rem; }
 .site-footer { max-width: 80rem; margin: auto; padding: 2rem; font-size: 0.8rem; color: var(--muted); border-top: 1px solid var(--border); }
 h1, h2, h3 { line-height: 1.2; }
-h1 { font-size: clamp(2rem, 5vw, 3.8rem); letter-spacing: -0.04em; margin: 0.7rem 0 1.2rem; max-width: 22ch; }
+h1 { font-size: clamp(1.9rem, 4vw, 3rem); letter-spacing: -0.045em; margin: 0.7rem 0 1.2rem; max-width: 22ch; }
 h2 { font-size: 1.35rem; }
 h3 { font-size: 1.4rem; }
 .eyebrow { text-transform: uppercase; letter-spacing: 0.13em; font-size: 0.75rem; font-weight: 700; color: var(--accent); }
 .lede { font-size: 1.1rem; max-width: 62ch; color: var(--muted); }
 .intro { padding: 0.5rem 0 3.5rem; }
-.button { display: inline-flex; gap: 1rem; align-items: center; padding: 0.65rem 1rem; background: var(--accent); color: #fff; border: 1px solid var(--accent); border-radius: 6px; font-weight: 600; font-size: 0.9rem; text-decoration: none; }
+.button { display: inline-flex; gap: 1rem; align-items: center; padding: 0.65rem 1rem; background: var(--accent); color: var(--on-accent); border: 1px solid var(--accent); border-radius: 0; font-weight: 600; font-size: 0.9rem; text-decoration: none; }
 .secondary { color: var(--accent); background: var(--panel); border-color: var(--border); }
 .section-heading, .card-meta { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
 #sample-count, .card-meta { font-size: 0.8rem; color: var(--muted); }
 .filters { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem; margin: 1rem 0 1.5rem; }
 .filters label { display: grid; gap: 0.4rem; font-size: 0.8rem; font-weight: 600; }
-.filters input, .filters select { width: 100%; min-width: 0; padding: 0.7rem; border: 1px solid var(--border); border-radius: 6px; background: var(--panel); color: var(--text); }
+.filters input, .filters select { width: 100%; min-width: 0; padding: 0.7rem; border: 1px solid var(--border); border-radius: 0; background: var(--panel); color: var(--text); }
 .sample-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-.sample-card { padding: 1.5rem; border: 1px solid var(--border); border-radius: 10px; background: var(--panel); display: flex; flex-direction: column; }
+.sample-card { padding: 1.5rem; border: 1px solid var(--border); border-radius: 0; background: var(--panel); display: flex; flex-direction: column; }
 .sample-card h3 a { color: var(--text); text-decoration: none; }
 .sample-card h3 a:hover { color: var(--accent); }
 .sample-card p { color: var(--muted); margin-top: 0; }
 .tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-.tags span { background: var(--soft); color: var(--accent); border-radius: 4px; font-size: 0.7rem; padding: 0.2rem 0.5rem; }
+.tags span { background: var(--soft); color: var(--accent); border-radius: 0; font-size: 0.7rem; padding: 0.2rem 0.5rem; }
 .card-link { display: block; padding-top: 1.5rem; margin-top: auto; font-weight: 600; font-size: 0.85rem; }
 .library-note { margin-top: 3rem; border-left: 3px solid var(--accent); padding: 0.2rem 1.5rem; max-width: 75ch; }
 .library-note p { color: var(--muted); }
@@ -57,14 +60,14 @@ h3 { font-size: 1.4rem; }
 .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
 code-loupe { display: block; }
 .lesson-details { display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; margin-top: 2rem; }
-.learning-goal { background: var(--soft); border-radius: 8px; padding: 1.5rem; align-self: start; }
+.learning-goal { background: var(--soft); border-radius: 0; padding: 1.5rem; align-self: start; }
 .learning-goal h2 { font-size: 1rem; }
 .learning-goal p, .learning-goal li { font-size: 0.9rem; }
 .learning-goal ul { padding-left: 1.2rem; }
 .prose { max-width: 72ch; }
 .prose h2 { margin-top: 2rem; }
 .prose h2:first-child { margin-top: 0; }
-.prose pre { overflow: auto; padding: 1.5rem; background: var(--panel); border: 1px solid var(--border); border-radius: 8px; }
+.prose pre { overflow: auto; padding: 1.5rem; background: var(--panel); border: 1px solid var(--border); border-radius: 0; }
 .prose code { font-size: 0.9em; }
 .prose li { margin-bottom: 0.5rem; }
 .guide { margin-bottom: 2rem; }
@@ -77,8 +80,23 @@ code-loupe { display: block; }
   .filters { grid-template-columns: minmax(0, 1fr); }
   nav { gap: 1rem; }
 }
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #141c19; --panel: #1c2722; --text: #e6eee8; --muted: #afbeb3; --border: #36473d; --accent: #8cddae; --soft: #233b2d; }
-  .button { color: #14261b; }
-  .secondary { color: var(--accent); }
+
+/* Phosphor-inspired structure: square panes, quiet dividers, and mono labels. */
+h1, .brand { font-family: var(--font-mono); font-weight: 600; }
+.brand span { font-family: system-ui, sans-serif; }
+.eyebrow, .card-meta, .tags, .panel-heading, .theme-picker { font-family: var(--font-mono); }
+code, pre, textarea { font-variant-ligatures: none; }
+.site-header { gap: 1.5rem; }
+.site-header nav { margin-left: auto; }
+.theme-picker { display: flex; align-items: center; gap: 0.6rem; font-size: 0.75rem; color: var(--muted); }
+.theme-picker select { padding: 0.35rem 0.6rem; color: var(--text); background: var(--panel); border: 1px solid var(--border); border-radius: 0; cursor: pointer; }
+.sample-card { border-top: 2px solid var(--border); }
+.sample-card:hover { border-top-color: var(--accent); }
+.tags span { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+.learning-goal { border: 1px solid var(--border); background: var(--panel); }
+.section-heading, .panel-heading { padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+@media (max-width: 600px) {
+  .site-header nav { margin-left: 0; }
+  .site-header { gap: 1rem; }
+  .theme-picker { margin-left: auto; }
 }

@@ -92,3 +92,44 @@ regression test checks the intermediate scopes as well as the final output.
 
 Moved the Reveal.js adapter to the backlog at the user's request. Expanding the
 lesson corpus takes priority over slide integration for now.
+
+## 2026-10-07 — Starter themes and Phosphor-inspired site
+
+Added Paper, Midnight, and Terminal as coordinated player/site presets. The site's
+header picker remembers a browser-local choice, with Midnight as its default.
+Independent embeds keep their own theme attribute and the existing dark-plus
+default. Regular Shiki themes remain supported. Theme changes pause playback,
+re-highlight the current lesson, and preserve its step and any directly loaded
+draft rather than fetching or restarting it.
+
+Read Phosphor's local theme design and implementation as the design reference.
+Its square panes, thin dividers, surface hierarchy, and typography guide the site;
+these three palettes are original starter presets rather than ports of Phosphor's
+Omarchy-inspired themes. Removed rounded corners from the site and player and
+disabled code ligatures. No fonts or CRT effects were added.
+
+The presets share a small DOM-independent data module and have automated contrast
+and syntax checks. A supported host-provided theming API for Phosphor embeds is
+future work. Also backlogged a responsive design session for lesson-specific
+layout needs, including constrained embed heights, deeper stacks, collections,
+and resizable panes; the existing narrow-width stacking remains in place.
+
+## 2026-10-07 — Browser and visual regression pipeline
+
+Replaced temporary browser scripts with a checked-in Playwright suite that tests
+the built static site and independent player bundle. Behavioral checks run with
+normal and reduced motion; eleven reviewed screenshot references cover the three
+starter themes, nested locals and both returns, the gallery, and a narrow player.
+Pinned Playwright 1.63.0 and its matching official Ubuntu Noble Docker image so
+local reference generation and CI comparisons use the same browser/font environment.
+
+Added GitHub Actions for lockfile installation, unit tests, browser-test types,
+production builds/type checks/corpus validation, and all browser/visual tests.
+Failure reports retain traces and screenshots. Normal runs fail on missing
+baselines; updates require an explicit command and review. A retried flaky test
+still fails CI. `npm run test:docker` runs the complete pipeline locally.
+
+The new scrub regression test exposed an existing ordering bug: pausing playback
+re-rendered controls and replaced the slider's incoming value before it was read.
+Capture the requested step before pausing, so input events actually scrub to the
+requested snapshot. The browser suite retains coverage for the fix.
