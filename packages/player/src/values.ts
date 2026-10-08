@@ -1,4 +1,4 @@
-import type { ListReference, StoredValue, Value } from './lesson';
+import type { ObjectReference, StoredValue, Value } from './lesson';
 
 interface LanguageWords {
   true: string;
@@ -65,7 +65,7 @@ export function validateValue(value: unknown, fail: (message: string) => never, 
   }
 }
 
-export function isReference(value: StoredValue): value is ListReference {
+export function isReference(value: StoredValue): value is ObjectReference {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 

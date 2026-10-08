@@ -267,3 +267,19 @@ runs its body twice, making the final False result and skipped body explicit.
 Keep counter evaluation separate from assignment, and preserve all intermediate
 states when stepping backward. No automatic loop execution or new loop-specific
 player state is introduced.
+
+## 2026-10-08 — Flat dictionaries before classes
+
+Extend explicit allocation with `fields` for flat, string-keyed dictionaries.
+Variables still hold object references; field contents live once in the heap and
+are copied per snapshot. Reuse `update` with a `key` selector for existing fields
+and `badge.from.key` for authored reads. Index actions stay list-only, and scalar
+badge values remain teacher-authored. Field validation and mutation live in a
+pure dictionary helper, separate from the object-card renderer and animations.
+
+Use the stable heading Objects now that cards can represent lists or dictionaries.
+Retain named reference labels and one card per identity. Field rows show their
+scalar types, update independently, and become visible within bounded data panes
+when read or changed. The first lesson changes score without changing name.
+Adding/deleting fields, nested values, whole-dictionary badges, class instances,
+and methods remain future work.

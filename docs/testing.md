@@ -41,6 +41,10 @@ badges, and preservation of the first console line when undoing the second.
 Control-flow checks cover True/False Boolean badges, repeated while-condition
 checks, counter assignment boundaries, backward line jumps, restoration of
 console history, and skipping the body after the final false condition.
+Dictionary checks cover named scalar fields and type tags, one-field animation,
+unchanged neighbors/identity, backward stepping and scrubbing, theme switching,
+local/global aliases and rebinding, empty dictionaries, invalid keys/nested
+values, quoted and reserved-looking keys, and bounded field following.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -101,7 +105,8 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains twenty-four PNGs, including indexed list selection and aliasing in all three presets
+The set contains twenty-seven PNGs, including indexed list selection, aliasing,
+and dictionary fields in all three presets
 and element update, list print badge, append, removal, separate copies, and a
 false while-loop condition in Midnight.
 Desktop captures use 1280×960, the narrow

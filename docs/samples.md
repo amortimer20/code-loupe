@@ -111,11 +111,15 @@ list as a badge. List-append introduces a cell at the old list length; list-remo
 deletes by index and shifts later elements forward. Compare Steps 2 and 3 in
 both lessons for the length change, then Step 4 for the final indices. Shared
 references are introduced in list-aliasing: two variable arrows point to one
-List objects card. Compare Steps 2 and 4 to see an append through `other` change
+Objects card. Compare Steps 2 and 4 to see an append through `other` change
 what `numbers` reads, then step backward to restore the shared contents. The
 list-copying lesson contrasts those aliases with two distinct objects: Step 2
 shows equal starting contents, Step 4 changes only the copy, and Steps 7 and 9
 print the unchanged original followed by the changed copy.
+Dictionary-fields adds named string keys instead of list indices. Compare Steps
+2 and 3 for the score update: name remains "Ada", the reference is unchanged,
+and stepping backward restores score to 5. Step 4 reads score from the object
+card into a scalar badge. This is a flat dictionary, not a class instance.
 Checked-in Playwright tests cover the library/player/playground, with focused
 theme and nested-call screenshot references. Run `npm test` after changing the
 state model or a tested sample's authored outcomes, and `npm run test:docker`

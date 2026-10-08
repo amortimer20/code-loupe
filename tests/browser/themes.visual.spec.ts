@@ -32,6 +32,17 @@ test('two separate lists after appending to the copy', async ({ page }) => {
   await expect(player).toHaveScreenshot('midnight-list-copying.png');
 });
 
+for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
+  test(`${theme}: named dictionary fields and an updated score`, async ({ page }) => {
+    await page.goto('/samples/python/dictionary-fields/');
+    const player = await ready(page, 5);
+    await selectTheme(page, theme);
+    await goTo(player, 4);
+    await page.mouse.move(0, 0);
+    await expect(player).toHaveScreenshot(`${theme}-dictionary-fields.png`);
+  });
+}
+
 test('while loop exits on a false Boolean condition', async ({ page }) => {
   await page.goto('/samples/python/while-loop/');
   const player = await ready(page, 14);

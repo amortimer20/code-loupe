@@ -7,7 +7,7 @@ export interface CollectionSelection {
   ref?: string;
 }
 
-interface CollectionVariable { name: string; value: Value }
+interface CollectionVariable { name: string; value: unknown }
 
 /** Copy on update so earlier snapshots and other variable values stay intact. */
 export function replaceCollectionElement(variable: CollectionVariable, index: number, value: Value, fail: (message: string) => never): ScalarValue[] {

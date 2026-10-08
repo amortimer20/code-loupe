@@ -32,7 +32,7 @@ export function renderVariables(host: HTMLElement, vars: VarState[], renderer: V
       else span.textContent = text;
       row.append(span);
     }
-    row.setAttribute('aria-label', isReference(v.value) ? `${v.name} points to list object ${v.value.ref}` : `${v.name} is the ${v.type} ${formatValue(v.value, renderer.language, v.type)}`);
+    row.setAttribute('aria-label', isReference(v.value) ? `${v.name} points to ${v.type === 'dict' || v.type === 'object' ? 'dictionary' : 'list'} object ${v.value.ref}` : `${v.name} is the ${v.type} ${formatValue(v.value, renderer.language, v.type)}`);
     return row;
   }));
 }

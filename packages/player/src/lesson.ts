@@ -3,17 +3,19 @@ import { parse } from 'yaml';
 /** A runtime value as written in a lesson file. YAML strings become language strings, numbers stay numbers. */
 export type ScalarValue = string | number | boolean | null;
 export type Value = ScalarValue | ScalarValue[];
-export interface ListReference { ref: string }
-export type StoredValue = Value | ListReference;
+export interface ObjectReference { ref: string }
+/** Compatibility name for the original list-only reference model. */
+export type ListReference = ObjectReference;
+export type StoredValue = Value | ObjectReference;
 
-/** Create a shared list with an author-chosen, stable identity. */
-export interface AllocateSpec { id: string; value: ScalarValue[] }
+/** Create a list or flat dictionary with an author-chosen, stable identity. */
+export type AllocateSpec = { id: string; value: ScalarValue[] } | { id: string; fields: Record<string, ScalarValue> };
 
 /**
  * Where a value travels from: the user's most recent console input, or a variable
  * in the Variables panel.
  */
-export type ValueSource = 'console' | { var: string; scope?: 'global'; index?: number };
+export type ValueSource = 'console' | { var: string; scope?: 'global'; index?: number; key?: string };
 
 /** Highlight an indexed element until another selection or explicit clearing. */
 export interface SelectSpec {
@@ -53,8 +55,12 @@ export interface AssignSpec {
   ref?: string;
 }
 
-/** Replace one existing list element; this does not resize the list. */
-export interface UpdateSpec extends SelectSpec {
+/** Replace one existing list element or dictionary field, without adding entries. */
+export interface UpdateSpec {
+  var: string;
+  scope?: 'global';
+  index?: number;
+  key?: string;
   value?: ScalarValue;
   from?: 'badge';
 }

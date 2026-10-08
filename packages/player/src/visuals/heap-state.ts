@@ -4,14 +4,16 @@ import { isReference } from '../values';
 import type { CollectionSelection } from './collection-state';
 
 export interface SharedList { id: string; value: ScalarValue[]; type: string }
+export interface DictionaryObject { id: string; fields: Record<string, ScalarValue>; type: string }
+export type HeapObject = SharedList | DictionaryObject;
 
-/** Variables store references; the list's contents live once in the heap. */
-export function resolveVariableValue(state: Pick<Snapshot, 'heap'>, variable: VarState): Value {
+/** Variables store references; object contents live once in the heap. */
+export function resolveVariableValue(state: Pick<Snapshot, 'heap'>, variable: VarState): Value | DictionaryObject['fields'] {
   if (!isReference(variable.value)) return variable.value;
   const ref = variable.value.ref;
   const object = state.heap.find(item => item.id === ref);
   if (!object) throw new Error(`Unknown shared list ${ref}.`);
-  return object.value;
+  return 'fields' in object ? object.fields : object.value;
 }
 
 export function collectionVariable(state: Pick<Snapshot, 'heap'>, variable: VarState) {
@@ -22,6 +24,7 @@ export function storeCollectionValue(state: Pick<Snapshot, 'heap'>, variable: Va
   if (isReference(variable.value)) {
     const ref = variable.value.ref;
     const object = state.heap.find(item => item.id === ref)!;
+    if ('fields' in object) throw new Error('Cannot store a list in a dictionary object.');
     object.value = value;
   } else variable.value = value;
 }

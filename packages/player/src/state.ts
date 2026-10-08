@@ -2,7 +2,8 @@ import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type Stored
 import { cloneValue, inferType, validateValue } from './values';
 import { appendCollectionElement, checkCollectionIndex, removeCollectionElement, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
-import { collectionVariable, referenceIdentity, selectionMatches, storeCollectionValue, type SharedList } from './visuals/heap-state';
+import { collectionVariable, referenceIdentity, selectionMatches, storeCollectionValue, type HeapObject } from './visuals/heap-state';
+import { dictionaryField, replaceDictionaryField, type FieldTarget } from './visuals/dictionary-state';
 
 export type { CallFrame } from './visuals/call-stack-state';
 
@@ -28,7 +29,7 @@ export interface ConsoleChunk {
   fromBadge?: number;
 }
 
-export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number; index?: number; ref?: string };
+export type BadgeOrigin = { kind: 'console'; chunk: number } | { kind: 'var'; name: string; frameId: number; index?: number; key?: string; ref?: string };
 
 /** What changed in the step that produced a snapshot; used only to animate forward steps. */
 export interface StepEvents {
@@ -37,7 +38,7 @@ export interface StepEvents {
   badgeAdded?: { id: number; from?: BadgeOrigin };
   converted?: { id: number; from: BadgeState };
   assigned?: { name: string; frameId: number; fromBadge?: number; isNew: boolean };
-  updated?: CollectionSelection & { fromBadge?: number };
+  updated?: (CollectionSelection | FieldTarget) & { fromBadge?: number };
   appended?: CollectionSelection & { fromBadge?: number };
   removed?: CollectionSelection;
   called?: { frameId: number; args: { name: string; fromBadge?: number }[] };
@@ -53,7 +54,7 @@ export interface Snapshot {
   badges: BadgeState[];
   console: ConsoleChunk[];
   selection: CollectionSelection | null;
-  heap: SharedList[];
+  heap: HeapObject[];
   events: StepEvents;
 }
 
@@ -96,7 +97,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       badges: current.badges.map((b) => ({ ...b, value: cloneValue(b.value) })),
       console: [...current.console],
       selection: current.selection ? { ...current.selection } : null,
-      heap: current.heap.map(object => ({ ...object, value: [...object.value] })),
+      heap: current.heap.map(object => 'fields' in object ? { ...object, fields: { ...object.fields } } : { ...object, value: [...object.value] }),
       events: { lineChanged: false, consoleFrom: current.console.length },
     };
 
@@ -127,19 +128,30 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.allocate !== undefined) {
       const object = step.allocate;
       if (!isRecord(object)) fail('`allocate` needs a mapping with id and value.');
-      checkKeys(object, ['id', 'value'], 'allocate', fail);
+      checkKeys(object, ['id', 'value', 'fields'], 'allocate', fail);
       if (typeof object.id !== 'string' || !object.id.length) fail('`allocate.id` must be nonempty text.');
-      if (s.heap.some(item => item.id === object.id)) fail(`shared list \`${object.id}\` already exists; allocate a new id.`);
-      validateValue(object.value, fail, 'allocate');
-      if (!Array.isArray(object.value)) fail('`allocate.value` must be a flat list.');
-      s.heap.push({ id: object.id, value: [...object.value], type: inferType(object.value, lang) });
+      if (s.heap.some(item => item.id === object.id)) fail(`object \`${object.id}\` already exists; allocate a new id.`);
+      if ('fields' in object) {
+        if ('value' in object) fail('`allocate` accepts either value or fields, not both.');
+        if (!isRecord(object.fields)) fail('`allocate.fields` must be a mapping of string keys to scalar values.');
+        for (const [key, value] of Object.entries(object.fields)) {
+          if (!key.length) fail('dictionary keys must be nonempty text.');
+          validateValue(value, fail, 'dictionary field');
+          if (Array.isArray(value)) fail('dictionary fields must be scalars; nested values are not supported.');
+        }
+        s.heap.push({ id: object.id, fields: { ...object.fields }, type: ['python', 'py'].includes(lang.toLowerCase()) ? 'dict' : 'object' });
+      } else {
+        validateValue(object.value, fail, 'allocate');
+        if (!Array.isArray(object.value)) fail('`allocate.value` must be a flat list.');
+        s.heap.push({ id: object.id, value: [...object.value], type: inferType(object.value, lang) });
+      }
     }
 
     const readBinding = (spec: Omit<AssignSpec, 'var'>, label: string): { value: StoredValue; type: string; fromBadge?: number } => {
       if (spec.ref === undefined) return readValue(spec, label);
       if (typeof spec.ref !== 'string' || !spec.ref.length) fail(`${label} \`ref\` must be nonempty text.`);
       if (spec.value !== undefined || spec.from !== undefined || spec.type !== undefined) fail(`${label} \`ref\` cannot be combined with value, from, or type.`);
-      const object = s.heap.find(item => item.id === spec.ref) ?? fail(`shared list \`${spec.ref}\` has not been allocated.`);
+      const object = s.heap.find(item => item.id === spec.ref) ?? fail(`object \`${spec.ref}\` has not been allocated.`);
       return { value: { ref: object.id }, type: object.type };
     };
 
@@ -278,13 +290,22 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.update !== undefined) {
       const update = step.update;
       if (!isRecord(update)) fail('`update` needs a mapping with var, index, and value or from.');
-      checkKeys(update, ['var', 'index', 'value', 'from', 'scope'], 'update', fail);
+      checkKeys(update, ['var', 'index', 'key', 'value', 'from', 'scope'], 'update', fail);
       if (typeof update.var !== 'string' || !update.var.length) fail('`update` needs a nonempty `var` name.');
       if (update.scope !== undefined && update.scope !== 'global') fail('`update.scope` must be `global` when supplied.');
       const found = findVariable(s, update.var, update.scope === 'global') ?? fail(`no variable named ${update.var} in the active scope or globals.`);
       const { value, fromBadge } = readValue(update, 'update');
-      storeCollectionValue(s, found.variable, replaceCollectionElement(collectionVariable(s, found.variable), update.index, value, fail));
-      s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge, ...referenceIdentity(found.variable) };
+      if ('key' in update) {
+        if ('index' in update) fail('`update` cannot combine key and index.');
+        const object = dictionaryField(s, found.variable, update.key, fail);
+        if (Array.isArray(value)) return fail('dictionary updates need a scalar field value.');
+        replaceDictionaryField(object, update.key!, value);
+        s.events.updated = { name: update.var, frameId: found.frameId, key: update.key!, ref: object.id, fromBadge };
+      } else {
+        checkCollectionIndex(collectionVariable(s, found.variable), update.index, fail);
+        storeCollectionValue(s, found.variable, replaceCollectionElement(collectionVariable(s, found.variable), update.index, value, fail));
+        s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge, ...referenceIdentity(found.variable) };
+      }
     }
 
     for (const action of ['append', 'remove'] as const) {
@@ -326,15 +347,22 @@ function resolveOrigin(from: unknown, s: Snapshot, fail: (msg: string) => never)
     return { kind: 'console', chunk };
   }
   if (typeof from === 'object' && from !== null && 'var' in from && typeof from.var === 'string') {
-    checkKeys(from, ['var', 'scope', 'index'], 'variable source', fail);
+    checkKeys(from, ['var', 'scope', 'index', 'key'], 'variable source', fail);
     const scope = 'scope' in from ? from.scope : undefined;
     if (scope !== undefined && scope !== 'global') fail('variable source `scope` must be `global` when supplied.');
     const found = findVariable(s, from.var, scope === 'global');
     if (!found) fail(`\`from: { var: ${from.var} }\` but there is no variable named ${from.var} in the active scope or globals.`);
+    if ('key' in from) {
+      if ('index' in from) fail('variable source cannot combine key and index.');
+      const object = dictionaryField(s, found!.variable, from.key, fail);
+      return { kind: 'var', name: from.var, frameId: found!.frameId, key: from.key as string, ref: object.id };
+    }
     if ('index' in from) {
       checkCollectionIndex(collectionVariable(s, found!.variable), from.index, fail);
       return { kind: 'var', name: from.var, frameId: found!.frameId, index: from.index, ...referenceIdentity(found!.variable) };
     }
+    const resolved = collectionVariable(s, found!.variable).value;
+    if (!Array.isArray(resolved) && typeof resolved === 'object' && resolved !== null) fail('dictionary sources require a `key`; whole-dictionary badges are not supported.');
     return { kind: 'var', name: from.var, frameId: found!.frameId, ...referenceIdentity(found!.variable) };
   }
   return fail('`from` must be `console` or `{ var: name }`.');

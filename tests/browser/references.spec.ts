@@ -64,7 +64,7 @@ test('copying shows two separate cards and restores only the copy when stepping 
   const original = player.locator('.heap-object[data-ref="list-1"]');
   const copy = player.locator('.heap-object[data-ref="list-2"]');
   await goTo(player, 2);
-  await expect(player.getByRole('region', { name: 'List objects', exact: true })).toBeVisible();
+  await expect(player.getByRole('region', { name: 'Objects', exact: true })).toBeVisible();
   await expect(player.getByRole('article', { name: 'List object list-1', exact: true })).toBeVisible();
   await expect(player.getByRole('article', { name: 'List object list-2', exact: true })).toBeVisible();
   await expect(player.locator('.heap-object')).toHaveCount(2);

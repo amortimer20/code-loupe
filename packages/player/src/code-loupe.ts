@@ -43,7 +43,7 @@ const TEMPLATE = `
         <div class="vars globals"></div>
       </section>
       <section class="call-stack" aria-label="Call stack" hidden></section>
-      <section class="heap-panel" aria-label="List objects" hidden></section>
+      <section class="heap-panel" aria-label="Objects" hidden></section>
     </div>
     <section class="code" aria-label="Code">
       <div class="code-scroll">
@@ -437,8 +437,12 @@ export class CodeLoupe extends HTMLElement {
         if (Array.isArray(v.value)) for (const item of v.value) texts.add(formatValue(item, lesson.language));
       }
       for (const object of snap.heap) {
-        texts.add(formatValue(object.value, lesson.language, object.type));
-        for (const item of object.value) texts.add(formatValue(item, lesson.language));
+        if ('fields' in object) {
+          for (const item of Object.values(object.fields)) texts.add(formatValue(item, lesson.language));
+        } else {
+          texts.add(formatValue(object.value, lesson.language, object.type));
+          for (const item of object.value) texts.add(formatValue(item, lesson.language));
+        }
       }
       const from = snap.events.converted?.from;
       if (from) texts.add(formatValue(from.value, lesson.language, from.type));
@@ -484,7 +488,9 @@ export class CodeLoupe extends HTMLElement {
     const ref = snap.events.updated?.ref ?? snap.events.appended?.ref ?? snap.events.removed?.ref
       ?? (source?.kind === 'var' ? source.ref : undefined)
       ?? (assigned ? this.#varRow(assigned.name, assigned.frameId)?.dataset.ref : undefined);
-    const target = pane.querySelector<HTMLElement>('.collection-cell[aria-current]')
+    const key = snap.events.updated && 'key' in snap.events.updated ? snap.events.updated.key : source?.kind === 'var' ? source.key : undefined;
+    const target = (ref !== undefined && key !== undefined ? this.#collectionRow('', 0, ref)?.querySelector<HTMLElement>(`.object-field[data-key="${CSS.escape(key)}"]`) : null)
+      ?? pane.querySelector<HTMLElement>('.collection-cell[aria-current]')
       ?? (ref === undefined ? null : this.#els.heap.querySelector<HTMLElement>(`[data-ref="${CSS.escape(ref)}"]`));
     if (!target) return;
     const top = target.getBoundingClientRect().top - pane.getBoundingClientRect().top + pane.scrollTop;
@@ -699,8 +705,9 @@ export class CodeLoupe extends HTMLElement {
     }
     if (ev.updated || ev.appended) {
       const update = (ev.updated ?? ev.appended)!;
-      const cell = this.#collectionRow(update.name, update.frameId, update.ref)?.querySelector<HTMLElement>(`.collection-cell[data-index="${update.index}"]`);
-      const value = cell?.querySelector<HTMLElement>('.collection-item');
+      const field = 'key' in update;
+      const cell = this.#collectionRow(update.name, update.frameId, update.ref)?.querySelector<HTMLElement>(field ? `.object-field[data-key="${CSS.escape(update.key)}"]` : `.collection-cell[data-index="${update.index}"]`);
+      const value = cell?.querySelector<HTMLElement>(field ? '.field-value' : '.collection-item');
       const source = update.fromBadge !== undefined ? this.#badgeInnerEl(update.fromBadge) : null;
       if (cell && value) {
         if (ev.appended) animateCollectionAppend(cell, t, this.#ms(250));
@@ -763,7 +770,7 @@ export class CodeLoupe extends HTMLElement {
   #originEl(from: BadgeOrigin | undefined) {
     if (from?.kind === 'console') return this.#els.console.querySelector<HTMLElement>(`.chunk[data-index="${from.chunk}"] .in`);
     if (from?.kind === 'var') {
-      const target = from.index === undefined ? '.value' : `.collection-cell[data-index="${from.index}"] .collection-item`;
+      const target = from.key !== undefined ? `.object-field[data-key="${CSS.escape(from.key)}"] .field-value` : from.index === undefined ? '.value' : `.collection-cell[data-index="${from.index}"] .collection-item`;
       return this.#collectionRow(from.name, from.frameId, from.ref)?.querySelector<HTMLElement>(target) ?? null;
     }
     return null;

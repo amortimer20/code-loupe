@@ -157,7 +157,7 @@ steps:
 Ordinary steps can combine actions. They animate in this order: console → badge →
 convert → assign → collection mutation. Use at most one `update`, `append`, or
 `remove` per step. `call` and `return` each require their own step, with an optional caption.
-Allocation precedes these value actions, so a step can allocate a list and bind
+Allocation precedes these value actions, so a step can allocate an object and bind
 a name to it.
 
 | Key       | Example                                         | What it does |
@@ -170,9 +170,9 @@ a name to it.
 | `badge`   | `badge: { over: int(text), value: 30 }`         | Float a value above code on the current line (`line:` and `nth:` pick another spot). Add `from: console` to fly it up from the user's input, or `from: { var: text }` to fly it from a variable. |
 | `convert` | `convert: { over: int(text), value: 30 }`       | Turn the latest badge into a new value, optionally moving it. |
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
-| `allocate` | `allocate: { id: list-1, value: [2, 4] }` | Create a list object with a unique, author-chosen identity. `assign: { var: numbers, ref: list-1 }` binds a name to it. |
+| `allocate` | `allocate: { id: list-1, value: [2, 4] }` | Create a list, or use `fields: { name: Ada, score: 5 }` for a flat dictionary. `assign: { var: numbers, ref: list-1 }` binds a name to its identity. |
 | `select` | `select: { var: numbers, index: 0 }` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
-| `update` | `update: { var: numbers, index: 1, value: 10 }` | Replace an existing list element. `from: badge` transfers the latest badge's scalar value into that cell. |
+| `update` | `update: { var: numbers, index: 1, value: 10 }` | Replace an existing list element, or use `key: score` for a dictionary field. `from: badge` transfers the latest badge's scalar value. |
 | `append` | `append: { var: numbers, value: 6 }` | Add a scalar at the end of a list, including an empty one. Alternatively use `from: badge`. |
 | `remove` | `remove: { var: numbers, index: 1 }` | Delete an element by zero-based index; later elements shift forward. |
 | `call` | `call: { name: add_one, line: 1, over: add_one(value), args: [{ var: value, from: badge }] }` | Save the current caller line and call target, enter a function frame at `line`, and bind its parameters. |
@@ -185,7 +185,7 @@ language; add `type: float` etc. to override.
 Flat lists of these scalar values are supported, including empty lists:
 `assign: { var: numbers, value: [2, 4, 6] }`. Python infers `list`; JavaScript
 infers `array`. Variable lists display indexed cells; list badges display a literal.
-Nested collections and general objects are not modeled yet. Shared lists use
+Nested collections and class instances are not modeled yet. Shared lists use
 explicit allocation and reference bindings, described below.
 
 See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
@@ -220,7 +220,7 @@ its index when a selected surviving element shifts. Use a later `select` step to
 mark a newly appended cell. One mutation per step keeps transitions unambiguous;
 backward stepping and scrubbing restore the complete earlier list.
 
-## List objects and references
+## Objects and references
 
 See [Two names for one list](lessons/python/list-aliasing/lesson.yaml):
 
@@ -234,7 +234,7 @@ See [Two names for one list](lessons/python/list-aliasing/lesson.yaml):
   append: { var: other, value: 6 }
 ```
 
-Both names point to one list in the List objects panel. Mutation through either
+Both names point to one list in the Objects panel. Mutation through either
 name changes that object; assigning another value or reference to a name changes
 the binding instead. Each snapshot stores the list contents once and preserves
 its identity, so backward stepping restores sharing as well as values.
@@ -257,6 +257,35 @@ collection, nested references, and reference-valued returns are not modeled.
 Bounded players reveal the selected cell or relevant shared list inside the data
 pane, while preserving the host page's position.
 
+### Flat dictionaries
+
+See [Updating a dictionary field](lessons/python/dictionary-fields/lesson.yaml):
+
+```yaml
+- line: 1
+  allocate: { id: student-1, fields: { name: Ada, score: 5 } }
+  assign: { var: student, ref: student-1 }
+- line: 2
+  update: { var: student, key: score, value: 7 }
+- line: 3
+  badge: { over: 'student["score"]', value: 7, from: { var: student, key: score } }
+```
+
+Use exactly one of `allocate.value` (a flat list) or `allocate.fields` (a mapping
+of nonempty string keys to scalar values). Empty mappings are valid. Reference
+bindings and scoped lookup work for either object kind; Python dictionary
+references have a `dict` tag. Each named field shows its value and scalar type.
+
+`update.key` replaces an existing field, directly or with `from: badge`.
+`badge.from.key` identifies a field as the source of a teacher-authored badge.
+Both accept `scope: global` to bypass a same-named local. Do not combine `key`
+and `index`. List indexing, append, remove, and selection remain list-only.
+Bounded players reveal a field when it is updated or read.
+
+Adding/deleting keys, non-string keys, nested values/references, whole-dictionary
+badges, and class definitions are not supported yet. A missing key is an invalid
+authored step; the player does not execute Python or produce a runtime KeyError.
+
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.
 
@@ -268,7 +297,7 @@ to see one caller pause while another runs and two returns resume their callers.
 Highlight the caller line before a `call` step. Its `over` identifies the exact call
 text on that active line; `nth` chooses an occurrence. The call's `line` is the
 function entry line. `args` is an optional list of parameter bindings, each using
-`var` with `value`, `from: badge` (the latest caller badge), or `ref` (an allocated shared list).
+`var` with `value`, `from: badge` (the latest caller badge), or `ref` (an allocated list or dictionary).
 
 Assignments inside a function update its own locals. A badge source such as
 `from: { var: value }` looks in the active frame, then globals. Use
