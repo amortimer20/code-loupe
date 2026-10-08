@@ -28,6 +28,14 @@ export function renderCollection(name: string, items: ScalarValue[], selected: n
   return list;
 }
 
+/** Only the changed cell flashes; instant and reduced-motion renders skip this. */
+export function animateCollectionUpdate(cell: HTMLElement, delay: number, duration: number) {
+  cell.animate([
+    { backgroundColor: 'color-mix(in srgb, var(--ca-accent) 35%, transparent)' },
+    { backgroundColor: getComputedStyle(cell).backgroundColor },
+  ], { duration, delay, easing: 'ease-out' });
+}
+
 export const collectionStyles = /* css */ `
 .var.has-collection .value { flex-basis: 100%; order: 1; min-width: 0; }
 .collection { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.25rem 0; }

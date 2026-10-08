@@ -47,6 +47,12 @@ export interface AssignSpec {
   from?: 'badge';
 }
 
+/** Replace one existing list element; this does not resize the list. */
+export interface UpdateSpec extends SelectSpec {
+  value?: ScalarValue;
+  from?: 'badge';
+}
+
 /** Enter a function at `line`; `over` identifies the call in the current line. */
 export interface CallSpec {
   name: string;
@@ -73,6 +79,7 @@ export interface Step {
   convert?: ConvertSpec;
   assign?: AssignSpec;
   select?: SelectSpec | null;
+  update?: UpdateSpec;
   call?: CallSpec;
   return?: ReturnSpec;
 }
@@ -86,7 +93,7 @@ export interface Lesson {
 
 export class LessonError extends Error {}
 
-const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'select', 'call', 'return'];
+const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'select', 'update', 'call', 'return'];
 
 export function parseLesson(source: string): Lesson {
   let data: unknown;

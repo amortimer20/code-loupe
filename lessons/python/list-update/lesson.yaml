@@ -1,0 +1,23 @@
+title: Updating a list element
+language: python
+code: |
+  numbers = [2, 4, 6]
+  numbers[1] = 10
+  print(numbers)
+steps:
+  - line: 1
+    assign: { var: numbers, value: [2, 4, 6] }
+    caption: Create a list with three elements at indices 0, 1, and 2.
+  - line: 2
+    select: { var: numbers, index: 1 }
+    badge: { over: "10", value: 10 }
+    caption: Index 1 selects the second element, currently 4. The new value is 10.
+  - update: { var: numbers, index: 1, from: badge }
+    caption: Replace the element at index 1 with 10. Only this cell changes.
+  - select: null
+    caption: The list is now [2, 10, 6]. Its length is still three, and indices 0 and 2 retain their values.
+  - line: 3
+    badge: { over: numbers, value: [2, 10, 6], from: { var: numbers } }
+    caption: Read the whole updated list to print it.
+  - print: { text: "[2, 10, 6]", from: badge }
+    caption: The console shows the updated list. Step backward to compare it with the original.

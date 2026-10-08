@@ -86,7 +86,10 @@ Snapshot regression tests cover these foundations and the earlier corpus outcome
 The list-iteration sample adds indexed cells, an authored selection cue, element
 value transfers, and loop exhaustion. Compare Steps 3, 7, and 11 for reads and
 Steps 6, 10, and 14 for accumulation; Step 15 clears the selection. The list is
-unchanged throughout. Mutation and shared references need separate future lessons.
+unchanged throughout. The list-update sample adds replacement of one existing
+element. Compare Steps 2 and 3 to see the second cell change from `4` to `10`,
+while the neighbors and length stay the same. Step 5 shows the whole updated
+list as a badge. Length changes and shared references need separate future lessons.
 Checked-in Playwright tests cover the library/player/playground, with focused
 theme and nested-call screenshot references. Run `npm test` after changing the
 state model or a tested sample's authored outcomes, and `npm run test:docker`

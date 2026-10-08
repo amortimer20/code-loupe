@@ -80,3 +80,43 @@ steps:
   await expect(global.locator('[aria-current]')).toHaveCount(0);
   await expect(local.locator('[aria-current] .collection-item')).toHaveText('False');
 });
+
+test('element updates animate one cell and restore values through backward stepping and scrubbing', async ({ page }, info) => {
+  await page.goto('/samples/python/list-update/');
+  const player = await ready(page, 6);
+  const cells = player.locator('[data-name="numbers"] .collection-item');
+  await goTo(player, 2);
+  await expect(cells).toHaveText(['2', '4', '6']);
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  if (info.project.use.reducedMotion !== 'reduce') {
+    expect(await player.locator('.collection-cell[data-index="1"]').evaluate(el => el.getAnimations().length)).toBeGreaterThan(0);
+    expect(await player.locator('.collection-cell[data-index="0"]').evaluate(el => el.getAnimations().length)).toBe(0);
+  } else expect(await player.evaluate(el => el.shadowRoot!.getAnimations().length)).toBe(0);
+  await settle(player);
+  await expect(cells).toHaveText(['2', '10', '6']);
+  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'numbers[1] is 10, selected');
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(cells).toHaveText(['2', '4', '6']);
+  await goTo(player, 6);
+  await expect(player.locator('.console pre')).toHaveText('[2, 10, 6]\n');
+  const scrub = player.getByRole('slider', { name: 'Step', exact: true });
+  await scrub.focus();
+  await scrub.press('Home');
+  await scrub.press('ArrowRight');
+  await scrub.press('ArrowRight');
+  await settle(player);
+  await expect(cells).toHaveText(['2', '4', '6']);
+  await scrub.press('ArrowRight');
+  await settle(player);
+  await expect(cells).toHaveText(['2', '10', '6']);
+  await selectTheme(page, 'terminal');
+  await expect(cells).toHaveText(['2', '10', '6']);
+  await page.getByRole('button', { name: 'Enter fullscreen', exact: true }).click();
+  await page.setViewportSize({ width: 390, height: 600 });
+  await settle(player);
+  await expect(player.locator('.collection-cell[aria-current]')).toBeInViewport();
+  const controls = await player.locator('.controls').boundingBox();
+  expect(controls!.y + controls!.height).toBeLessThanOrEqual(600);
+  await expect(cells).toHaveText(['2', '10', '6']);
+});

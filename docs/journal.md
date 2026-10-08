@@ -171,3 +171,16 @@ to the inward-corner icon on entry; its accessible label and tooltip describe
 the current action. Keep the viewport-sized dialog behavior and the player's
 own title. A small optional `viewer-actions` slot lets the host supply this control
 without making the embeddable player depend on the sample site's dialog.
+
+## 2026-10-08 — Updating one list element
+
+Added `update: { var, index, value }` with an optional `from: badge` in place of
+an explicit value. It replaces one existing element without resizing the list,
+preserves an authored selection, and follows local/global lookup rules. A badge
+can travel into the cell, which briefly highlights on forward playback. Reduced
+motion, backward stepping, and scrubbing use the same stored snapshots immediately.
+
+The new lesson changes `[2, 4, 6]` to `[2, 10, 6]`, separating target selection,
+replacement, and printing. Copy the list on update to keep earlier snapshots
+and independently stored values intact. Shared references and object identity
+still need a distinct model; this action does not implement Python aliasing.

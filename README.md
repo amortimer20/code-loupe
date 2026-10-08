@@ -150,7 +150,7 @@ steps:
 ```
 
 Ordinary steps can combine actions. They animate in this order: console → badge →
-convert → assign. `call` and `return` each require their own step, with an optional caption.
+convert → assign → update. `call` and `return` each require their own step, with an optional caption.
 
 | Key       | Example                                         | What it does |
 | --------- | ----------------------------------------------- | ------------ |
@@ -163,6 +163,7 @@ convert → assign. `call` and `return` each require their own step, with an opt
 | `convert` | `convert: { over: int(text), value: 30 }`       | Turn the latest badge into a new value, optionally moving it. |
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
 | `select` | `select: { var: numbers, index: 0 }` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
+| `update` | `update: { var: numbers, index: 1, value: 10 }` | Replace an existing list element. `from: badge` transfers the latest badge's scalar value into that cell. |
 | `call` | `call: { name: add_one, line: 1, over: add_one(value), args: [{ var: value, from: badge }] }` | Save the current caller line and call target, enter a function frame at `line`, and bind its parameters. |
 | `return` | `return: { from: badge }` | Leave the active function, restore its caller, and show the result over the saved call target. Alternatively supply `value` and optional `type`. |
 
@@ -173,7 +174,7 @@ language; add `type: float` etc. to override.
 Flat lists of these scalar values are supported, including empty lists:
 `assign: { var: numbers, value: [2, 4, 6] }`. Python infers `list`; JavaScript
 infers `array`. Variable lists display indexed cells; list badges display a literal.
-Nested lists, objects, element mutation, and shared-reference identity are not modeled yet.
+Nested lists, objects, length-changing operations, and shared-reference identity are not modeled yet.
 
 See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
 indexed source such as `badge: { over: numbers, value: 2, from: { var: numbers, index: 0 } }`
@@ -184,6 +185,14 @@ then globals; `scope: global` selects a shadowed global explicitly.
 Selection is applied before badge animation and remains through the loop body.
 Reassigning the selected list or returning from its owning frame clears it.
 Lists are snapshot values, not a model of Python object identity or aliasing.
+
+The [element-update lesson](lessons/python/list-update/lesson.yaml) replaces one
+cell while preserving its neighbors and list length. `update` requires an existing
+list, a valid zero-based `index`, and a scalar `value` or `from: badge`. It resolves
+locals then globals; `scope: global` explicitly updates a shadowed global. Selection
+is separate: use `select` to mark a cell and `select: null` to clear it. A forward
+update briefly highlights the changed cell; reduced motion and backward stepping
+show the stored state immediately. Negative indices and append/remove are not supported.
 
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.

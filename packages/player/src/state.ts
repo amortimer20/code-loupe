@@ -1,6 +1,6 @@
 import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type Value } from './lesson';
 import { cloneValue, inferType, validateValue } from './values';
-import { checkCollectionIndex, type CollectionSelection } from './visuals/collection-state';
+import { checkCollectionIndex, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
 
 export type { CallFrame } from './visuals/call-stack-state';
@@ -36,6 +36,7 @@ export interface StepEvents {
   badgeAdded?: { id: number; from?: BadgeOrigin };
   converted?: { id: number; from: BadgeState };
   assigned?: { name: string; frameId: number; fromBadge?: number; isNew: boolean };
+  updated?: CollectionSelection & { fromBadge?: number };
   called?: { frameId: number; args: { name: string; fromBadge?: number }[] };
   returned?: { frameId: number; badgeId: number; fromBadge?: number };
 }
@@ -243,6 +244,18 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       if (existing) Object.assign(existing, { value, type });
       else vars.push({ name, value, type });
       s.events.assigned = { name, frameId, fromBadge, isNew: !existing };
+    }
+
+    if (step.update !== undefined) {
+      const update = step.update;
+      if (!isRecord(update)) fail('`update` needs a mapping with var, index, and value or from.');
+      checkKeys(update, ['var', 'index', 'value', 'from', 'scope'], 'update', fail);
+      if (typeof update.var !== 'string' || !update.var.length) fail('`update` needs a nonempty `var` name.');
+      if (update.scope !== undefined && update.scope !== 'global') fail('`update.scope` must be `global` when supplied.');
+      const found = findVariable(s, update.var, update.scope === 'global') ?? fail(`no variable named ${update.var} in the active scope or globals.`);
+      const { value, fromBadge } = readValue(update, 'update');
+      found.variable.value = replaceCollectionElement(found.variable, update.index, value, fail);
+      s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge };
     }
 
     snapshots.push(s);

@@ -83,3 +83,66 @@ test('invalid lists, selections, and indexed origins fail with useful step error
     assert.throws(() => buildSnapshots(parseLesson(raw)), /Step 2:.*flat list/);
   }
 });
+
+test('element replacement preserves list length, neighbors, and earlier snapshots', () => {
+  const lesson = parseLesson(readFileSync(new URL('../../../lessons/python/list-update/lesson.yaml', import.meta.url), 'utf8'));
+  const states = buildSnapshots(lesson);
+  assert.equal(states.length, 7);
+  assert.deepEqual(states[2].vars[0].value, [2, 4, 6]);
+  assert.deepEqual(states[3].vars[0].value, [2, 10, 6]);
+  assert.equal(states[3].vars[0].type, 'list');
+  assert.deepEqual(states[3].selection, { name: 'numbers', index: 1, frameId: 0 });
+  assert.deepEqual(states[3].events.updated, { name: 'numbers', index: 1, frameId: 0, fromBadge: 1 });
+  assert.equal(states[4].selection, null);
+  assert.equal(states[6].console.at(-1)?.text, '[2, 10, 6]\n');
+  const extra = buildSnapshots(fixture([assign, { update: { var: 'numbers', index: 0, value: null } }, { update: { var: 'numbers', index: 2, value: false } }]));
+  assert.deepEqual(extra[1].vars[0].value, [2, 4, 6]);
+  assert.deepEqual(extra[2].vars[0].value, [null, 4, 6]);
+  assert.deepEqual(extra[3].vars[0].value, [null, 4, false]);
+});
+
+test('element updates resolve local shadowing and explicit or fallback globals without aliasing', () => {
+  const states = buildSnapshots(fixture([
+    assign,
+    { call: { name: 'change', line: 2, over: 'numbers', args: [{ var: 'numbers', value: [9] }] } },
+    { update: { var: 'numbers', index: 0, value: 8 } },
+    { update: { var: 'numbers', index: 1, value: 10, scope: 'global' } },
+    { return: { value: null } },
+    { badge: { over: 'numbers', value: [2, 10, 6] } },
+    { assign: { var: 'copy', from: 'badge' } },
+    { update: { var: 'copy', index: 0, value: 99 } },
+  ]));
+  assert.deepEqual(states[3].frames[0].vars[0].value, [8]);
+  assert.deepEqual(states[3].vars[0].value, [2, 4, 6]);
+  assert.deepEqual(states[4].vars[0].value, [2, 10, 6]);
+  assert.equal(states[3].events.updated?.frameId, 1);
+  assert.equal(states[4].events.updated?.frameId, 0);
+  assert.deepEqual(states[8].vars[0].value, [2, 10, 6]);
+  assert.deepEqual(states[8].vars[1].value, [99, 10, 6]);
+  const fallback = buildSnapshots(fixture([assign, { call: { name: 'change', line: 2, over: 'numbers' } }, { update: { var: 'numbers', index: 0, value: 7 } }]));
+  assert.equal(fallback[3].events.updated?.frameId, 0);
+  assert.deepEqual(fallback[3].vars[0].value, [7, 4, 6]);
+});
+
+test('invalid element updates fail rather than growing a list or accepting nested values', () => {
+  for (const [update, error] of [
+    ['{ var: numbers, index: 3, value: 10 }', /outside/],
+    ['{ var: numbers, index: -1, value: 10 }', /zero-based/],
+    ['{ var: numbers, index: 0.5, value: 10 }', /outside/],
+    ['{ var: numbers, value: 10 }', /outside/],
+    ['{ var: missing, index: 0, value: 10 }', /no variable/],
+    ['{ var: numbers, index: 1 }', /needs a `value`/],
+    ['{ var: numbers, index: 1, from: badge }', /no badge/],
+    ['{ var: numbers, index: 1, from: console }', /must be `badge`/],
+    ['{ var: numbers, index: 1, value: [10] }', /scalar element/],
+    ['{ var: numbers, index: 1, value: .inf }', /finite scalar/],
+    ['{ var: numbers, index: 1, value: 10, scope: local }', /scope/],
+    ['{ var: numbers, index: 1, value: 10, typo: 1 }', /unknown update key/],
+    ['null', /needs a mapping/],
+  ] as const) {
+    const yaml = `language: python\ncode: n = numbers\nsteps:\n  - assign: { var: numbers, value: [2, 4, 6] }\n  - update: ${update}\n`;
+    assert.throws(() => buildSnapshots(parseLesson(yaml)), new RegExp(`Step 2:.*${error.source}`));
+  }
+  assert.throws(() => buildSnapshots(fixture([{ assign: { var: 'numbers', value: 2 } }, { update: { var: 'numbers', index: 0, value: 10 } }])), /Step 2:.*not a list/);
+  assert.throws(() => buildSnapshots(fixture([assign, { line: 1, badge: { over: 'numbers', value: [10] } }, { update: { var: 'numbers', index: 1, from: 'badge' } }])), /Step 3:.*scalar element/);
+});

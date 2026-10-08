@@ -5,7 +5,7 @@ import { formatValue } from './values';
 import { styles } from './styles';
 import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
 import { renderVariables } from './visuals/variables';
-import { collectionStyles } from './visuals/collection';
+import { animateCollectionUpdate, collectionStyles } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
 
 const DEFAULT_THEME = 'dark-plus';
@@ -665,6 +665,19 @@ export class CodeLoupe extends HTMLElement {
           [{ backgroundColor: 'color-mix(in srgb, var(--ca-accent) 35%, transparent)' }, { backgroundColor: 'transparent' }],
           { duration: this.#ms(900), delay: t, easing: 'ease-out' },
         );
+      }
+    }
+    if (ev.updated) {
+      const update = ev.updated;
+      const cell = this.#varRow(update.name, update.frameId)?.querySelector<HTMLElement>(`.collection-cell[data-index="${update.index}"]`);
+      const value = cell?.querySelector<HTMLElement>('.collection-item');
+      const source = update.fromBadge !== undefined ? this.#badgeInnerEl(update.fromBadge) : null;
+      if (cell && value) {
+        if (source) {
+          t += this.#fly(value.innerHTML, source.getBoundingClientRect(), value.getBoundingClientRect(), t, 'start');
+          value.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(150), delay: t - this.#ms(60), fill: 'backwards' });
+        }
+        animateCollectionUpdate(cell, t, this.#ms(900));
       }
     }
   }

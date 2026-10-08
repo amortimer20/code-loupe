@@ -13,6 +13,16 @@ for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
   });
 }
 
+test('updated list cell and list-valued print badge', async ({ page }) => {
+  await page.goto('/samples/python/list-update/');
+  const player = await ready(page, 6);
+  await goTo(player, 3);
+  await page.mouse.move(0, 0);
+  await expect(player).toHaveScreenshot('midnight-list-updated.png');
+  await goTo(player, 5);
+  await expect(player).toHaveScreenshot('midnight-list-print-badge.png');
+});
+
 test('gallery shell and narrow nested-call layout', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.sample-card')).toHaveCount(corpus.length);

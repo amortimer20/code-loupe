@@ -135,7 +135,9 @@ through a shared "where is this value on screen?" lookup.
       and two returns back to global scope.
 - [x] List-iteration lesson: flat list values, indexed cells, authored selection,
       element-to-badge transfers, and an accumulator with explicit exhaustion.
-- [ ] Collection mutation and shared-reference/heap semantics with focused lessons.
+- [x] List element-update lesson: replace one indexed cell, transfer a badge into it,
+      highlight the change, and restore the previous value when stepping backward.
+- [ ] Length-changing collection operations and shared-reference/heap semantics with focused lessons.
 - [ ] Extend module boundaries to the remaining visuals as new features need them.
 - [ ] Closures, nonlocal/global assignment declarations, implicit returns, and exception unwinding.
 
@@ -150,7 +152,8 @@ through a shared "where is this value on screen?" lookup.
        sample-specific playground drafts, and build-time lesson validation.
 4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
        Includes input conversion, an accumulator loop, a conditional branch, and a
-       function call, nested calls, and list iteration; next explore mutation and references.
+       function call, nested calls, list iteration, and an element update;
+       next explore length changes and references.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
@@ -202,8 +205,8 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      fifteen reviewed screenshot references for themes, nested calls/returns,
-      list selection, the gallery, narrow player, and short-laptop Focus lesson view;
+      seventeen reviewed screenshot references for themes, nested calls/returns,
+      list selection/updates, the gallery, narrow player, and short-laptop Focus lesson view;
       pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,
