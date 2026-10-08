@@ -133,3 +133,18 @@ The new scrub regression test exposed an existing ordering bug: pausing playback
 re-rendered controls and replaced the slider's incoming value before it was read.
 Capture the requested step before pausing, so input events actually scrub to the
 requested snapshot. The browser suite retains coverage for the fix.
+
+## 2026-10-07 — Focus lesson, first short-screen iteration
+
+Added a viewport-sized Focus lesson view to sample pages. The existing inline
+dialog becomes modal without moving or reconnecting the player, so entering and
+leaving preserve the current step and frames. Escape and the exit button restore
+the inline view, page position, and focus. Native modal behavior keeps background
+controls out of the tab order while viewing the lesson.
+
+Added an opt-in `fit` attribute for hosts that supply a definite player height.
+Code and data panes scroll internally; captions, console, and controls occupy
+the remaining fixed regions. The code pane keeps the active line visible with
+space for value badges. Normal players retain their natural height. This first
+iteration keeps the existing font size and code-row spacing so we can evaluate
+the focused layout before adding compact density settings.

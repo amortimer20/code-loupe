@@ -32,7 +32,7 @@ const ICONS = {
 const TEMPLATE = `
 <style>${styles}${callStackStyles}</style>
 <div class="ca" part="container">
-  <div class="title" hidden></div>
+  <div class="title" part="title" hidden></div>
   <div class="stage">
     <div class="data">
       <section aria-label="Global variables">
@@ -77,7 +77,7 @@ const TEMPLATE = `
  * Fires `stepchange` with { step, total }. Methods: next(), prev(), goTo(n), play(), pause().
  */
 export class CodeLoupe extends HTMLElement {
-  static observedAttributes = ['src', 'theme', 'speed', 'motion'];
+  static observedAttributes = ['src', 'theme', 'speed', 'motion', 'fit'];
 
   #root = this.attachShadow({ mode: 'open' });
   #lesson: Lesson | null = null;
@@ -183,6 +183,7 @@ export class CodeLoupe extends HTMLElement {
 
   attributeChangedCallback(name: string, _old: string | null, value: string | null) {
     if (_old === value) return;
+    if (name === 'fit') return this.#render(false);
     if (name === 'speed') {
       // A viewer's own saved choice wins over the page's default.
       if (readStoredSpeed() === null && value !== null) this.speed = Number(value);
@@ -470,8 +471,17 @@ export class CodeLoupe extends HTMLElement {
     if (!animate) scroll.classList.add('instant');
     arrow.classList.toggle('visible', !!lineEl);
     if (lineEl) {
-      const y = lineEl.getBoundingClientRect().top - scroll.getBoundingClientRect().top + scroll.scrollTop + lineEl.offsetHeight / 2;
+      const top = lineEl.getBoundingClientRect().top - scroll.getBoundingClientRect().top + scroll.scrollTop;
+      const y = top + lineEl.offsetHeight / 2;
       arrow.style.transform = `translateY(${y}px)`;
+      if (this.hasAttribute('fit')) {
+        // Leave room above the active line for its value badges. Scroll only
+        // this pane; stepping must never move the host page.
+        if (top - scroll.scrollTop < 32) scroll.scrollTop = Math.max(0, top - 32);
+        else if (top + lineEl.offsetHeight - scroll.scrollTop > scroll.clientHeight - 8) {
+          scroll.scrollTop = top + lineEl.offsetHeight - scroll.clientHeight + 8;
+        }
+      }
     }
     if (!animate) {
       void scroll.offsetWidth; // apply the new position before transitions come back

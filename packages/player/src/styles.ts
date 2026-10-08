@@ -6,6 +6,22 @@ export const styles = /* css */ `
 :host(:focus-visible) { outline: none; }
 :host(:focus-visible) .ca { outline: 2px solid var(--ca-accent); outline-offset: 2px; }
 
+/* Opt-in bounded viewer: the host supplies a definite height. */
+:host([fit]) .ca { height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto auto; }
+:host([fit]) .title { grid-row: 1; }
+:host([fit]) .stage { grid-row: 2; min-height: 0; }
+:host([fit]) .caption { grid-row: 3; }
+:host([fit]) .console { grid-row: 4; }
+:host([fit]) .controls { grid-row: 5; }
+:host([fit]) .data { min-height: 0; overflow: auto; }
+:host([fit]) .code { min-height: 0; min-width: 0; }
+:host([fit]) .code-scroll { height: 100%; min-height: 0; box-sizing: border-box; overflow: auto; }
+:host([fit]) .console pre { max-height: 4.2em; }
+:host([fit]) .ca.has-error .error { grid-row: 1 / -1; overflow: auto; }
+@container (max-width: 640px) {
+  :host([fit]) .stage { grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
+}
+
 .ca {
   /* --ca-bg and --ca-fg are replaced with the Shiki theme's colors at load. */
   --ca-bg: #1e1e1e;

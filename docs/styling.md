@@ -53,7 +53,25 @@ Docker environment and how to review intentional visual changes.
 The site follows Phosphor's square-pane design, thin borders, coordinated surfaces,
 and monospace labels. Code Loupe does not currently include Phosphor's CRT effects.
 
-The player already stacks its data panel below the code at narrow container widths;
+The sample page's **Focus lesson** button opens the existing player in a viewport-sized
+modal with an exit bar. Escape or **Exit focus** restores the inline view and its
+page position. The player stays connected, preserving its step, theme, and frames.
+The player's `title` CSS part lets this view hide the repeated internal title;
+ordinary bounded embeds retain their title unless the host styles that part.
+Code and data panes scroll internally, with captions, console, and controls below
+them. The active code line is kept in view, with room above it for badges.
+
+Embeds can opt into the same bounded layout with `fit` and a definite host height:
+
+```html
+<code-loupe src="lesson.yaml" theme="midnight" fit style="height: 70dvh"></code-loupe>
+```
+
+The first focus-view iteration preserves code font size and row spacing. Compact
+spacing and automatic density changes are still future design work; larger code
+or stacks can require scrolling within their panes.
+
+The player stacks its data panel below the code at narrow container widths;
 the playground stacks its editor and preview. A future responsive design session
 should consider long code lines, deeper stacks, collections, constrained embed
 heights, resizable panes, and teacher-selected layouts. That work is backlogged,

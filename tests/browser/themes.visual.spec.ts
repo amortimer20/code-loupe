@@ -24,3 +24,16 @@ test('gallery shell and narrow nested-call layout', async ({ page }) => {
   await goTo(player, 8);
   await expect(player).toHaveScreenshot('midnight-narrow-nested-locals.png');
 });
+
+test('focus view on a short laptop', async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 600 });
+  await page.goto('/samples/python/nested-function-call/');
+  const player = await ready(page, 19);
+  await goTo(player, 8);
+  await page.getByRole('button', { name: 'Focus lesson', exact: true }).click();
+  await expect(player).toHaveAttribute('fit');
+  await page.getByRole('button', { name: 'Exit focus', exact: true }).blur();
+  await goTo(player, 8);
+  await page.mouse.move(0, 0);
+  await expect(page).toHaveScreenshot('midnight-focus-short-laptop.png');
+});

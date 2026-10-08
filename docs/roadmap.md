@@ -180,7 +180,11 @@ through a shared "where is this value on screen?" lookup.
       slide player; verify light/dark themes, keyboard focus, reduced motion, and custom fonts.
 - [ ] **Lesson-aware responsive layouts (backlog):** explore constrained embed sizes,
       long code, deep stacks, collections, resizable panes, and teacher-selected layouts.
-      Current narrow-width stacking remains the baseline; no layout API is settled yet.
+      Narrow-width stacking and bounded-height viewing are the baseline;
+      lesson-specific layout choices remain to be designed.
+- [x] First short-screen improvement: sample-page Focus lesson view and opt-in
+      bounded-height player (`fit`), preserving steps with internally scrollable
+      panes and active-line following. Compact spacing remains a next iteration.
 
 ## 7. Embedding and distribution
 
@@ -195,8 +199,9 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      eleven reviewed screenshot references for themes, nested calls/returns,
-      the gallery, and a narrow player; pinned Docker environment for CI parity.
+      twelve reviewed screenshot references for themes, nested calls/returns,
+      the gallery, narrow player, and short-laptop Focus lesson view;
+      pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,
       production builds/corpus validation, behavioral and visual tests, and

@@ -32,6 +32,11 @@ editor and in the player. Drafts are saved in browser storage when available,
 with separate drafts for each sample. Download preserves the exact YAML, even
 for incomplete lessons. There is no account or backend.
 
+On a sample page, **Focus lesson** fills the viewport with the current player and
+a small exit bar. It preserves your step; use **Exit focus** or Escape to return.
+The code follows the active line, while code and variable/call-stack panes scroll
+internally as needed. Captions, console, and playback controls remain available.
+
 ## Repository structure
 
 ```text
@@ -91,6 +96,7 @@ baseline review, and current coverage limits.
 | `speed`       | Default playback speed, e.g. `0.75`. A viewer's own choice from the speed menu is remembered and wins. |
 | `motion`      | `full` animates even when the OS asks for reduced motion (Windows "Animation effects" off); `reduced` starts with animations off. Viewers can always flip the animations button, and their choice is remembered. |
 | `no-keyboard` | Don't handle ← → Home End Space (e.g. when a host page does) |
+| `fit`         | Fit a definite height supplied by the host (e.g. `style="height: 70dvh"`). Keep captions, console, and controls below scrollable code/data panes; follow the active line. |
 
 JavaScript API: `next()`, `prev()`, `goTo(n)`, `play()`, `pause()`, `step`, `total`, and a
 `stepchange` event with `{ step, total }`.

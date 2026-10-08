@@ -11,12 +11,15 @@ execute the Python displayed in a lesson.
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
 | Type checks and builds | Player and site code, browser tests/configuration, canonical lesson metadata and semantic validation, independent player bundle and static site |
 | Playwright behavior | Gallery filters, all samples' outcomes and downloads, draft restoration/isolation, invalid draft recovery/download, nested frames, both returns, backward stepping, scrubbing, keyboard navigation, autoplay, animations, theme/draft/load races, storage failure, and narrow layouts |
-| Screenshot comparisons | Paper/Midnight/Terminal at nested locals and both return destinations; Midnight gallery and narrow nested-call player |
+| Screenshot comparisons | Paper/Midnight/Terminal at nested locals and both return destinations; Midnight gallery, narrow nested-call player, and focused player on a short laptop |
 
 Behavioral tests run in separate Chromium projects for normal motion and OS
 reduced motion. Each test starts with a fresh browser context and checks for
 unexpected JavaScript exceptions. Tests wait for player readiness, assertions,
 and actual Web Animations to finish rather than sleeping for guessed durations.
+Focus-view tests cover 1280×600 and 390×600 viewports, execution following,
+reachable controls, step/frame preservation, both exit paths, no source refetch,
+and a bounded independent embed without a title.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
@@ -77,8 +80,8 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The initial set contains eleven PNGs. Desktop captures use 1280×960 and the narrow
-case uses 390×844. Visual tests disable animations and move the pointer away from
+The set contains twelve PNGs. Desktop captures use 1280×960, the narrow
+case uses 390×844, and the focused laptop uses 1280×600. Visual tests disable animations and move the pointer away from
 controls. Comparisons permit no differing pixels beyond Playwright's default
 per-pixel color threshold; they do not use a broad percentage tolerance.
 

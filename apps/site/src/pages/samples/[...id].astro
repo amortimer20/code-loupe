@@ -20,9 +20,16 @@ const source = sitePath(`lessons/${entry.id}.yaml`);
     <div class="actions">
       <a class="button" href={`${sitePath('playground/')}?sample=${encodeURIComponent(entry.id)}`}>Edit in playground</a>
       <a class="button secondary" href={source} download={`${entry.id.split('/').at(-1)}.yaml`}>Download YAML</a>
+      <button class="button secondary" id="focus-lesson" type="button">Focus lesson</button>
     </div>
   </div>
-  <code-loupe src={source}></code-loupe>
+  <dialog class="lesson-view" id="lesson-view" aria-label={entry.data.title} open>
+    <div class="focus-bar" hidden>
+      <span>{entry.data.title}</span>
+      <button class="button secondary" id="exit-focus" type="button">Exit focus <span aria-hidden="true">Esc</span></button>
+    </div>
+    <code-loupe src={source}></code-loupe>
+  </dialog>
   <div class="lesson-details">
     <aside class="learning-goal">
       <h2>Learning objective</h2><p>{entry.data.objective}</p>
@@ -32,4 +39,4 @@ const source = sitePath(`lessons/${entry.id}.yaml`);
     <div class="prose"><Content /></div>
   </div>
 </Layout>
-<script>import 'code-loupe';</script>
+<script>import 'code-loupe'; import '../../focus-lesson';</script>
