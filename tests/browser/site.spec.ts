@@ -5,6 +5,12 @@ import type { CodeLoupe } from '../../packages/player/src/code-loupe';
 test('gallery combines search and topic filters and reports empty results', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.sample-card')).toHaveCount(corpus.length);
+  await expect(page.locator('.sample-card').nth(0)).toContainText('Hello, world');
+  await expect(page.locator('.sample-card').nth(1)).toContainText('Simple arithmetic');
+  await expect(page.locator('.sample-card').nth(2)).toContainText('Naming a value');
+  await expect(page.locator('.sample-card').nth(3)).toContainText('Changing a value');
+  await expect(page.locator('.sample-card').nth(4)).toContainText('Strings and numbers');
+  await expect(page.locator('.sample-card').nth(5)).toContainText('Converting input to a number');
   await page.getByRole('combobox', { name: 'Topic', exact: true }).selectOption('Functions');
   await expect(page.locator('.sample-card:visible')).toHaveCount(2);
   await page.getByLabel('Search', { exact: true }).fill('nested');
@@ -17,13 +23,100 @@ test('gallery combines search and topic filters and reports empty results', asyn
   await expect(page.locator('.sample-card:visible')).toHaveCount(corpus.length);
 });
 
+test('introductory lessons reveal output after the active line and restore intermediate states', async ({ page }) => {
+  for (const sample of corpus.slice(0, 2)) {
+    await page.goto(`/samples/python/${sample.id}/`);
+    const player = await ready(page, sample.steps);
+    await goTo(player, 1);
+    await expect(player.locator('.line.active')).toHaveCount(1);
+    await expect(player.locator('.console pre')).toHaveText('');
+    await expect(player.locator('.badge')).toHaveCount(0);
+    await player.getByRole('button', { name: 'Next step', exact: true }).click();
+    await settle(player);
+    if (sample.id === 'simple-arithmetic') {
+      await expect(player.locator('.badge')).toContainText('5');
+      await expect(player.locator('.badge .tag')).toHaveText('int');
+      await expect(player.locator('.console pre')).toHaveText('');
+      await player.getByRole('button', { name: 'Next step', exact: true }).click();
+      await settle(player);
+    }
+    await expect(player.locator('.console pre')).toHaveText(sample.output + '\n');
+    await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+    await settle(player);
+    await expect(player.locator('.console pre')).toHaveText('');
+    await expect(player.locator('.badge')).toHaveCount(sample.id === 'simple-arithmetic' ? 1 : 0);
+    await goTo(player, 1);
+    await expect(player.locator('.badge')).toHaveCount(0);
+    await expect(player.locator('.globals [data-name]')).toHaveCount(0);
+    await expect(player.locator('.heap-panel')).toBeHidden();
+    await expect(player.locator('.call-stack')).toBeHidden();
+  }
+});
+
+test('naming and changing a value show reads before assignment and restore the old binding', async ({ page }) => {
+  await page.goto('/samples/python/naming-value/');
+  let player = await ready(page, 3);
+  await goTo(player, 2);
+  await expect(player.locator('.globals [data-name="score"]')).toContainText('5');
+  await expect(player.locator('.badge')).toContainText('5');
+  await expect(player.locator('.console pre')).toHaveText('');
+  await goTo(player, 3);
+  await expect(player.locator('.console pre')).toHaveText('5\n');
+  await expect(player.locator('.globals [data-name]')).toHaveCount(1);
+  await page.goto('/samples/python/changing-value/');
+  player = await ready(page, 6);
+  await goTo(player, 3);
+  await expect(player.locator('.globals [data-name="score"]')).toContainText('5');
+  await expect(player.locator('.badge')).toContainText('7');
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.globals [data-name="score"]')).toContainText('7');
+  await expect(player.locator('.globals [data-name]')).toHaveCount(1);
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.globals [data-name="score"]')).toContainText('5');
+  await expect(player.locator('.badge')).toContainText('7');
+  await goTo(player, 6);
+  await expect(player.locator('.console pre')).toHaveText('7\n');
+  await player.getByRole('slider', { name: 'Step', exact: true }).focus();
+  await page.keyboard.press('Home');
+  await expect(player.locator('.globals [data-name]')).toHaveCount(0);
+  await expect(player.locator('.console pre')).toHaveText('');
+});
+
+test('number addition and string concatenation keep distinct badges and independent console lines', async ({ page }) => {
+  await page.goto('/samples/python/strings-and-numbers/');
+  const player = await ready(page, 6);
+  await goTo(player, 2);
+  await expect(player.locator('.badge .tag')).toHaveText('int');
+  await expect(player.locator('.badge')).toContainText('5');
+  await goTo(player, 4);
+  await expect(player.locator('.console pre')).toHaveText('5\n');
+  await expect(player.locator('.badge')).toHaveCount(0);
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.badge .tag')).toHaveText('str');
+  await expect(player.locator('.badge')).toContainText('"23"');
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.console pre')).toHaveText('5\n23\n');
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('.console pre')).toHaveText('5\n');
+  await expect(player.locator('.badge')).toContainText('"23"');
+  await goTo(player, 2);
+  await expect(player.locator('.badge .tag')).toHaveText('int');
+  await expect(player.locator('.console pre')).toHaveText('');
+});
+
 for (const sample of corpus) {
   test(`${sample.id}: playback, canonical download, and playground draft restore`, async ({ page }) => {
     const yaml = await canonical(sample.id);
     await page.goto(`/samples/python/${sample.id}/`);
     const player = await ready(page, sample.steps);
     await goTo(player, sample.steps);
-    await expect(player.locator('.globals')).toContainText(sample.vars);
+    if (sample.vars) await expect(player.locator('.globals')).toContainText(sample.vars);
+    else await expect(player.locator('.globals [data-name]')).toHaveCount(0);
     await expect(player.locator('.console pre')).toContainText(sample.output);
     await expect(player.locator('.frame[data-frame-id]:not([data-frame-id="0"])')).toHaveCount(0);
     const event = page.waitForEvent('download');

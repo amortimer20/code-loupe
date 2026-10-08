@@ -77,6 +77,18 @@ intermediate states. Teaching order and animation origins matter even when final
 values are identical. The corpus supplies snapshot-test fixtures and can also
 support future visual regression tests.
 
+The library begins with hello-world and simple-arithmetic. Hello-world has only
+an active line and printed message; arithmetic adds one expression-result badge
+and a transfer to the console. Neither needs variables. They provide small
+comparisons before input conversion combines several concepts. Gallery `order`
+sets the teaching sequence without changing existing sample URLs or drafts.
+Next, naming-value introduces a stored number and a read through its name.
+Changing-value separates reading the old value, evaluating the right-hand side,
+and storing the result; compare Steps 3 and 4 for the assignment boundary.
+Strings-and-numbers contrasts integer addition with string concatenation. Compare
+the badges at Steps 2 and 5, then both outputs at Step 6, before moving to input
+conversion.
+
 The function-call sample adds parameter binding, separate global/local scope,
 return-to-caller behavior, and a frame that can be restored by backward stepping.
 The nested-function-call sample adds a suspended caller, same-named locals in

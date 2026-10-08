@@ -14,7 +14,12 @@ export const test = base.extend<{ browserErrors: string[] }>({
 export { expect };
 
 export const palettes = { paper: '#faf7ef', midnight: '#191d2d', terminal: '#101815' };
-export const corpus = [
+export const corpus: { id: string; steps: number; output: string; vars?: RegExp }[] = [
+  { id: 'hello-world', steps: 2, output: 'Hello, world!' },
+  { id: 'simple-arithmetic', steps: 3, output: '5' },
+  { id: 'naming-value', steps: 3, output: '5', vars: /score\s*=\s*5/ },
+  { id: 'changing-value', steps: 6, output: '7', vars: /score\s*=\s*7/ },
+  { id: 'strings-and-numbers', steps: 6, output: '5\n23' },
   { id: 'numeric-input', steps: 9, output: 'You will be 100 in 70 years!', vars: /age\s*=\s*30/ },
   { id: 'accumulator-loop', steps: 13, output: '3', vars: /total\s*=\s*3/ },
   { id: 'conditional', steps: 5, output: 'Under 18', vars: /age\s*=\s*16/ },

@@ -47,8 +47,12 @@ lessons/          Canonical YAML lessons plus Markdown metadata and teaching not
 docs/             Tutorial, contribution guide, roadmap, and journal
 ```
 
-The corpus includes Python input conversion, an accumulator loop, a conditional
-branch, a function call, and nested calls with separate locals and return values.
+Start with [Hello, world](lessons/python/hello-world/lesson.yaml) and
+[Simple arithmetic](lessons/python/simple-arithmetic/lesson.yaml), then naming
+and changing a value and comparing strings with numbers. The corpus
+continues with Python input conversion, an accumulator loop, a conditional
+branch, functions with separate locals and return values, and list operations,
+aliasing, and copying.
 See [Adding samples](docs/samples.md) to contribute another
 lesson without editing the site routes. The site validates every lesson during
 its build and generates download files from the canonical YAML.

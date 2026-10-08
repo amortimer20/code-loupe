@@ -10,7 +10,7 @@ prerequisites:
   - Shared list references
 topics: [Collections, References, Assignment, Input and output]
 mode: authored
-order: 11
+order: 16
 ---
 
 ## Teaching notes

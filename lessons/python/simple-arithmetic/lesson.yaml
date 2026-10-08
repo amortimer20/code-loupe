@@ -1,0 +1,11 @@
+title: Simple arithmetic
+language: python
+code: |
+  print(2 + 3)
+steps:
+  - line: 1
+    caption: Before print() can show anything, Python evaluates the addition inside the parentheses. What is 2 + 3?
+  - badge: { over: "2 + 3", value: 5 }
+    caption: The expression 2 + 3 evaluates to the integer 5. The badge shows that result beside the code.
+  - print: { text: "5", from: badge }
+    caption: print() sends the result to the console. The output is 5, rather than the expression 2 + 3.

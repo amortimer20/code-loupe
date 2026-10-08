@@ -235,3 +235,25 @@ The panel is labeled List objects consistently for both lessons. Sharing is a
 relationship between variable references and an object, not a property required
 of every list card. Keep the layout and reference labels; one card versus two
 cards explains aliasing versus copying without changing the panel's name.
+
+## 2026-10-08 — A gentler starting sequence
+
+Put Hello, world and simple arithmetic before input conversion. The first uses
+two moments for one print statement; the second adds an expression-result badge
+before printing. Neither needs variables or new player actions. Preserve sample
+ids and relative ordering of the existing corpus while shifting gallery order.
+Build the remaining introductory lessons in later focused batches.
+
+Completed the starting sequence with naming a value, changing a value, and
+strings versus numbers. Keep evaluation and assignment as separate authored
+moments so students see the old binding while the new result is available.
+Use numeric addition versus string concatenation to prepare for input conversion;
+console text alone does not identify the value's original type.
+
+## 2026-10-08 — Mathematics stays in the long-term backlog
+
+An authored algebra renderer is a possible future extension, with separate math
+lesson types and rendering and potentially shared playback and captions. Record
+it as an exploration, not a settled architecture or a solver commitment. Finish
+the introductory code sequence first; no math dependencies or renderer changes
+are part of this work.

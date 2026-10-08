@@ -1,0 +1,14 @@
+title: Naming a value
+language: python
+code: |
+  score = 5
+  print(score)
+steps:
+  - line: 1
+    assign: { var: score, value: 5 }
+    caption: Assignment binds the name score to the integer 5. The Variables panel shows its current value.
+  - line: 2
+    badge: { over: score, value: 5, from: { var: score } }
+    caption: Read score to find the value that print() will use. The name refers to 5; it is not the message to print.
+  - print: { text: "5", from: badge }
+    caption: The console shows 5. Reading score did not change its stored value.

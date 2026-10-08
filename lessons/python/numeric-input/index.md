@@ -7,12 +7,16 @@ objective: Distinguish the string returned by input() from the integer needed fo
 prerequisites:
   - Variables and assignment
   - Basic arithmetic
+  - Strings and numbers
 topics: [Input and output, Types and conversion, Expressions]
 mode: authored
-order: 1
+order: 6
 ---
 
 ## Teaching notes
+
+Follow [Strings and numbers](/samples/python/strings-and-numbers/) with this
+lesson: input returns text even when the typed characters are digits.
 
 Pause when `input()` returns `"30"`. Ask whether typing digits makes this value
 a number. The `str` tag and quotes make its type visible.

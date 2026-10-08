@@ -158,9 +158,12 @@ through a shared "where is this value on screen?" lookup.
        static site with searchable samples, teaching notes, canonical YAML downloads,
        sample-specific playground drafts, and build-time lesson validation.
 4. [ ] **Grow the comparison corpus:** add lessons as each new visual or behavior lands.
-       Includes input conversion, an accumulator loop, a conditional branch, and a
+       Begins with Hello, world, simple arithmetic, naming a value, changing a value,
+       and strings versus numbers, followed by input conversion,
+       an accumulator loop, a conditional branch, and a
        function call, nested calls, list iteration, element updates, append, and
        indexed removal, shared-list aliasing, and a copying comparison.
+       The initial five-lesson introductory sequence is complete.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
 
@@ -223,6 +226,16 @@ through a shared "where is this value on screen?" lookup.
 - [ ] Extend browser coverage to Firefox and WebKit as embedding needs grow.
 
 ---
+
+## 9. Mathematics exploration (long-term backlog)
+
+- [ ] Explore authored algebra lessons after the code-teaching foundations.
+      Start with a small prototype displaying successive teacher-authored equations
+      and captions, using LaTeX-style notation rendered by a math library such as
+      KaTeX. Keep math lesson types and rendering separate from code execution state;
+      assess shared playback controls and captions before extracting a common shell.
+      Animated term transformations, mathematical validation, and student-entered
+      solutions are later questions. This is not part of the near-term sequence.
 
 ## Suggested order
 

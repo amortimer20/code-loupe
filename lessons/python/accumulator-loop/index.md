@@ -9,7 +9,7 @@ prerequisites:
   - Addition
 topics: [Loops, Expressions, Input and output]
 mode: authored
-order: 2
+order: 7
 ---
 
 ## Teaching notes

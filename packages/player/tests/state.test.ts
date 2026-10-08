@@ -174,6 +174,11 @@ test('return replaces argument badges but preserves evaluated values outside the
 
 test('existing corpus lessons keep their final globals, console, and empty call stacks', () => {
   const cases = [
+    ['hello-world', {}, 'Hello, world!\n'],
+    ['simple-arithmetic', {}, '5\n'],
+    ['naming-value', { score: 5 }, '5\n'],
+    ['changing-value', { score: 7 }, '7\n'],
+    ['strings-and-numbers', {}, '5\n23\n'],
     ['numeric-input', { text: '30', age: 30 }, 'Enter your age: 30You will be 100 in 70 years!\n'],
     ['accumulator-loop', { total: 3, n: 2 }, '3\n'],
     ['conditional', { age: 16 }, 'Under 18\n'],
@@ -184,4 +189,23 @@ test('existing corpus lessons keep their final globals, console, and empty call 
     assert.equal(final.console.map(c => c.text).join(''), output);
     assert.deepEqual(final.frames, []);
   }
+});
+
+test('introductory examples separate old-value reads, assignment, and string concatenation', () => {
+  const naming = buildSnapshots(sample('naming-value'));
+  assert.deepEqual(vars(naming[1].vars), { score: 5 });
+  assert.equal(naming[2].badges.at(-1)?.value, 5);
+  assert.equal(naming[2].events.badgeAdded?.from?.kind, 'var');
+  const changing = buildSnapshots(sample('changing-value'));
+  assert.deepEqual(vars(changing[3].vars), { score: 5 });
+  assert.equal(changing[2].badges.at(-1)?.nth, 2);
+  assert.equal(changing[3].badges.at(-1)?.value, 7);
+  assert.deepEqual(vars(changing[4].vars), { score: 7 });
+  assert.equal(changing[3].console.length, 0);
+  const types = buildSnapshots(sample('strings-and-numbers'));
+  assert.equal(types[2].badges.at(-1)?.value, 5);
+  assert.equal(types[2].badges.at(-1)?.type, 'int');
+  assert.equal(types[5].badges.at(-1)?.value, '23');
+  assert.equal(types[5].badges.at(-1)?.type, 'str');
+  assert.equal(types[5].console.map(chunk => chunk.text).join(''), '5\n');
 });

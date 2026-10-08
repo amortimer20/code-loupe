@@ -1,0 +1,22 @@
+title: Changing a value
+language: python
+code: |
+  score = 5
+  score = score + 2
+  print(score)
+steps:
+  - line: 1
+    assign: { var: score, value: 5 }
+    caption: Start with score bound to 5.
+  - line: 2
+    badge: { over: score, nth: 2, value: 5, from: { var: score } }
+    caption: Read the old value of score on the right-hand side first. It is still 5.
+  - convert: { over: "score + 2", value: 7 }
+    caption: Adding 2 gives 7. This is the new result, but score still holds 5 until assignment happens.
+  - assign: { var: score, from: badge }
+    caption: Now bind score to the result 7, replacing its previous value. This is an assignment, not an algebraic equality.
+  - line: 3
+    badge: { over: score, value: 7, from: { var: score } }
+    caption: Reading score now gives 7.
+  - print: { text: "7", from: badge }
+    caption: The console shows the updated value 7.

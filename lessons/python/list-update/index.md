@@ -9,7 +9,7 @@ prerequisites:
   - Zero-based list indices
 topics: [Collections, Assignment, Input and output]
 mode: authored
-order: 7
+order: 12
 ---
 
 ## Teaching notes

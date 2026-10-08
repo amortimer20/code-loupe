@@ -32,6 +32,12 @@ Reference checks cover one object shared by two bindings, mutations through
 aliases, rebinding, distinct objects, local/global references, restored identities,
 selection through another alias, independent copies with contrasting console
 outputs, and bounded data-pane following across two object cards.
+Introductory checks cover gallery ordering, lessons without variables, the active
+line before output, an integer expression badge before printing, and backward
+restoration of the empty console and intermediate badge.
+The remaining introductory checks cover one binding reused on reassignment,
+old-value reads before assignment, restored bindings, integer versus string
+badges, and preservation of the first console line when undoing the second.
 
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only

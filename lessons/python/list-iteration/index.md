@@ -9,7 +9,7 @@ prerequisites:
   - Accumulator loops
 topics: [Collections, Loops, Expressions, Input and output]
 mode: authored
-order: 6
+order: 11
 ---
 
 ## Teaching notes

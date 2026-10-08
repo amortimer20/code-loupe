@@ -1,0 +1,9 @@
+title: Hello, world
+language: python
+code: |
+  print("Hello, world!")
+steps:
+  - line: 1
+    caption: The arrow marks the line we are about to run. print() sends a message to the console.
+  - print: "Hello, world!"
+    caption: The console shows Hello, world! The quotation marks belong to the code; they are not part of the printed message.

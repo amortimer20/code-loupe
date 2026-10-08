@@ -9,7 +9,7 @@ prerequisites:
   - Numeric comparison
 topics: [Conditionals, Expressions, Input and output]
 mode: authored
-order: 3
+order: 8
 ---
 
 ## Teaching notes

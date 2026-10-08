@@ -1,0 +1,18 @@
+title: Strings and numbers
+language: python
+code: |
+  print(2 + 3)
+  print("2" + "3")
+steps:
+  - line: 1
+    caption: These operands are integers. Predict the result of adding 2 and 3.
+  - badge: { over: "2 + 3", value: 5 }
+    caption: Integer addition gives 5. The int tag identifies the result as a number.
+  - print: { text: "5", from: badge }
+    caption: The first console line shows 5.
+  - line: 2
+    caption: Quotation marks make these operands strings. What will joining "2" and "3" produce?
+  - badge: { over: '"2" + "3"', value: "23" }
+    caption: For strings, + joins the text. The result is "23", with a str tag; it is not integer addition.
+  - print: { text: "23", from: badge }
+    caption: The second console line shows 23 without quotation marks. The badge showed its string type; console text alone does not show that distinction.
