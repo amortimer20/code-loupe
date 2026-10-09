@@ -64,6 +64,12 @@ need updating; code edits do not recalculate them.
 The new page, gallery card, topic filters, playground source list, and YAML download
 are generated from the folder. No route edits or registration list are needed.
 
+Use addresses for existing locations: `from: 'numbers[1]'`,
+`update: { target: 'student["score"]', value: 7 }`, or `target: 'self.name'`.
+`var` remains for assignments and call parameters. Quote bracket addresses inside
+flow mappings, and put `scope: global` beside `target` when needed. Old location
+mappings are rejected with migration hints; do not copy them into new samples.
+
 ## Comparing behavior
 
 Keep examples small enough that their important states can be checked manually.

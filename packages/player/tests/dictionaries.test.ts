@@ -24,10 +24,10 @@ test('dictionary references support aliases, scope lookup, and independently res
     create,
     { assign: { var: 'other', ref: 'record' } },
     { call: { name: 'change', line: 2, over: 'change(student)', args: [{ var: 'student', ref: 'record' }] } },
-    { update: { var: 'student', key: 'score', value: 9 } },
-    { badge: { over: 'student', value: 9, from: { var: 'other', key: 'score', scope: 'global' } } },
+    { update: { target: "student[\"score\"]", value: 9 } },
+    { badge: { over: 'student', value: 9, from: { target: "other[\"score\"]", scope: 'global' } } },
     { allocate: { id: 'separate', fields: { score: 2 } }, assign: { var: 'student', ref: 'separate' } },
-    { update: { var: 'student', key: 'score', scope: 'global', value: 10 } },
+    { update: { target: "student[\"score\"]", scope: 'global', value: 10 } },
     { return: { value: null } },
   ]));
   assert.deepEqual(states[4].heap[0], { id: 'record', fields: { name: 'Ada', score: 9 }, type: 'dict' });
@@ -44,8 +44,8 @@ test('empty dictionaries and reserved-looking keys remain ordinary authored fiel
   const states = buildSnapshots(fixture([
     { allocate: { id: 'empty', fields: {} } },
     { ...create, allocate: { id: 'record', fields } },
-    { update: { var: 'student', key: '__proto__', value: 9 } },
-    { badge: { over: 'student', value: 8, from: { var: 'student', key: 'a"b]' } } },
+    { update: { target: "student[\"__proto__\"]", value: 9 } },
+    { badge: { over: 'student', value: 8, from: "student[\"a\\\"b]\"]" } },
   ]));
   assert.deepEqual(states[1].heap[0], { id: 'empty', fields: {}, type: 'dict' });
   const object = states[3].heap[1];
@@ -64,23 +64,23 @@ test('invalid dictionary allocations and updates fail with step-specific errors'
     ['allocate: { id: second, fields: { nested: [1] } }', /scalars/],
     ['allocate: { id: second, fields: { nested: { score: 1 } } }', /finite scalar/],
     ['allocate: { id: second, fields: { score: .inf } }', /finite scalar/],
-    ['update: { var: student, key: missing, value: 1 }', /does not exist/],
-    ['update: { var: student, key: constructor, value: 1 }', /does not exist/],
-    ['update: { var: student, key: "", value: 1 }', /nonempty/],
-    ['update: { var: student, key: 0, value: 1 }', /nonempty text/],
-    ['update: { var: student, key: score, index: 0, value: 1 }', /cannot combine/],
-    ['update: { var: student, key: score, value: [1] }', /scalar field/],
-    ['update: { var: student, index: 0, value: 1 }', /not a list/],
-    ['append: { var: student, value: 1 }', /not a list/],
-    ['remove: { var: student, index: 0 }', /not a list/],
-    ['badge: { over: student, value: 1, from: { var: student, key: missing } }', /does not exist/],
-    ['badge: { over: student, value: 1, from: { var: student, key: score, index: 0 } }', /cannot combine/],
-    ['badge: { over: student, value: 1, from: { var: student } }', /require a `key`/],
-    ['select: { var: student, index: 0 }', /not a list/],
+    ["update: { target: 'student[\"missing\"]', value: 1 }", /does not exist/],
+    ["update: { target: 'student[\"constructor\"]', value: 1 }", /does not exist/],
+    ["update: { target: 'student[\"\"]', value: 1 }", /nonempty/],
+    ["update: { target: 'student[0]', value: 1 }", /not a list/],
+    ["update: { target: 'student[0][\"score\"]', value: 1 }", /invalid accessor/],
+    ["update: { target: 'student[\"score\"]', value: [1] }", /scalar field/],
+    ["update: { target: 'student[0]', value: 1 }", /not a list/],
+    ["append: { target: 'student', value: 1 }", /not a list/],
+    ["remove: 'student[0]'", /not a list/],
+    ["badge: { over: student, value: 1, from: 'student[\"missing\"]' }", /does not exist/],
+    ["badge: { over: student, value: 1, from: 'student[0][\"score\"]' }", /invalid accessor/],
+    ["badge: { over: student, value: 1, from: 'student' }", /require a `key`/],
+    ["select: 'student[0]'", /not a list/],
   ] as const) {
     const yaml = `language: python\ncode: student\nsteps:\n  - line: 1\n    allocate: { id: record, fields: { score: 5 } }\n    assign: { var: student, ref: record }\n  - ${action}\n`;
     assert.throws(() => buildSnapshots(parseLesson(yaml)), new RegExp(`Step 2:.*${pattern.source}`));
   }
-  assert.throws(() => buildSnapshots(fixture([create, { assign: { var: 'number', value: 5 } }, { update: { var: 'number', key: 'score', value: 9 } }])), /not a dictionary reference/);
-  assert.throws(() => buildSnapshots(fixture([{ line: 1, allocate: { id: 'list', value: [5] }, assign: { var: 'student', ref: 'list' } }, { update: { var: 'student', key: 'score', value: 9 } }])), /not a dictionary reference/);
+  assert.throws(() => buildSnapshots(fixture([create, { assign: { var: 'number', value: 5 } }, { update: { target: "number[\"score\"]", value: 9 } }])), /not a dictionary reference/);
+  assert.throws(() => buildSnapshots(fixture([{ line: 1, allocate: { id: 'list', value: [5] }, assign: { var: 'student', ref: 'list' } }, { update: { target: "student[\"score\"]", value: 9 } }])), /not a dictionary reference/);
 });

@@ -34,19 +34,19 @@ steps:
         - { var: new_name, from: badge }
     caption: Enter rename. The receiver ada becomes the local self reference; new_name holds "Lovelace". Both ada and self point to student-1.
   - line: 6
-    badge: { over: new_name, value: Lovelace, from: { var: new_name } }
+    badge: { over: new_name, value: Lovelace, from: 'new_name' }
     caption: Read the local parameter new_name. The instance's name attribute still holds "Ada".
-  - update: { var: self, attribute: name, from: badge }
+  - update: { target: 'self.name', from: badge }
     caption: Update the instance through self. ada sees the same object's new name, while grace's separate instance stays unchanged.
   - return: { value: null }
     caption: rename reaches the end without an explicit return, so the call's result is None. Its locals disappear, but the attribute change remains. Unlike construction, this call does not produce an instance reference.
   - line: 11
-    badge: { over: ada.name, value: Lovelace, from: { var: ada, attribute: name } }
+    badge: { over: ada.name, value: Lovelace, from: 'ada.name' }
     caption: The unused None result is discarded. Read "Lovelace" through ada, which still points to student-1.
   - print: { text: Lovelace, from: badge }
     caption: Print the name changed by the method.
   - line: 12
-    badge: { over: grace.name, value: Grace, from: { var: grace, attribute: name } }
+    badge: { over: grace.name, value: Grace, from: 'grace.name' }
     caption: Read grace's name from student-2. The method was called on ada, so this instance still holds "Grace".
   - print: { text: Grace, from: badge }
     caption: The outputs show the method's lasting change to one instance. Its None result was not printed or assigned.

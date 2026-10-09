@@ -28,9 +28,9 @@ steps:
         - { var: name, from: badge }
     caption: In this initializer call, self points to student-1 and the local name is "Ada".
   - line: 3
-    badge: { over: name, nth: 2, value: Ada, from: { var: name } }
+    badge: { over: name, nth: 2, value: Ada, from: 'name' }
     caption: Read this call's local name parameter.
-  - update: { var: self, attribute: name, from: badge }
+  - update: { target: 'self.name', from: badge }
     caption: Initialize student-1's name to "Ada" through self.
   - return: { value: null }
     caption: The initializer finishes with None; the constructor expression produces a reference to student-1.
@@ -51,9 +51,9 @@ steps:
         - { var: name, from: badge }
     caption: This new call has its own locals. self now points to student-2, while ada still points to student-1.
   - line: 3
-    badge: { over: name, nth: 2, value: Grace, from: { var: name } }
+    badge: { over: name, nth: 2, value: Grace, from: 'name' }
     caption: Read "Grace" from the second initializer's local name parameter.
-  - update: { var: self, attribute: name, from: badge }
+  - update: { target: 'self.name', from: badge }
     caption: Initialize student-2's name to "Grace". The first instance's name remains "Ada".
   - return: { value: null }
     caption: The second initializer finishes with None; this constructor expression produces a reference to student-2.
@@ -62,15 +62,15 @@ steps:
   - line: 7
     badge: { over: '"Lovelace"', value: Lovelace }
     caption: Evaluate the replacement name before updating ada's instance.
-  - update: { var: ada, attribute: name, from: badge }
+  - update: { target: 'ada.name', from: badge }
     caption: Replace only student-1's name with "Lovelace". Using the same class and attribute name does not make the two instances share that attribute's value.
   - line: 8
-    badge: { over: ada.name, value: Lovelace, from: { var: ada, attribute: name } }
+    badge: { over: ada.name, value: Lovelace, from: 'ada.name' }
     caption: Follow ada's reference and read "Lovelace" from the first instance.
   - print: { text: Lovelace, from: badge }
     caption: Print the first instance's updated name.
   - line: 9
-    badge: { over: grace.name, value: Grace, from: { var: grace, attribute: name } }
+    badge: { over: grace.name, value: Grace, from: 'grace.name' }
     caption: Follow grace's different reference. Its instance still holds "Grace".
   - print: { text: Grace, from: badge }
     caption: The two outputs confirm independent state. Updating ada.name did not change grace.name.

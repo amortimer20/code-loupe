@@ -62,9 +62,9 @@ steps:
   - line: 1
     assign: { var: numbers, value: [true, null, "<b>text</b>"] }
   - call: { name: inspect, line: 2, over: inspect(numbers), args: [{ var: numbers, value: [] }] }
-  - select: { var: numbers, index: 1, scope: global }
+  - select: { target: 'numbers[1]', scope: global }
   - assign: { var: numbers, value: [false, "hello"] }
-  - select: { var: numbers, index: 0 }
+  - select: 'numbers[0]'
 `);
   });
   await goTo(player, 2);
@@ -187,11 +187,11 @@ test('removal follows a surviving selection and the final cell can become an emp
 code: numbers = [2, 4, 6]
 steps:
   - assign: { var: numbers, value: [2, 4, 6] }
-  - select: { var: numbers, index: 2 }
-  - remove: { var: numbers, index: 1 }
-  - remove: { var: numbers, index: 0 }
-  - remove: { var: numbers, index: 0 }
-  - append: { var: numbers, value: null }
+  - select: 'numbers[2]'
+  - remove: 'numbers[1]'
+  - remove: 'numbers[0]'
+  - remove: 'numbers[0]'
+  - append: { target: 'numbers', value: null }
 `);
   });
   await goTo(player, 3);

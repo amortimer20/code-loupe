@@ -67,9 +67,9 @@ test('field lookup handles unusual keys and follows a field in a bounded standal
     await player.loadLesson(JSON.stringify({ language: 'python', code: 'student', steps: [
       { line: 1, allocate: { id: 'record', fields }, assign: { var: 'student', ref: 'record' } },
       { assign: { var: 'other', ref: 'record' } },
-      { update: { var: 'other', key, value: 9 } },
-      { badge: { over: 'student', value: 9, from: { var: 'student', key } } },
-      { update: { var: 'student', key: '__proto__', value: 7 } },
+      { update: { target: `other[${JSON.stringify(key)}]`, value: 9 } },
+      { badge: { over: 'student', value: 9, from: `student[${JSON.stringify(key)}]` } },
+      { update: { target: "student[\"__proto__\"]", value: 7 } },
     ] }));
     player.setAttribute('fit', '');
     player.style.height = '500px';

@@ -35,12 +35,12 @@ test('attribute updates create or replace scalar attributes through scoped alias
     { ...allocate, assign: { var: 'student', ref: 'instance' } },
     { allocate: { id: 'other', class: 'Student', fields: { name: 'Grace' } }, assign: { var: 'other', ref: 'other' } },
     enter,
-    { update: { var: 'self', attribute: 'name', value: 'Ada' } },
-    { update: { var: 'student', scope: 'global', attribute: 'name', value: 'Lovelace' } },
-    { badge: { over: 'self.name', value: 'Lovelace', from: { var: 'self', attribute: 'name' } } },
+    { update: { target: "self.name", value: 'Ada' } },
+    { update: { target: "student.name", scope: 'global', value: 'Lovelace' } },
+    { badge: { over: 'self.name', value: 'Lovelace', from: "self.name" } },
     { return: { value: null } },
     { assign: { var: 'alias', from: 'badge' } },
-    { update: { var: 'alias', attribute: 'name', value: 'Ada' } },
+    { update: { target: "alias.name", value: 'Ada' } },
   ]));
   assert.deepEqual(states[5].heap.map(object => 'fields' in object ? object.fields : object.value), [{ name: 'Lovelace' }, { name: 'Grace' }]);
   assert.equal(states[4].events.updated?.frameId, 1);
@@ -102,14 +102,14 @@ test('invalid class metadata, constructor bindings, and attribute operations fai
     ['allocate: { id: another, class: "", fields: {} }', /nonempty/],
     ['allocate: { id: another, class: 1, fields: {} }', /nonempty/],
     ['allocate: { id: another, class: Student, value: [] }', /require `fields`/],
-    ['update: { var: self, attribute: "", value: 1 }', /nonempty/],
-    ['update: { var: self, attribute: name, key: name, value: Ada }', /cannot combine/],
-    ['update: { var: self, attribute: name, index: 0, value: Ada }', /cannot combine/],
-    ['update: { var: self, attribute: name, value: [1] }', /scalar/],
-    ['update: { var: self, key: name, value: Ada }', /not a dictionary/],
-    ['badge: { over: self.name, value: Ada, from: { var: self, attribute: name } }', /does not exist/],
-    ['badge: { over: self.name, value: Ada, from: { var: self, attribute: name, key: name } }', /cannot combine/],
-    ['badge: { over: self.name, value: Ada, from: { var: self } }', /require an `attribute`/],
+    ["update: { target: 'self.', value: 1 }", /invalid address/],
+    ["update: { target: 'self[\"name\"].name', value: Ada }", /invalid address/],
+    ["update: { target: 'self[0].name', value: Ada }", /invalid address/],
+    ["update: { target: 'self.name', value: [1] }", /scalar/],
+    ["update: { target: 'self[\"name\"]', value: Ada }", /not a dictionary/],
+    ["badge: { over: self.name, value: Ada, from: 'self.name' }", /does not exist/],
+    ["badge: { over: self.name, value: Ada, from: 'self[\"name\"].name' }", /invalid address/],
+    ["badge: { over: self.name, value: Ada, from: 'self' }", /require an `attribute`/],
   ] as const) {
     const yaml = `language: python\ncode: self.name\nsteps:\n  - line: 1\n    allocate: { id: instance, class: Student, fields: {} }\n    assign: { var: self, ref: instance }\n  - ${action}\n`;
     assert.throws(() => buildSnapshots(parseLesson(yaml)), new RegExp(`Step 2:.*${pattern.source}`));

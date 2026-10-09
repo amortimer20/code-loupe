@@ -358,3 +358,19 @@ not execute code or infer expression results.
 Console-source consistency, Python lists-of-strings printing (the current
 formatter uses JSON-style double quotes), and a unified address syntax remain
 open items. This change does not resolve them.
+
+## 2026-10-09 — One authored address grammar
+
+Use Python-shaped addresses for existing locations: a name with at most one
+list index, quoted dictionary key, or instance attribute. Normalize them into
+the existing internal selectors so snapshots, events, and visuals stay unchanged.
+Remove old location mappings without aliases; saved drafts receive migration hints.
+Keep var for bindings being created or rebound, and target/from for addressing
+existing values. Use the address mapping form for explicit global scope, or to
+disambiguate a variable named console from console input. Quote every address:
+YAML requires it for brackets inside flow mappings, and one rule is easier to teach.
+Badge, convert, and output mappings now reject unknown keys like other actions.
+
+Nested accessors remain open. Unifying ordinary list values and heap-backed
+list references into one list model is separate future work, not part of this
+authoring syntax change.

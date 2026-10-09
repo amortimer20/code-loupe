@@ -15,14 +15,12 @@ export type AllocateSpec = { id: string; value: ScalarValue[] } | { id: string; 
  * Where a value travels from: the user's most recent console input, or a variable
  * in the Variables panel.
  */
-export type ValueSource = 'console' | { var: string; scope?: 'global'; index?: number; key?: string; attribute?: string };
+export interface AddressMapping { target: string; scope?: 'global' }
+export type AddressSpec = string | AddressMapping;
+export type ValueSource = AddressSpec;
 
 /** Highlight an indexed element until another selection or explicit clearing. */
-export interface SelectSpec {
-  var: string;
-  index: number;
-  scope?: 'global';
-}
+export type SelectSpec = AddressSpec;
 
 /** Float a value above a piece of code, e.g. the result of a function call. */
 export interface BadgeSpec {
@@ -56,20 +54,13 @@ export interface AssignSpec {
 }
 
 /** Replace one existing list element or dictionary field, without adding entries. */
-export interface UpdateSpec {
-  var: string;
-  scope?: 'global';
-  index?: number;
-  key?: string;
-  attribute?: string;
+export interface UpdateSpec extends AddressMapping {
   value?: ScalarValue;
   from?: 'badge';
 }
 
 /** Add a scalar value to the end of an existing list. */
-export interface AppendSpec {
-  var: string;
-  scope?: 'global';
+export interface AppendSpec extends AddressMapping {
   value?: ScalarValue;
   from?: 'badge';
 }
@@ -137,7 +128,10 @@ export function parseLesson(source: string): Lesson {
   try {
     data = parse(source);
   } catch (err) {
-    throw new LessonError(`The lesson isn't valid YAML:\n${(err as Error).message}`);
+    const message = (err as Error).message;
+    const hint = /unexpected.*(?:flow.seq|\[)|flow sequence/i.test(message)
+      ? "\nAddresses with brackets inside { } must be quoted, e.g. from: 'numbers[1]'." : '';
+    throw new LessonError(`The lesson isn't valid YAML:\n${message}${hint}`);
   }
   if (!isRecord(data)) throw new LessonError('A lesson must be a YAML mapping with language, code and steps.');
 

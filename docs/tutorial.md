@@ -118,12 +118,28 @@ Append these steps to the existing `steps` list, keeping the same indentation:
 
 `from: console` makes the value travel from the most recent authored input to
 the badge. The badge's `value` is still supplied by you; its source describes
-the animation. Similarly, `from: { var: text }` below describes where a badge
+the animation. Similarly, `from: 'text'` below describes where a badge
 travels from, rather than calculating its value.
 Variable-source badges must nevertheless match the source's current value,
 including selected list elements and named fields. A number and a string with
 the same digits are different values; a mismatch is a hard lesson error.
 Console-source consistency is not checked yet.
+
+An address mirrors the displayed Python: `text` is a binding, `numbers[1]` is a
+list element, `report["score"]` is a dictionary field, and `ada.name` is an
+instance attribute. Use at most one accessor, without whitespace, and quote
+bracket addresses inside `{ ... }`, for example `from: 'numbers[1]'`.
+`var` names a binding being created or rebound; `target` and badge `from` address
+an existing location. For an explicitly global read, use
+`from: { target: text, scope: global }`. `from: console` means console input;
+`from: { target: 'console' }` reads a variable named console.
+
+Use `select: 'numbers[1]'` or `remove: 'numbers[1]'` for indexed selection/removal,
+`update: { target: 'numbers[1]', value: 5 }` for a change, and
+`append: { target: 'numbers', value: 6 }` for growth. Update requires an accessor
+and append requires a bare name. Select/remove also accept `{ target, scope: global }`;
+update/append put scope beside target. Scope is accepted only in address mappings.
+Old location mappings with var/index/key/attribute are rejected with migration hints.
 
 The quotes around `"30"` matter: YAML reads it as a string. An unquoted `30`
 would be a number. Python's inferred type tag is therefore `str` here.
@@ -136,7 +152,7 @@ Append:
 
 ```yaml
   - line: 2
-    badge: { over: text, value: "30", from: { var: text } }
+    badge: { over: text, value: "30", from: 'text' }
     caption: Python looks up text and finds the string "30".
 
   - convert: { over: int(text), value: 30 }

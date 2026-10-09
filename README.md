@@ -160,7 +160,7 @@ convert → assign → collection mutation. Use at most one `update`, `append`, 
 Allocation precedes these value actions, so a step can allocate an object and bind
 a name to it.
 
-A badge with `from: { var: ... }` must match that source's current value,
+A badge with an address in `from` must match that source's current value,
 including an indexed element, named field, or whole list. Types are compared
 strictly: `5` and `"5"` differ. With `print` or `write` using `from: badge`, the
 authored text must contain the badge's printed form (strings print raw), allowing
@@ -175,17 +175,46 @@ Combining badge/conversion with `assign: { from: badge }` remains valid.
 | `write`   | `write: "Enter your age: "`                     | Output text with no newline. |
 | `print`   | `print: Hello!`                                 | Output a line. `print: { text: ..., from: badge }` flies the latest badge's value into the printed text. |
 | `input`   | `input: "30"`                                   | The user types this and presses Enter. |
-| `badge`   | `badge: { over: int(text), value: 30 }`         | Float a value above code on the current line (`line:` and `nth:` pick another spot). Add `from: console` to fly it up from the user's input, or `from: { var: text }` to fly it from a variable. |
+| `badge`   | `badge: { over: int(text), value: 30 }`         | Float a value above code on the current line (`line:` and `nth:` pick another spot). Add `from: console` to fly it up from the user's input, or `from: 'text'` to fly it from a variable. |
 | `convert` | `convert: { over: int(text), value: 30 }`       | Turn the latest badge into a new value, optionally moving it. |
 | `assign`  | `assign: { var: age, from: badge }`             | Store a value in a variable. `from: badge` flies the latest badge into it; or give `value:`. |
 | `allocate` | `allocate: { id: list-1, value: [2, 4] }` | Create a list, or use `fields: { name: Ada, score: 5 }` for a flat dictionary. `assign: { var: numbers, ref: list-1 }` binds a name to its identity. |
-| `select` | `select: { var: numbers, index: 0 }` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
-| `update` | `update: { var: numbers, index: 1, value: 10 }` | Replace an existing list element, or use `key: score` for a dictionary field. `from: badge` transfers the latest badge's scalar value. |
-| `append` | `append: { var: numbers, value: 6 }` | Add a scalar at the end of a list, including an empty one. Alternatively use `from: badge`. |
-| `remove` | `remove: { var: numbers, index: 1 }` | Delete an element by zero-based index; later elements shift forward. |
+| `select` | `select: 'numbers[0]'` | Mark a zero-based list cell. The selection persists across steps; `select: null` clears it. |
+| `update` | `update: { target: 'numbers[1]', value: 10 }` | Change a list element, dictionary field (`student["score"]`), or instance attribute (`self.name`). `from: badge` transfers the latest badge's scalar value. |
+| `append` | `append: { target: 'numbers', value: 6 }` | Add a scalar at the end of a list, including an empty one. Alternatively use `from: badge`. |
+| `remove` | `remove: 'numbers[1]'` | Delete an element by zero-based index; later elements shift forward. |
 | `call` | `call: { name: add_one, line: 1, over: add_one(value), args: [{ var: value, from: badge }] }` | Save the current caller line and call target, enter a function frame at `line`, and bind its parameters. |
 | `return` | `return: { from: badge }` | Leave the active function, restore its caller, and show the result over the saved call target. Alternatively supply `value` and optional `type`. |
 | `error` | `error: { kind: runtime, name: ValueError, message: Cannot convert., line: 3, over: int(age) }` | End execution with an authored diagnostic, preserving earlier state/output. A syntax error must be the first step. |
+
+### Addresses
+
+`var` names a binding being created or rebound (assignments and call parameters).
+`target` and badge `from` address an existing location. Use a name such as
+`numbers`, one list index (`numbers[1]`), one quoted dictionary key
+(`report["score"]` or `report['score']`), or one instance attribute (`ada.name`).
+Names use letters, digits, and underscores and cannot start with a digit.
+Addresses have no whitespace and at most one accessor. Indices must be
+nonnegative integers. Keys must be nonempty; double-quoted keys use JSON escapes,
+while single-quoted keys cannot contain a single quote or backslash.
+
+`select` and `remove` require an index. `update.target` requires an accessor;
+use `assign` to rebind a bare name. `append.target` requires a bare name.
+Accessors must match the object kind: integer brackets select a list,
+quoted brackets select a dictionary, and dot notation selects an instance.
+
+Lookup uses locals, then globals. To bypass a shadowing local, use an address
+mapping: `from: { target: 'numbers[1]', scope: global }`,
+`select: { target: 'numbers[1]', scope: global }`, or the same mapping for remove.
+Update and append put `scope: global` beside their existing `target`.
+Scope is accepted only in address mappings. `from: console` still reads console
+input; use `from: { target: 'console' }` for a variable named console.
+
+Quote every address, as the sample lessons do: `from: 'score'`, `target: 'ada.name'`,
+`select: 'numbers[1]'`. Inside YAML flow mappings (`{ ... }`), addresses containing
+brackets must be quoted, and quoting all of them keeps one rule to remember.
+The old `var`/`index`/`key`/`attribute` location mappings are removed; saved drafts
+using them receive migration hints. Nested accessors are not supported.
 
 Values: `"30"` (quoted) is a string, `30` is a number, `true`/`false`/`null` are written in the
 lesson language's style (`True`/`None` in Python). Types like `str`/`int` are inferred per
@@ -198,11 +227,11 @@ Nested collections are not modeled yet. Shared lists use
 explicit allocation and reference bindings, described below.
 
 See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
-indexed source such as `badge: { over: numbers, value: 2, from: { var: numbers, index: 0 } }`
+indexed source such as `badge: { over: numbers, value: 2, from: 'numbers[0]' }`
 flies the authored badge value from that cell. The teacher still supplies the
 value: sources identify animation origins, not computed reads. Indices must be
 integers within an existing list. Both `select` and indexed sources look up locals
-then globals; `scope: global` selects a shadowed global explicitly.
+then globals; an address mapping with `scope: global` selects a shadowed global explicitly.
 Selection is applied before badge animation and remains through the loop body.
 Reassigning the selected list or returning from its owning frame clears it.
 Ordinary list literals and list badges remain snapshot values. To teach identity
@@ -210,7 +239,7 @@ and aliasing, use explicit shared-list references rather than repeated literals.
 
 The [element-update lesson](lessons/python/list-update/lesson.yaml) replaces one
 cell while preserving its neighbors and list length. `update` requires an existing
-list, a valid zero-based `index`, and a scalar `value` or `from: badge`. It resolves
+list, a target such as `numbers[1]`, and a scalar `value` or `from: badge`. It resolves
 locals then globals; `scope: global` explicitly updates a shadowed global. Selection
 is separate: use `select` to mark a cell and `select: null` to clear it. A forward
 update briefly highlights the changed cell; reduced motion and backward stepping
@@ -240,7 +269,7 @@ See [Two names for one list](lessons/python/list-aliasing/lesson.yaml):
 - line: 2
   assign: { var: other, ref: list-1 }
 - line: 3
-  append: { var: other, value: 6 }
+  append: { target: 'other', value: 6 }
 ```
 
 Both names point to one list in the Objects panel. Mutation through either
@@ -275,9 +304,9 @@ See [Updating a dictionary field](lessons/python/dictionary-fields/lesson.yaml):
   allocate: { id: student-1, fields: { name: Ada, score: 5 } }
   assign: { var: student, ref: student-1 }
 - line: 2
-  update: { var: student, key: score, value: 7 }
+  update: { target: 'student["score"]', value: 7 }
 - line: 3
-  badge: { over: 'student["score"]', value: 7, from: { var: student, key: score } }
+  badge: { over: 'student["score"]', value: 7, from: 'student["score"]' }
 ```
 
 Use exactly one of `allocate.value` (a flat list) or `allocate.fields` (a mapping
@@ -285,10 +314,11 @@ of nonempty string keys to scalar values). Empty mappings are valid. Reference
 bindings and scoped lookup work for either object kind; Python dictionary
 references have a `dict` tag. Each named field shows its value and scalar type.
 
-`update.key` replaces an existing field, directly or with `from: badge`.
-`badge.from.key` identifies a field as the source of a teacher-authored badge.
-Both accept `scope: global` to bypass a same-named local. Do not combine `key`
-and `index`. List indexing, append, remove, and selection remain list-only.
+`update: { target: 'student["score"]', value: 7 }` replaces an existing field,
+directly or with `from: badge`. `from: 'student["score"]'` identifies a field
+as the source of a matching teacher-authored badge. Address mappings accept
+`scope: global` to bypass a same-named local. Each address has one accessor.
+List indexing, append, remove, and selection remain list-only.
 Bounded players reveal a field when it is updated or read.
 
 Adding/deleting keys, non-string keys, nested values/references, whole-dictionary
@@ -311,7 +341,7 @@ is Student, and attribute names appear without dictionary-key quotation marks.
     construct: student-1
     args: [{ var: self, ref: student-1 }, { var: name, value: Ada }]
 - line: 3
-  update: { var: self, attribute: name, value: Ada }
+  update: { target: 'self.name', value: Ada }
 - return: { value: null }
 - assign: { var: student, from: badge }
 ```
@@ -330,10 +360,10 @@ this produces a None badge, not a constructor reference. See the
 [instance-method sample](lessons/python/instance-method/lesson.yaml). Receiver
 binding and method lookup are authored, rather than inferred from the code.
 
-`update.attribute` creates or replaces a scalar instance attribute; it accepts
-`value` or `from: badge`. `badge.from.attribute` reads an existing attribute as
-an animation origin, with a teacher-authored scalar badge value. Both support
-`scope: global`. Attribute, key, and index selectors cannot be combined, and
+`update: { target: 'self.name', value: Ada }` creates or replaces a scalar instance
+attribute; it accepts `value` or `from: badge`. `from: 'self.name'` reads an existing
+attribute as an animation origin, with a matching teacher-authored scalar badge
+value. Both support address mappings with `scope: global`. Each address has one accessor, and
 dictionary keys and instance attributes remain distinct operations.
 
 Class names are authored labels: the player does not interpret class definitions,
@@ -389,8 +419,8 @@ function entry line. `args` is an optional list of parameter bindings, each usin
 `var` with `value`, `from: badge` (the latest caller badge), or `ref` (an allocated object).
 
 Assignments inside a function update its own locals. A badge source such as
-`from: { var: value }` looks in the active frame, then globals. Use
-`from: { var: value, scope: global }` to explicitly select a shadowed global.
+`from: 'value'` looks in the active frame, then globals. Use
+`from: { target: 'value', scope: global }` to explicitly select a shadowed global.
 Suspended callers' locals are not visible to another function.
 
 `return` supplies an authored result; it does not evaluate code. It restores the

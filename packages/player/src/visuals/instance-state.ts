@@ -15,7 +15,13 @@ export function constructedInstance(state: Pick<Snapshot, 'heap'>, ref: unknown,
 export function instanceAttribute(state: Pick<Snapshot, 'heap'>, variable: VarState, attribute: unknown, mustExist: boolean, fail: (message: string) => never) {
   if (typeof attribute !== 'string' || !attribute.length) return fail('`attribute` must be nonempty text.');
   if (!isReference(variable.value)) return fail(`variable \`${variable.name}\` is not an instance reference.`);
-  const object = constructedInstance(state, variable.value.ref, fail);
+  const object = constructedInstance(state, variable.value.ref, message => {
+    const target = state.heap.find(item => item.id === (variable.value as { ref: string }).ref);
+    if (target && 'fields' in target && target.class === undefined) {
+      fail(`${message} For a dictionary, write ${variable.name}[${JSON.stringify(attribute)}] instead of ${variable.name}.${attribute}.`);
+    }
+    return fail(message);
+  });
   if (mustExist && !Object.hasOwn(object.fields, attribute)) fail(`attribute \`${attribute}\` does not exist in \`${variable.name}\`.`);
   return object;
 }

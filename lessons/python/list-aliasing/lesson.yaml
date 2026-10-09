@@ -16,13 +16,13 @@ steps:
   - line: 3
     badge: { over: "6", value: 6 }
     caption: We will append 6 through other. Predict what printing numbers will show.
-  - append: { var: other, from: badge }
+  - append: { target: 'other', from: badge }
     caption: Change the shared list to [2, 4, 6]. The two names still point to the same object.
-  - select: { var: numbers, index: 2 }
+  - select: 'numbers[2]'
     caption: Through numbers, we can see the new element at index 2. It is the very same list.
   - line: 4
     select: null
-    badge: { over: numbers, value: [2, 4, 6], from: { var: numbers } }
+    badge: { over: numbers, value: [2, 4, 6], from: 'numbers' }
     caption: Read the list through numbers, even though the append used other.
   - print: { text: "[2, 4, 6]", from: badge }
     caption: The console shows [2, 4, 6]. Assignment gave the list another name; it did not copy its contents.

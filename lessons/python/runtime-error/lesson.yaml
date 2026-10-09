@@ -14,7 +14,7 @@ steps:
     assign: { var: age, value: abc }
     caption: Store the string "abc" in age. Assigning a string is valid.
   - line: 3
-    badge: { over: age, value: abc, from: { var: age } }
+    badge: { over: age, value: abc, from: 'age' }
     caption: Read age before trying to convert it to an integer. years has not been assigned yet.
   - error:
       kind: runtime

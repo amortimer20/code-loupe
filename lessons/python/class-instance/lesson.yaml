@@ -25,16 +25,16 @@ steps:
         - { var: name, from: badge }
     caption: Enter __init__. self points to the new instance, while the local parameter name holds "Ada".
   - line: 3
-    badge: { over: name, nth: 2, value: Ada, from: { var: name } }
+    badge: { over: name, nth: 2, value: Ada, from: 'name' }
     caption: Read the local parameter name on the right-hand side. It is separate from the instance attribute self.name.
-  - update: { var: self, attribute: name, from: badge }
+  - update: { target: 'self.name', from: badge }
     caption: Store "Ada" in the instance's name attribute. self still points to the same object.
   - return: { value: null }
     caption: __init__ finishes with None. The enclosing Student("Ada") constructor call produces the initialized instance, shown by its reference badge.
   - assign: { var: student, from: badge }
     caption: Bind student to the constructed instance. The initializer's local self and name no longer exist.
   - line: 6
-    badge: { over: student.name, value: Ada, from: { var: student, attribute: name } }
+    badge: { over: student.name, value: Ada, from: 'student.name' }
     caption: Read student.name from the instance. Dot notation accesses an attribute, rather than a dictionary key.
   - print: { text: Ada, from: badge }
     caption: The console shows Ada. student still points to the Student instance with its name attribute.

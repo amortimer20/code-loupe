@@ -18,18 +18,18 @@ steps:
   - line: 3
     badge: { over: "6", value: 6 }
     caption: We will append 6 through other. Predict what printing each list will show.
-  - append: { var: other, from: badge }
+  - append: { target: 'other', from: badge }
     caption: Only list-2 grows to [2, 4, 6]. The original list-1 remains [2, 4].
-  - select: { var: other, index: 2 }
+  - select: 'other[2]'
     caption: The new element at index 2 belongs to the copy. Equal starting contents did not make these the same object.
   - line: 4
     select: null
-    badge: { over: numbers, value: [2, 4], from: { var: numbers } }
+    badge: { over: numbers, value: [2, 4], from: 'numbers' }
     caption: Read the original list through numbers. It still contains just 2 and 4.
   - print: { text: "[2, 4]", from: badge }
     caption: Printing numbers shows [2, 4]; appending to the copy left it unchanged.
   - line: 5
-    badge: { over: other, value: [2, 4, 6], from: { var: other } }
+    badge: { over: other, value: [2, 4, 6], from: 'other' }
     caption: Read the separate list through other. This is the one we changed.
   - print: { text: "[2, 4, 6]", from: badge }
     caption: Printing other shows [2, 4, 6]. Compare this with assignment alone, where both names pointed to one list.

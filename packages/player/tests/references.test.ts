@@ -48,8 +48,8 @@ test('rebindings change a name, while distinct shared lists and earlier snapshot
     create,
     { assign: { var: 'other', ref: 'shared' } },
     { allocate: { id: 'second', value: [2, 4] }, assign: { var: 'numbers', ref: 'second' } },
-    { append: { var: 'other', value: 6 } },
-    { update: { var: 'numbers', index: 0, value: 99 } },
+    { append: { target: "other", value: 6 } },
+    { update: { target: "numbers[0]", value: 99 } },
     { assign: { var: 'other', value: 5 } },
   ]));
   assert.deepEqual(states[2].vars[0].value, { ref: 'shared' });
@@ -66,11 +66,11 @@ test('selection and indexed sources resolve shared identity when mutations use a
   const states = buildSnapshots(fixture([
     create,
     { assign: { var: 'other', ref: 'shared' } },
-    { select: { var: 'numbers', index: 1 } },
-    { remove: { var: 'other', index: 0 } },
-    { badge: { over: 'numbers', value: 4, from: { var: 'numbers', index: 0 } } },
-    { remove: { var: 'other', index: 0 } },
-    { append: { var: 'numbers', value: null } },
+    { select: "numbers[1]" },
+    { remove: "other[0]" },
+    { badge: { over: 'numbers', value: 4, from: "numbers[0]" } },
+    { remove: "other[0]" },
+    { append: { target: "numbers", value: null } },
   ]));
   assert.equal(states[3].selection?.index, 1);
   assert.equal(states[4].selection?.index, 0);
@@ -85,8 +85,8 @@ test('shared references in call parameters preserve identity across locals, glob
   const states = buildSnapshots(fixture([
     create,
     { call: { name: 'change', line: 2, over: 'change(numbers)', args: [{ var: 'numbers', ref: 'shared' }] } },
-    { append: { var: 'numbers', value: 6 } },
-    { badge: { over: 'numbers', value: 6, from: { var: 'numbers', index: 2, scope: 'global' } } },
+    { append: { target: "numbers", value: 6 } },
+    { badge: { over: 'numbers', value: 6, from: { target: "numbers[2]", scope: 'global' } } },
     { return: { value: null } },
   ]));
   assert.deepEqual(states[3].vars[0].value, { ref: 'shared' });
@@ -103,10 +103,10 @@ test('ordinary list values keep their independent semantics when mixed with refe
   const states = buildSnapshots(fixture([
     create,
     { assign: { var: 'plain', value: [2, 4] } },
-    { badge: { line: 1, over: 'numbers', value: [2, 4], from: { var: 'numbers' } } },
+    { badge: { line: 1, over: 'numbers', value: [2, 4], from: "numbers" } },
     { assign: { var: 'illustration', from: 'badge' } },
-    { append: { var: 'numbers', value: 6 } },
-    { append: { var: 'plain', value: 8 } },
+    { append: { target: "numbers", value: 6 } },
+    { append: { target: "plain", value: 8 } },
   ]));
   assert.deepEqual(states[6].heap[0].value, [2, 4, 6]);
   assert.deepEqual(states[6].vars[1].value, [2, 4, 8]);

@@ -36,7 +36,7 @@ test('flat lists format their scalar elements in the lesson language, including 
 test('list values and selections in earlier snapshots are independent of later assignments', () => {
   const states = buildSnapshots(fixture([
     assign,
-    { select: { var: 'numbers', index: 1 } },
+    { select: "numbers[1]" },
     { badge: { over: 'numbers', value: [2, 4, 6] } },
     { assign: { var: 'copy', from: 'badge' } },
     { assign: { var: 'numbers', value: [] } },
@@ -55,9 +55,9 @@ test('list selection and indexed origins respect local shadowing and explicit gl
   const states = buildSnapshots(fixture([
     assign,
     { call: { name: 'read', line: 2, over: 'numbers', args: [{ var: 'numbers', value: [9] }] } },
-    { select: { var: 'numbers', index: 0 }, badge: { over: 'n', value: 9, from: { var: 'numbers', index: 0 } } },
-    { select: { var: 'numbers', index: 2, scope: 'global' } },
-    { select: { var: 'numbers', index: 0 } },
+    { select: "numbers[0]", badge: { over: 'n', value: 9, from: "numbers[0]" } },
+    { select: { target: "numbers[2]", scope: 'global' } },
+    { select: "numbers[0]" },
     { return: { value: 9 } },
   ]));
   assert.deepEqual(states[3].selection, { name: 'numbers', frameId: 1, index: 0 });
@@ -69,13 +69,13 @@ test('list selection and indexed origins respect local shadowing and explicit gl
 
 test('invalid lists, selections, and indexed origins fail with useful step errors', () => {
   const invalid: [Step[], RegExp][] = [
-    [[assign, { select: { var: 'missing', index: 0 } }], /Step 2:.*no variable/],
-    [[assign, { select: { var: 'numbers', index: -1 } }], /Step 2:.*zero-based/],
-    [[assign, { select: { var: 'numbers', index: 3 } }], /Step 2:.*length 3/],
-    [[assign, { select: { var: 'numbers', index: 0.5 } }], /Step 2:.*outside/],
-    [[assign, { badge: { over: 'numbers', value: 2, from: { var: 'numbers', index: 5 } } }], /Step 2:.*outside/],
-    [[{ assign: { var: 'numbers', value: [] } }, { select: { var: 'numbers', index: 0 } }], /Step 2:.*length 0/],
-    [[{ assign: { var: 'numbers', value: 2 } }, { select: { var: 'numbers', index: 0 } }], /Step 2:.*not a list/],
+    [[assign, { select: "missing[0]" }], /Step 2:.*no variable/],
+    [[assign, { select: "numbers[-1]" }], /Step 2:.*nonnegative integer/],
+    [[assign, { select: "numbers[3]" }], /Step 2:.*length 3/],
+    [[assign, { select: "numbers[0.5]" }], /Step 2:.*nonnegative integer/],
+    [[assign, { badge: { over: 'numbers', value: 2, from: "numbers[5]" } }], /Step 2:.*outside/],
+    [[{ assign: { var: 'numbers', value: [] } }, { select: "numbers[0]" }], /Step 2:.*length 0/],
+    [[{ assign: { var: 'numbers', value: 2 } }, { select: "numbers[0]" }], /Step 2:.*not a list/],
   ];
   for (const [steps, error] of invalid) assert.throws(() => buildSnapshots(fixture(steps)), error);
   for (const action of ['assign', 'badge', 'convert']) {
@@ -95,7 +95,7 @@ test('element replacement preserves list length, neighbors, and earlier snapshot
   assert.deepEqual(states[3].events.updated, { name: 'numbers', index: 1, frameId: 0, fromBadge: 1 });
   assert.equal(states[4].selection, null);
   assert.equal(states[6].console.at(-1)?.text, '[2, 10, 6]\n');
-  const extra = buildSnapshots(fixture([assign, { update: { var: 'numbers', index: 0, value: null } }, { update: { var: 'numbers', index: 2, value: false } }]));
+  const extra = buildSnapshots(fixture([assign, { update: { target: "numbers[0]", value: null } }, { update: { target: "numbers[2]", value: false } }]));
   assert.deepEqual(extra[1].vars[0].value, [2, 4, 6]);
   assert.deepEqual(extra[2].vars[0].value, [null, 4, 6]);
   assert.deepEqual(extra[3].vars[0].value, [null, 4, false]);
@@ -105,12 +105,12 @@ test('element updates resolve local shadowing and explicit or fallback globals w
   const states = buildSnapshots(fixture([
     assign,
     { call: { name: 'change', line: 2, over: 'numbers', args: [{ var: 'numbers', value: [9] }] } },
-    { update: { var: 'numbers', index: 0, value: 8 } },
-    { update: { var: 'numbers', index: 1, value: 10, scope: 'global' } },
+    { update: { target: "numbers[0]", value: 8 } },
+    { update: { target: "numbers[1]", value: 10, scope: 'global' } },
     { return: { value: null } },
     { badge: { over: 'numbers', value: [2, 10, 6] } },
     { assign: { var: 'copy', from: 'badge' } },
-    { update: { var: 'copy', index: 0, value: 99 } },
+    { update: { target: "copy[0]", value: 99 } },
   ]));
   assert.deepEqual(states[3].frames[0].vars[0].value, [8]);
   assert.deepEqual(states[3].vars[0].value, [2, 4, 6]);
@@ -119,32 +119,32 @@ test('element updates resolve local shadowing and explicit or fallback globals w
   assert.equal(states[4].events.updated?.frameId, 0);
   assert.deepEqual(states[8].vars[0].value, [2, 10, 6]);
   assert.deepEqual(states[8].vars[1].value, [99, 10, 6]);
-  const fallback = buildSnapshots(fixture([assign, { call: { name: 'change', line: 2, over: 'numbers' } }, { update: { var: 'numbers', index: 0, value: 7 } }]));
+  const fallback = buildSnapshots(fixture([assign, { call: { name: 'change', line: 2, over: 'numbers' } }, { update: { target: "numbers[0]", value: 7 } }]));
   assert.equal(fallback[3].events.updated?.frameId, 0);
   assert.deepEqual(fallback[3].vars[0].value, [7, 4, 6]);
 });
 
 test('invalid element updates fail rather than growing a list or accepting nested values', () => {
   for (const [update, error] of [
-    ['{ var: numbers, index: 3, value: 10 }', /outside/],
-    ['{ var: numbers, index: -1, value: 10 }', /zero-based/],
-    ['{ var: numbers, index: 0.5, value: 10 }', /outside/],
-    ['{ var: numbers, value: 10 }', /outside/],
-    ['{ var: missing, index: 0, value: 10 }', /no variable/],
-    ['{ var: numbers, index: 1 }', /needs a `value`/],
-    ['{ var: numbers, index: 1, from: badge }', /no badge/],
-    ['{ var: numbers, index: 1, from: console }', /must be `badge`/],
-    ['{ var: numbers, index: 1, value: [10] }', /scalar element/],
-    ['{ var: numbers, index: 1, value: .inf }', /finite scalar/],
-    ['{ var: numbers, index: 1, value: 10, scope: local }', /scope/],
-    ['{ var: numbers, index: 1, value: 10, typo: 1 }', /unknown update key/],
+    ["{ target: 'numbers[3]', value: 10 }", /outside/],
+    ["{ target: 'numbers[-1]', value: 10 }", /nonnegative integer/],
+    ["{ target: 'numbers[0.5]', value: 10 }", /nonnegative integer/],
+    ["{ target: 'numbers', value: 10 }", /use assign/],
+    ["{ target: 'missing[0]', value: 10 }", /no variable/],
+    ["{ target: 'numbers[1]' }", /needs a `value`/],
+    ["{ target: 'numbers[1]', from: badge }", /no badge/],
+    ["{ target: 'numbers[1]', from: console }", /must be `badge`/],
+    ["{ target: 'numbers[1]', value: [10] }", /scalar element/],
+    ["{ target: 'numbers[1]', value: .inf }", /finite scalar/],
+    ["{ target: 'numbers[1]', value: 10, scope: local }", /scope/],
+    ["{ target: 'numbers[1]', value: 10, typo: 1 }", /unknown update key/],
     ['null', /needs a mapping/],
   ] as const) {
     const yaml = `language: python\ncode: n = numbers\nsteps:\n  - assign: { var: numbers, value: [2, 4, 6] }\n  - update: ${update}\n`;
     assert.throws(() => buildSnapshots(parseLesson(yaml)), new RegExp(`Step 2:.*${error.source}`));
   }
-  assert.throws(() => buildSnapshots(fixture([{ assign: { var: 'numbers', value: 2 } }, { update: { var: 'numbers', index: 0, value: 10 } }])), /Step 2:.*not a list/);
-  assert.throws(() => buildSnapshots(fixture([assign, { line: 1, badge: { over: 'numbers', value: [10] } }, { update: { var: 'numbers', index: 1, from: 'badge' } }])), /Step 3:.*scalar element/);
+  assert.throws(() => buildSnapshots(fixture([{ assign: { var: 'numbers', value: 2 } }, { update: { target: "numbers[0]", value: 10 } }])), /Step 2:.*not a list/);
+  assert.throws(() => buildSnapshots(fixture([assign, { line: 1, badge: { over: 'numbers', value: [10] } }, { update: { target: "numbers[1]", from: 'badge' } }])), /Step 3:.*scalar element/);
 });
 
 test('append and removal lessons preserve earlier lists and publish their final output', () => {
@@ -164,14 +164,14 @@ test('append and removal lessons preserve earlier lists and publish their final 
 test('empty lists, null append, and first/middle/last deletions keep valid selections and independent values', () => {
   const states = buildSnapshots(fixture([
     { assign: { var: 'numbers', value: [] } },
-    { append: { var: 'numbers', value: null } },
-    { select: { var: 'numbers', index: 0 } },
-    { append: { var: 'numbers', value: 4 } },
-    { append: { var: 'numbers', value: 6 } },
-    { select: { var: 'numbers', index: 2 } },
-    { remove: { var: 'numbers', index: 0 } },
-    { remove: { var: 'numbers', index: 1 } },
-    { remove: { var: 'numbers', index: 0 } },
+    { append: { target: "numbers", value: null } },
+    { select: "numbers[0]" },
+    { append: { target: "numbers", value: 4 } },
+    { append: { target: "numbers", value: 6 } },
+    { select: "numbers[2]" },
+    { remove: "numbers[0]" },
+    { remove: "numbers[1]" },
+    { remove: "numbers[0]" },
   ]));
   assert.deepEqual(states[1].vars[0].value, []);
   assert.deepEqual(states[2].vars[0].value, [null]);
@@ -183,7 +183,7 @@ test('empty lists, null append, and first/middle/last deletions keep valid selec
   assert.deepEqual(states[8].vars[0].value, [4]);
   assert.equal(states[8].selection, null);
   assert.deepEqual(states[9].vars[0].value, []);
-  const retained = buildSnapshots(fixture([assign, { select: { var: 'numbers', index: 0 } }, { remove: { var: 'numbers', index: 2 } }]));
+  const retained = buildSnapshots(fixture([assign, { select: "numbers[0]" }, { remove: "numbers[2]" }]));
   assert.equal(retained[3].selection?.index, 0);
 });
 
@@ -191,10 +191,10 @@ test('append and removal resolve local/global scopes without mutating other list
   const states = buildSnapshots(fixture([
     assign,
     { call: { name: 'change', line: 2, over: 'numbers', args: [{ var: 'numbers', value: [9] }] } },
-    { append: { var: 'numbers', value: 8 } },
-    { remove: { var: 'numbers', index: 0 } },
-    { append: { var: 'numbers', value: 10, scope: 'global' } },
-    { remove: { var: 'numbers', index: 1, scope: 'global' } },
+    { append: { target: "numbers", value: 8 } },
+    { remove: "numbers[0]" },
+    { append: { target: "numbers", value: 10, scope: 'global' } },
+    { remove: { target: "numbers[1]", scope: 'global' } },
   ]));
   assert.deepEqual(states[2].frames[0].vars[0].value, [9]);
   assert.deepEqual(states[3].frames[0].vars[0].value, [9, 8]);
@@ -204,33 +204,33 @@ test('append and removal resolve local/global scopes without mutating other list
   assert.deepEqual(states[1].vars[0].value, [2, 4, 6]);
   assert.equal(states[3].events.appended?.frameId, 1);
   assert.equal(states[6].events.removed?.frameId, 0);
-  const fallback = buildSnapshots(fixture([assign, { call: { name: 'change', line: 2, over: 'numbers' } }, { append: { var: 'numbers', value: 7 } }, { remove: { var: 'numbers', index: 0 } }]));
+  const fallback = buildSnapshots(fixture([assign, { call: { name: 'change', line: 2, over: 'numbers' } }, { append: { target: "numbers", value: 7 } }, { remove: "numbers[0]" }]));
   assert.deepEqual(fallback[4].vars[0].value, [4, 6, 7]);
 });
 
 test('invalid append/removal operations fail with a step number', () => {
   for (const [action, spec, error] of [
-    ['append', '{ var: numbers }', /needs a `value`/],
-    ['append', '{ var: numbers, from: badge }', /no badge/],
-    ['append', '{ var: numbers, value: [8] }', /scalar element/],
-    ['append', '{ var: numbers, value: .inf }', /finite scalar/],
-    ['append', '{ var: numbers, value: 8, index: 0 }', /unknown append key/],
-    ['remove', '{ var: numbers, index: 3 }', /outside/],
-    ['remove', '{ var: numbers, index: -1 }', /zero-based/],
-    ['remove', '{ var: numbers, index: 0.5 }', /outside/],
-    ['remove', '{ var: numbers }', /outside/],
-    ['remove', '{ var: numbers, index: 0, value: 4 }', /unknown remove key/],
-    ['remove', '{ var: numbers, index: 0, scope: local }', /scope/],
-    ['append', '{ var: missing, value: 8 }', /no variable/],
-    ['remove', '{ var: missing, index: 0 }', /no variable/],
+    ['append', "{ target: 'numbers' }", /needs a `value`/],
+    ['append', "{ target: 'numbers', from: badge }", /no badge/],
+    ['append', "{ target: 'numbers', value: [8] }", /scalar element/],
+    ['append', "{ target: 'numbers', value: .inf }", /finite scalar/],
+    ['append', "{ target: 'numbers[0]', value: 8 }", /bare name/],
+    ['remove', "{ target: 'numbers[3]' }", /outside/],
+    ['remove', "{ target: 'numbers[-1]' }", /nonnegative integer/],
+    ['remove', "{ target: 'numbers[0.5]' }", /nonnegative integer/],
+    ['remove', "{ target: 'numbers' }", /index accessor/],
+    ['remove', "{ target: 'numbers[0]', value: 4 }", /unknown remove key/],
+    ['remove', "{ target: 'numbers[0]', scope: local }", /scope/],
+    ['append', "{ target: 'missing', value: 8 }", /no variable/],
+    ['remove', "{ target: 'missing[0]' }", /no variable/],
     ['append', 'null', /needs a mapping/],
-    ['remove', 'null', /needs a mapping/],
+    ['remove', 'null', /address or a mapping/],
   ] as const) {
     assert.throws(() => buildSnapshots(parseLesson(`language: python\ncode: n = numbers\nsteps:\n  - assign: { var: numbers, value: [2, 4, 6] }\n  - ${action}: ${spec}\n`)), new RegExp(`Step 2:.*${error.source}`));
   }
-  assert.throws(() => buildSnapshots(fixture([{ assign: { var: 'numbers', value: [] } }, { remove: { var: 'numbers', index: 0 } }])), /Step 2:.*length 0/);
-  for (const mutation of [{ append: { var: 'numbers', value: 8 } }, { remove: { var: 'numbers', index: 0 } }]) {
+  assert.throws(() => buildSnapshots(fixture([{ assign: { var: 'numbers', value: [] } }, { remove: "numbers[0]" }])), /Step 2:.*length 0/);
+  for (const mutation of [{ append: { target: "numbers", value: 8 } }, { remove: "numbers[0]" }]) {
     assert.throws(() => buildSnapshots(fixture([{ assign: { var: 'numbers', value: 2 } }, mutation])), /Step 2:.*not a list/);
   }
-  assert.throws(() => buildSnapshots(fixture([assign, { append: { var: 'numbers', value: 8 }, remove: { var: 'numbers', index: 0 } }])), /Step 2:.*one collection mutation/);
+  assert.throws(() => buildSnapshots(fixture([assign, { append: { target: "numbers", value: 8 }, remove: "numbers[0]" }])), /Step 2:.*one collection mutation/);
 });

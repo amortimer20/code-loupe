@@ -12,10 +12,10 @@ steps:
   - line: 2
     badge: { over: "7", value: 7 }
     caption: The key "score" identifies the field to change. We will store 7 there while leaving "name" unchanged.
-  - update: { var: student, key: score, from: badge }
+  - update: { target: 'student["score"]', from: badge }
     caption: Replace the score field's value 5 with 7. The dictionary and student's reference keep the same identity.
   - line: 3
-    badge: { over: 'student["score"]', value: 7, from: { var: student, key: score } }
+    badge: { over: 'student["score"]', value: 7, from: 'student["score"]' }
     caption: Read the value stored under "score". The field supplies the integer 7 to print().
   - print: { text: "7", from: badge }
     caption: The console shows 7. The dictionary still has both fields, and name still holds "Ada".

@@ -121,12 +121,12 @@ steps:
     allocate: { id: shared, value: [2, 4] }
     assign: { var: numbers, ref: shared }
   - call: { name: change, line: 2, over: change(numbers), args: [{ var: other, ref: shared }] }
-  - select: { var: numbers, index: 1 }
-  - remove: { var: other, index: 0 }
-  - append: { var: other, value: 6 }
+  - select: 'numbers[1]'
+  - remove: 'other[0]'
+  - append: { target: 'other', value: 6 }
   - allocate: { id: separate, value: [] }
     assign: { var: other, ref: separate }
-  - append: { var: other, value: 9 }
+  - append: { target: 'other', value: 9 }
   - return: { value: null }
 `);
   });

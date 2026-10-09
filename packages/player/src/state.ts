@@ -7,6 +7,7 @@ import { dictionaryField, type FieldTarget } from './visuals/dictionary-state';
 import { constructedInstance, instanceAttribute, type AttributeTarget } from './visuals/instance-state';
 import { programError, type ProgramError } from './visuals/error-state';
 import { checkBadgeSourceValue } from './visuals/source-value';
+import { normalizeAddress } from './address';
 
 export type { CallFrame } from './visuals/call-stack-state';
 
@@ -264,9 +265,9 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.select !== undefined) {
       if (step.select === null) s.selection = null;
       else {
-        if (!isRecord(step.select)) fail('`select` needs a mapping with var and index, or null.');
-        checkKeys(step.select, ['var', 'index', 'scope'], 'select', fail);
-        const origin = resolveOrigin(step.select, s, fail);
+        const target = normalizeAddress(step.select, 'select', fail);
+        if (target.index === undefined) fail('`select` needs an index accessor, e.g. numbers[1].');
+        const origin = resolveOrigin(target, s, fail);
         if (origin?.kind === 'var' && origin.index !== undefined) {
           s.selection = { name: origin.name, frameId: origin.frameId, index: origin.index, ...('ref' in origin && origin.ref !== undefined ? { ref: origin.ref } : {}) };
         } else fail('`select` needs a variable and index.');
@@ -274,6 +275,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     }
 
     const output = (spec: OutputSpec, newline: string) => {
+      if (isRecord(spec)) checkKeys(spec, ['text', 'from'], 'output', fail);
       const { text, from } = typeof spec === 'object' && spec !== null ? spec : { text: spec, from: undefined };
       if (text === undefined) fail('output needs `text`, e.g. `print: { text: Hi, from: badge }`.');
       const chunk: ConsoleChunk = { kind: 'out', text: `${text}${newline}` };
@@ -293,7 +295,9 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     if (step.print !== undefined) output(step.print, '\n');
     if (step.input !== undefined) s.console.push({ kind: 'in', text: String(step.input) });
 
-    if (step.badge) {
+    if (step.badge !== undefined) {
+      if (!isRecord(step.badge)) fail('`badge` needs a mapping with over and value.');
+      checkKeys(step.badge, ['over', 'value', 'type', 'line', 'nth', 'from'], 'badge', fail);
       const { over, value } = step.badge;
       if (typeof over !== 'string') fail('`badge` needs `over`: the code the value floats above.');
       if (value === undefined) fail('`badge` needs a `value`.');
@@ -301,14 +305,17 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const line = step.badge.line ?? s.line ?? fail('`badge` needs a `line` because no line is active yet.');
       const nth = step.badge.nth ?? 1;
       checkTarget(line, over, nth);
-      const origin = resolveOrigin(step.badge.from, s, fail);
+      const source = step.badge.from;
+      const origin = resolveOrigin(source === undefined || source === 'console' ? source : normalizeAddress(source, 'from', fail), s, fail);
       if (origin?.kind === 'var') checkBadgeSourceValue(s, origin, value, lang, fail);
       const badge: BadgeState = { id: nextBadgeId++, line, over, nth, value: cloneValue(value), type: step.badge.type ?? inferType(value, lang) };
       s.badges.push(badge);
       s.events.badgeAdded = { id: badge.id, from: origin };
     }
 
-    if (step.convert) {
+    if (step.convert !== undefined) {
+      if (!isRecord(step.convert)) fail('`convert` needs a mapping with value.');
+      checkKeys(step.convert, ['value', 'type', 'over', 'line', 'nth'], 'convert', fail);
       const badge = s.badges.at(-1) ?? fail('`convert` needs a badge to convert. Add a `badge` step first.');
       if (isReference(badge.value)) fail('`convert` cannot transform an object reference badge.');
       if (step.convert.value === undefined) fail('`convert` needs a `value`.');
@@ -340,11 +347,9 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     }
 
     if (step.update !== undefined) {
-      const update = step.update;
-      if (!isRecord(update)) fail('`update` needs a mapping with var, index, and value or from.');
-      checkKeys(update, ['var', 'index', 'key', 'attribute', 'value', 'from', 'scope'], 'update', fail);
-      if (typeof update.var !== 'string' || !update.var.length) fail('`update` needs a nonempty `var` name.');
-      if (update.scope !== undefined && update.scope !== 'global') fail('`update.scope` must be `global` when supplied.');
+      if (!isRecord(step.update)) fail('`update` needs a mapping with target and value or from.');
+      const update = { ...normalizeAddress(step.update, 'update', fail, ['value', 'from']), value: step.update.value, from: step.update.from };
+      if (update.index === undefined && update.key === undefined && update.attribute === undefined) fail('`update` needs an accessor; use assign to rebind a name.');
       const found = findVariable(s, update.var, update.scope === 'global') ?? fail(`no variable named ${update.var} in the active scope or globals.`);
       const { value, fromBadge } = readValue(update, 'update');
       if ('attribute' in update) {
@@ -367,12 +372,12 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     }
 
     for (const action of ['append', 'remove'] as const) {
-      const spec = step[action];
-      if (spec === undefined) continue;
-      if (!isRecord(spec)) fail(`\`${action}\` needs a mapping with var${action === 'remove' ? ' and index' : ' and value or from'}.`);
-      checkKeys(spec, action === 'append' ? ['var', 'value', 'from', 'scope'] : ['var', 'index', 'scope'], action, fail);
-      if (typeof spec.var !== 'string' || !spec.var.length) fail(`\`${action}\` needs a nonempty \`var\` name.`);
-      if (spec.scope !== undefined && spec.scope !== 'global') fail(`\`${action}.scope\` must be \`global\` when supplied.`);
+      const authored = step[action];
+      if (authored === undefined) continue;
+      if (action === 'append' && !isRecord(authored)) fail('`append` needs a mapping with target and value or from.');
+      const spec = normalizeAddress(authored, action, fail, action === 'append' ? ['value', 'from'] : []);
+      if (action === 'append' && (spec.index !== undefined || spec.key !== undefined || spec.attribute !== undefined)) fail('`append` needs a bare name, not an accessor.');
+      if (action === 'remove' && spec.index === undefined) fail('`remove` needs an index accessor, e.g. numbers[1].');
       const found = findVariable(s, spec.var, spec.scope === 'global') ?? fail(`no variable named ${spec.var} in the active scope or globals.`);
       if (action === 'append') {
         const { value, fromBadge } = readValue(step.append!, 'append');
@@ -380,7 +385,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
         storeCollectionValue(s, found.variable, items);
         s.events.appended = { name: spec.var, frameId: found.frameId, index: items.length - 1, fromBadge, ...referenceIdentity(found.variable) };
       } else {
-        const index = step.remove!.index;
+        const index = spec.index!;
         storeCollectionValue(s, found.variable, removeCollectionElement(collectionVariable(s, found.variable), index, fail));
         s.events.removed = { name: spec.var, frameId: found.frameId, index, ...referenceIdentity(found.variable) };
         if (selectionMatches(s.selection, found.variable, spec.var, found.frameId) && s.selection) {

@@ -31,8 +31,9 @@ to Step 0 to remove both the dictionary and its binding. All field values and
 results are authored; the player does not execute Python.
 
 `allocate.fields` creates a flat mapping of nonempty string keys to scalar
-values. `update.key` replaces an existing field; `badge.from.key` identifies a
-field as an animation origin. Nested values, adding/deleting keys, whole-dictionary
+values. `update: { target: 'student["score"]', ... }` replaces an existing field;
+`from: 'student["score"]'` identifies a field as an animation origin.
+Nested values, adding/deleting keys, whole-dictionary
 badges, and class definitions remain later work. The player rejects missing
 keys as invalid authored lessons; that does not model Python's runtime KeyError.
 

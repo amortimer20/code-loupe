@@ -14,7 +14,7 @@ steps:
     badge: { over: "count < 2", value: true }
     caption: With count at 0, 0 < 2 is True. Enter the loop body.
   - line: 3
-    badge: { over: count, value: 0, from: { var: count } }
+    badge: { over: count, value: 0, from: 'count' }
     caption: Read count for the first print. Its value is 0.
   - print: { text: "0", from: badge }
     caption: The first iteration prints 0.
@@ -27,7 +27,7 @@ steps:
     badge: { over: "count < 2", value: true }
     caption: Now 1 < 2 is True. Run the body again with count at 1.
   - line: 3
-    badge: { over: count, value: 1, from: { var: count } }
+    badge: { over: count, value: 1, from: 'count' }
     caption: Read count for the second print. Its value is now 1.
   - print: { text: "1", from: badge }
     caption: The second iteration prints 1.

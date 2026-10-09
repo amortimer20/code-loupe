@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { parseLesson, type Lesson, type Step, type Value, type ValueSource } from '../src/lesson';
+import { LessonError, parseLesson, type Lesson, type Step, type Value, type ValueSource } from '../src/lesson';
 import { buildSnapshots, type Snapshot } from '../src/state';
 
 const sample = (name: string) => parseLesson(readFileSync(new URL(`../../../lessons/python/${name}/lesson.yaml`, import.meta.url), 'utf8'));
@@ -14,14 +14,14 @@ test('variable-source badges must match exact scoped, indexed, field, or referen
     { call: { name: 'example', line: 2, over: 'example(x)', args: [{ var: 'x', value: 7 }] } },
   ];
   const cases: { label: string; setup: Step[]; source: ValueSource; value: Value; mismatches: Value[] }[] = [
-    { label: 'local', setup: scoped, source: { var: 'x' }, value: 7, mismatches: [5, '7'] },
-    { label: 'global under a shadowing local', setup: scoped, source: { var: 'x', scope: 'global' }, value: 5, mismatches: [7, '5'] },
-    { label: 'list index', setup: [{ line: 2, assign: { var: 'x', value: [2, 1] } }], source: { var: 'x', index: 1 }, value: 1, mismatches: [true, 2] },
-    { label: 'reference list index', setup: [{ line: 2, allocate: { id: 'list', value: [2, 5] }, assign: { var: 'x', ref: 'list' } }], source: { var: 'x', index: 1 }, value: 5, mismatches: [2, '5'] },
-    { label: 'dictionary key', setup: [{ line: 2, allocate: { id: 'dict', fields: { score: 5 } }, assign: { var: 'x', ref: 'dict' } }], source: { var: 'x', key: 'score' }, value: 5, mismatches: [99, '5'] },
-    { label: 'instance attribute', setup: [{ line: 2, allocate: { id: 'student', class: 'Student', fields: { name: 'Ada' } }, assign: { var: 'x', ref: 'student' } }], source: { var: 'x', attribute: 'name' }, value: 'Ada', mismatches: ['Grace', 5] },
-    { label: 'whole referenced list', setup: [{ line: 2, allocate: { id: 'list', value: [5, '5', true, null] }, assign: { var: 'x', ref: 'list' } }], source: { var: 'x' }, value: [5, '5', true, null], mismatches: [[5, '5', 1, null], [5, '5', true], ['5', 5, true, null]] },
-    { label: 'whole ordinary list', setup: [{ line: 2, assign: { var: 'x', value: [] } }], source: { var: 'x' }, value: [], mismatches: [[null], null] },
+    { label: 'local', setup: scoped, source: "x", value: 7, mismatches: [5, '7'] },
+    { label: 'global under a shadowing local', setup: scoped, source: { target: "x", scope: 'global' }, value: 5, mismatches: [7, '5'] },
+    { label: 'list index', setup: [{ line: 2, assign: { var: 'x', value: [2, 1] } }], source: "x[1]", value: 1, mismatches: [true, 2] },
+    { label: 'reference list index', setup: [{ line: 2, allocate: { id: 'list', value: [2, 5] }, assign: { var: 'x', ref: 'list' } }], source: "x[1]", value: 5, mismatches: [2, '5'] },
+    { label: 'dictionary key', setup: [{ line: 2, allocate: { id: 'dict', fields: { score: 5 } }, assign: { var: 'x', ref: 'dict' } }], source: "x[\"score\"]", value: 5, mismatches: [99, '5'] },
+    { label: 'instance attribute', setup: [{ line: 2, allocate: { id: 'student', class: 'Student', fields: { name: 'Ada' } }, assign: { var: 'x', ref: 'student' } }], source: "x.name", value: 'Ada', mismatches: ['Grace', 5] },
+    { label: 'whole referenced list', setup: [{ line: 2, allocate: { id: 'list', value: [5, '5', true, null] }, assign: { var: 'x', ref: 'list' } }], source: "x", value: [5, '5', true, null], mismatches: [[5, '5', 1, null], [5, '5', true], ['5', 5, true, null]] },
+    { label: 'whole ordinary list', setup: [{ line: 2, assign: { var: 'x', value: [] } }], source: "x", value: [], mismatches: [[null], null] },
   ];
   for (const { label, setup, source, value, mismatches } of cases) {
     const lesson = (badgeValue: Value): Lesson => ({ language: 'python', code: 'x = example(x)\nx', steps: [...setup, { badge: { over: 'x', value: badgeValue, from: source } }] });
@@ -32,7 +32,7 @@ test('variable-source badges must match exact scoped, indexed, field, or referen
   }
   assert.throws(() => buildSnapshots({ language: 'python', code: 'x', steps: [
     { line: 1, assign: { var: 'x', value: 5 } },
-    { badge: { over: 'x', value: '99', from: { var: 'x' } } },
+    { badge: { over: 'x', value: '99', from: "x" } },
   ] }), /Step 2: badge value "99" doesn't match `x`, which currently holds 5/);
 });
 
@@ -76,7 +76,7 @@ test('badge-linked output cannot share badge creation or conversion, but assignm
   }
   const lesson: Lesson = { language: 'python', code: 'x', steps: [
     { line: 1, badge: { over: 'x', value: '5' }, convert: { value: 5 }, assign: { var: 'x', from: 'badge' } },
-    { badge: { over: 'x', value: 5, from: { var: 'x' } }, assign: { var: 'other', from: 'badge' } },
+    { badge: { over: 'x', value: 5, from: "x" }, assign: { var: 'other', from: 'badge' } },
     { print: { text: '5', from: 'badge' } },
   ] };
   assert.deepEqual(vars(buildSnapshots(lesson).at(-1)!.vars), { x: 5, other: 5 });
@@ -149,13 +149,13 @@ test('nested calls with the same name have distinct frames and restore the suspe
   const states = buildSnapshots(fixture([
     { line: 1, badge: { over: '10', value: 10 } },
     { call: { name: 'bump', line: 2, over: 'bump(10)', args: [{ var: 'value', from: 'badge' }] } },
-    { badge: { over: 'value', value: 10, from: { var: 'value' } } },
+    { badge: { over: 'value', value: 10, from: "value" } },
     { call: { name: 'bump', line: 3, over: 'bump(value)', args: [{ var: 'value', value: 20 }] } },
     { assign: { var: 'result', value: 21 } },
-    { badge: { over: 'result', value: 21, from: { var: 'result' } } },
+    { badge: { over: 'result', value: 21, from: "result" } },
     { return: { from: 'badge' } },
     { assign: { var: 'result', from: 'badge' } },
-    { line: 3, badge: { over: 'result', value: 21, from: { var: 'result' } } },
+    { line: 3, badge: { over: 'result', value: 21, from: "result" } },
     { return: { from: 'badge' } },
     { assign: { var: 'answer', from: 'badge' } },
   ]));
@@ -178,9 +178,9 @@ test('shadowing, explicit global lookup, and global fallback resolve the correct
     { assign: { var: 'shared', value: 7 } },
     { call: { name: 'bump', line: 2, over: 'bump(10)', args: [{ var: 'value', value: 20 }] } },
     { assign: { var: 'value', value: 30 } },
-    { badge: { over: 'value', value: 30, from: { var: 'value' } } },
-    { badge: { over: 'value', value: 10, from: { var: 'value', scope: 'global' } } },
-    { badge: { over: 'value', value: 7, from: { var: 'shared' } } },
+    { badge: { over: 'value', value: 30, from: "value" } },
+    { badge: { over: 'value', value: 10, from: { target: "value", scope: 'global' } } },
+    { badge: { over: 'value', value: 7, from: "shared" } },
     { return: { value: 31 } },
   ]));
   assert.equal(states[5].events.badgeAdded?.from?.kind, 'var');
@@ -195,7 +195,7 @@ test('a function cannot read a local variable from a suspended caller', () => {
     { line: 1 },
     { call: { name: 'outer', line: 2, over: 'bump(10)', args: [{ var: 'private', value: 10 }] } },
     { call: { name: 'inner', line: 3, over: 'bump(value)' } },
-    { badge: { over: 'result', value: 10, from: { var: 'private' } } },
+    { badge: { over: 'result', value: 10, from: "private" } },
   ])), /no variable named private/);
 });
 
@@ -306,4 +306,15 @@ test('control-flow examples preserve Boolean types and end a while loop on its t
   assert.equal(loop[13].line, 5);
   assert.equal(loop[13].badges.length, 0);
   assert.equal(loop[14].console.map(chunk => chunk.text).join(''), '0\n1\nDone\n');
+});
+
+test('malformed badge, convert, and output steps fail as lesson errors, including unknown keys', () => {
+  const lesson = (step: string) => parseLesson(`language: python\ncode: x\nsteps:\n  - line: 1\n    badge: { over: x, value: 1 }\n  - ${step}\n`);
+  for (const [step, message] of [
+    ['badge: hello', /Step 2: `badge` needs a mapping/],
+    ['convert: 5', /Step 2: `convert` needs a mapping/],
+    ['badge: { over: x, value: 1, frm: x }', /Step 2: unknown badge key `frm`/],
+    ['convert: { value: 2, ovr: x }', /Step 2: unknown convert key `ovr`/],
+    ['print: { txt: "1", from: badge }', /Step 2: unknown output key `txt`/],
+  ] as const) assert.throws(() => buildSnapshots(lesson(step)), (error: Error) => error instanceof LessonError && message.test(error.message), step);
 });

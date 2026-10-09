@@ -36,7 +36,7 @@ steps:
   - line: 2
     caption: range(3) has no more values. Execution leaves the loop.
   - line: 4
-    badge: { over: total, value: 3, from: { var: total } }
+    badge: { over: total, value: 3, from: 'total' }
     caption: Look up the final total to print it.
   - print: { text: "3", from: badge }
     caption: The console shows 3, the sum of 0, 1, and 2.

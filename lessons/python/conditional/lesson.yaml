@@ -11,7 +11,7 @@ steps:
     assign: { var: age, value: 16 }
     caption: Store the integer 16 in age.
   - line: 2
-    badge: { over: age, value: 16, from: { var: age } }
+    badge: { over: age, value: 16, from: 'age' }
     caption: Look up age before comparing it with 18.
   - convert: { over: age >= 18, value: false }
     caption: Evaluating 16 >= 18 gives False, a Boolean value.

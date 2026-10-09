@@ -20,7 +20,7 @@ steps:
     caption: The string "30" is stored in the variable text.
 
   - line: 2
-    badge: { over: text, value: "30", from: { var: text } }
+    badge: { over: text, value: "30", from: 'text' }
     caption: Python looks up text and finds the string "30".
 
   - convert: { over: int(text), value: 30 }
