@@ -1,11 +1,12 @@
 import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type StoredValue, type Value } from './lesson';
-import { cloneValue, inferType, isReference, validateValue } from './values';
+import { cloneValue, formatValue, inferType, isReference, validateValue } from './values';
 import { appendCollectionElement, checkCollectionIndex, removeCollectionElement, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
 import { collectionVariable, referenceIdentity, replaceObjectField, selectionMatches, storeCollectionValue, type HeapObject } from './visuals/heap-state';
 import { dictionaryField, type FieldTarget } from './visuals/dictionary-state';
 import { constructedInstance, instanceAttribute, type AttributeTarget } from './visuals/instance-state';
 import { programError, type ProgramError } from './visuals/error-state';
+import { checkBadgeSourceValue } from './visuals/source-value';
 
 export type { CallFrame } from './visuals/call-stack-state';
 
@@ -127,6 +128,12 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     }
     if ([step.update, step.append, step.remove].filter(action => action !== undefined).length > 1) {
       fail('use only one collection mutation (`update`, `append`, or `remove`) per step.');
+    }
+    for (const action of ['print', 'write'] as const) {
+      const spec = step[action];
+      if (isRecord(spec) && spec.from === 'badge' && (step.badge !== undefined || step.convert !== undefined)) {
+        fail(`\`${action}\` with \`from: badge\` can't share a step with \`badge\` or \`convert\`; put the ${action} in its own step so it uses the finished badge.`);
+      }
     }
 
     const readValue = (spec: Omit<AssignSpec, 'var'>, label: string) => {
@@ -273,6 +280,10 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       if (from === 'badge') {
         const badge = s.badges.at(-1) ?? fail('`from: badge` but there is no badge to print.');
         if (isReference(badge.value)) fail('printing reference badges is not supported; read a scalar attribute first.');
+        const printed = typeof badge.value === 'string' ? badge.value : formatValue(badge.value, lang, badge.type);
+        if (!String(text).includes(printed)) {
+          fail(`output badge holds ${formatValue(badge.value, lang, badge.type)}, but the given text ${JSON.stringify(String(text))} does not contain its printed form ${JSON.stringify(printed)}.`);
+        }
         chunk.fromBadge = badge.id;
       }
       else if (from !== undefined) fail('output `from` must be `badge`.');
@@ -290,9 +301,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const line = step.badge.line ?? s.line ?? fail('`badge` needs a `line` because no line is active yet.');
       const nth = step.badge.nth ?? 1;
       checkTarget(line, over, nth);
+      const origin = resolveOrigin(step.badge.from, s, fail);
+      if (origin?.kind === 'var') checkBadgeSourceValue(s, origin, value, lang, fail);
       const badge: BadgeState = { id: nextBadgeId++, line, over, nth, value: cloneValue(value), type: step.badge.type ?? inferType(value, lang) };
       s.badges.push(badge);
-      s.events.badgeAdded = { id: badge.id, from: resolveOrigin(step.badge.from, s, fail) };
+      s.events.badgeAdded = { id: badge.id, from: origin };
     }
 
     if (step.convert) {

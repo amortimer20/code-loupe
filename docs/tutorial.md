@@ -120,6 +120,10 @@ Append these steps to the existing `steps` list, keeping the same indentation:
 the badge. The badge's `value` is still supplied by you; its source describes
 the animation. Similarly, `from: { var: text }` below describes where a badge
 travels from, rather than calculating its value.
+Variable-source badges must nevertheless match the source's current value,
+including selected list elements and named fields. A number and a string with
+the same digits are different values; a mismatch is a hard lesson error.
+Console-source consistency is not checked yet.
 
 The quotes around `"30"` matter: YAML reads it as a string. An unquoted `30`
 would be a number. Python's inferred type tag is therefore `str` here.
@@ -169,6 +173,9 @@ Append the final two steps:
 
 `print` adds a newline after its text. `from: badge` animates the latest badge's
 value into the output; you still write the complete output text yourself.
+That text must contain the badge's printed form: strings print raw, while Python
+booleans and null print as True/False and None. Containment lets the message above
+include 70 inside a longer sentence. Unrelated output text is a hard lesson error.
 
 Your lesson now has nine steps. Compare it with the
 [complete example](../lessons/python/numeric-input/lesson.yaml), then try backward
@@ -191,7 +198,10 @@ time to distinguish them. Combine actions when one explanation is enough:
 Within a step, actions happen in a fixed order: line change, console activity,
 badge creation, conversion, then assignment. Their order in the YAML mapping
 doesn't change that sequence. To print a newly created badge's value, create
-the badge in an earlier step, because console actions happen first.
+the badge in an earlier step, because console actions happen first. A `print` or
+`write` with `from: badge` cannot share a step with `badge` or `convert`; validation
+rejects that combination. Combining them with `assign: { from: badge }` is valid
+because assignment happens afterward.
 
 Variables and console history persist across steps. Captions do not: a step
 without a caption clears the previous one.

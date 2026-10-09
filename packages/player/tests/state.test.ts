@@ -1,12 +1,95 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
-import { parseLesson, type Lesson, type Step } from '../src/lesson';
+import { parseLesson, type Lesson, type Step, type Value, type ValueSource } from '../src/lesson';
 import { buildSnapshots, type Snapshot } from '../src/state';
 
 const sample = (name: string) => parseLesson(readFileSync(new URL(`../../../lessons/python/${name}/lesson.yaml`, import.meta.url), 'utf8'));
 const vars = (items: { name: string; value: unknown }[]) => Object.fromEntries(items.map(v => [v.name, v.value]));
 const fixture = (steps: Step[]): Lesson => ({ language: 'python', code: 'answer = bump(10)\nresult = bump(value)\nreturn result\nprint(answer)', steps });
+
+test('variable-source badges must match exact scoped, indexed, field, or referenced-list values', () => {
+  const scoped: Step[] = [
+    { line: 1, assign: { var: 'x', value: 5 } },
+    { call: { name: 'example', line: 2, over: 'example(x)', args: [{ var: 'x', value: 7 }] } },
+  ];
+  const cases: { label: string; setup: Step[]; source: ValueSource; value: Value; mismatches: Value[] }[] = [
+    { label: 'local', setup: scoped, source: { var: 'x' }, value: 7, mismatches: [5, '7'] },
+    { label: 'global under a shadowing local', setup: scoped, source: { var: 'x', scope: 'global' }, value: 5, mismatches: [7, '5'] },
+    { label: 'list index', setup: [{ line: 2, assign: { var: 'x', value: [2, 1] } }], source: { var: 'x', index: 1 }, value: 1, mismatches: [true, 2] },
+    { label: 'reference list index', setup: [{ line: 2, allocate: { id: 'list', value: [2, 5] }, assign: { var: 'x', ref: 'list' } }], source: { var: 'x', index: 1 }, value: 5, mismatches: [2, '5'] },
+    { label: 'dictionary key', setup: [{ line: 2, allocate: { id: 'dict', fields: { score: 5 } }, assign: { var: 'x', ref: 'dict' } }], source: { var: 'x', key: 'score' }, value: 5, mismatches: [99, '5'] },
+    { label: 'instance attribute', setup: [{ line: 2, allocate: { id: 'student', class: 'Student', fields: { name: 'Ada' } }, assign: { var: 'x', ref: 'student' } }], source: { var: 'x', attribute: 'name' }, value: 'Ada', mismatches: ['Grace', 5] },
+    { label: 'whole referenced list', setup: [{ line: 2, allocate: { id: 'list', value: [5, '5', true, null] }, assign: { var: 'x', ref: 'list' } }], source: { var: 'x' }, value: [5, '5', true, null], mismatches: [[5, '5', 1, null], [5, '5', true], ['5', 5, true, null]] },
+    { label: 'whole ordinary list', setup: [{ line: 2, assign: { var: 'x', value: [] } }], source: { var: 'x' }, value: [], mismatches: [[null], null] },
+  ];
+  for (const { label, setup, source, value, mismatches } of cases) {
+    const lesson = (badgeValue: Value): Lesson => ({ language: 'python', code: 'x = example(x)\nx', steps: [...setup, { badge: { over: 'x', value: badgeValue, from: source } }] });
+    assert.deepEqual(buildSnapshots(lesson(value)).at(-1)?.badges.at(-1)?.value, value, label);
+    for (const mismatch of mismatches) {
+      assert.throws(() => buildSnapshots(lesson(mismatch)), new RegExp(`Step ${setup.length + 1}: badge value .*doesn't match.*currently holds.*must show`), label);
+    }
+  }
+  assert.throws(() => buildSnapshots({ language: 'python', code: 'x', steps: [
+    { line: 1, assign: { var: 'x', value: 5 } },
+    { badge: { over: 'x', value: '99', from: { var: 'x' } } },
+  ] }), /Step 2: badge value "99" doesn't match `x`, which currently holds 5/);
+});
+
+test('badge-linked output must contain the printed value, allowing embedded values and language literals', () => {
+  const outputs: [Value, string | undefined, string][] = [
+    [70, undefined, 'You will be 100 in 70 years!'],
+    ['Ada', undefined, 'Hello, Ada!'],
+    [true, undefined, 'True'],
+    [false, undefined, 'False'],
+    [null, undefined, 'None'],
+    [5, 'float', '5.0'],
+    [[2, 4], undefined, '[2, 4]'],
+  ];
+  for (const action of ['print', 'write'] as const) {
+    for (const [value, type, text] of outputs) {
+      const steps: Step[] = [
+        { line: 1, badge: { over: 'x', value, type } },
+        { [action]: { text, from: 'badge' } },
+      ];
+      const lesson: Lesson = { language: 'python', code: 'print(x)', steps };
+      assert.equal(buildSnapshots(lesson).at(-1)?.console.at(-1)?.text, text + (action === 'print' ? '\n' : ''));
+      assert.throws(() => buildSnapshots({ ...lesson, steps: [steps[0], { [action]: { text: 'unrelated', from: 'badge' } }] }), /Step 2: output badge holds .*given text "unrelated".*printed form/);
+    }
+  }
+  for (const [value, text] of [[true, 'true'], [null, 'null'], ['Ada', 'Bob']] as const) {
+    assert.throws(() => buildSnapshots({ language: 'python', code: 'x', steps: [
+      { line: 1, badge: { over: 'x', value } },
+      { print: { text, from: 'badge' } },
+    ] }), /Step 2: output badge holds/);
+  }
+});
+
+test('badge-linked output cannot share badge creation or conversion, but assignment can', () => {
+  for (const output of ['print', 'write'] as const) {
+    for (const action of [{ badge: { over: 'x', value: 9 } }, { convert: { value: 9 } }] satisfies Step[]) {
+      assert.throws(() => buildSnapshots({ language: 'python', code: 'x', steps: [
+        { line: 1, badge: { over: 'x', value: 5 } },
+        { ...action, [output]: { text: '5', from: 'badge' } },
+      ] }), new RegExp(`Step 2:.*${output}.*from: badge.*can't share a step.*badge.*convert.*own step`));
+    }
+  }
+  const lesson: Lesson = { language: 'python', code: 'x', steps: [
+    { line: 1, badge: { over: 'x', value: '5' }, convert: { value: 5 }, assign: { var: 'x', from: 'badge' } },
+    { badge: { over: 'x', value: 5, from: { var: 'x' } }, assign: { var: 'other', from: 'badge' } },
+    { print: { text: '5', from: 'badge' } },
+  ] };
+  assert.deepEqual(vars(buildSnapshots(lesson).at(-1)!.vars), { x: 5, other: 5 });
+  assert.doesNotThrow(() => buildSnapshots({ ...lesson, steps: [{ line: 1, badge: { over: 'x', value: 5 }, print: 'unrelated' }] }));
+});
+
+test('console-source badges remain authored values without source consistency validation', () => {
+  const states = buildSnapshots({ language: 'python', code: 'x', steps: [
+    { line: 1, input: 'abc' },
+    { badge: { over: 'x', value: 99, from: 'console' } },
+  ] });
+  assert.equal(states[2].badges[0].value, 99);
+});
 
 test('function locals stay separate from globals and returning resumes the saved expression', () => {
   const states = buildSnapshots(sample('function-call'));

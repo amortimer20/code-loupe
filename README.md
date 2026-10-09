@@ -160,6 +160,14 @@ convert → assign → collection mutation. Use at most one `update`, `append`, 
 Allocation precedes these value actions, so a step can allocate an object and bind
 a name to it.
 
+A badge with `from: { var: ... }` must match that source's current value,
+including an indexed element, named field, or whole list. Types are compared
+strictly: `5` and `"5"` differ. With `print` or `write` using `from: badge`, the
+authored text must contain the badge's printed form (strings print raw), allowing
+values embedded in messages. Mismatches are hard lesson errors. Such output
+cannot share a step with `badge` or `convert`; put it in a separate later step.
+Combining badge/conversion with `assign: { from: badge }` remains valid.
+
 | Key       | Example                                         | What it does |
 | --------- | ----------------------------------------------- | ------------ |
 | `line`    | `line: 2`                                       | Move the arrow to a line. Clears badges from the previous line. |

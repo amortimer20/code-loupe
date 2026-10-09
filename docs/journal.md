@@ -345,3 +345,16 @@ Keep the current 24 lessons as the working comparison corpus. Pause new content
 and deeper language behavior to avoid growing complexity at this stage. Use the
 existing examples to assess the player and authoring experience; future topics
 remain in the backlog rather than becoming automatic next tasks.
+
+## 2026-10-08 — Validate authored source consistency
+
+Add validation rules requiring variable-source badges to match current source
+values and badge-linked output to contain the badge's printed form. Mismatches
+are hard lesson errors. Reject badge-linked print/write combined with badge
+creation or conversion, preserving the existing action order and valid combined
+badge/conversion/assignment steps. These checks validate authored data; they do
+not execute code or infer expression results.
+
+Console-source consistency, Python lists-of-strings printing (the current
+formatter uses JSON-style double quotes), and a unified address syntax remain
+open items. This change does not resolve them.
