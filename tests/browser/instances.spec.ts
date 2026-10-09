@@ -142,6 +142,92 @@ test('two constructions bind self independently and attribute changes reverse wi
   await expect(player.locator('.console pre')).toHaveText('');
 });
 
+test('method self aliases its receiver and None completion preserves mutation and restores locals backward', async ({ page }) => {
+  await page.goto('/samples/python/instance-method/');
+  const player = await ready(page, 11);
+  const first = player.getByRole('article', { name: 'Student instance student-1', exact: true });
+  const second = player.getByRole('article', { name: 'Student instance student-2', exact: true });
+  const frame = player.locator('.frame[data-frame-id="1"]');
+  await goTo(player, 3);
+  await expect(first.locator('.field-value')).toHaveText('"Ada"');
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(frame).toContainText('Student.rename');
+  await expect(frame.locator('[data-name="self"]')).toHaveAttribute('data-ref', 'student-1');
+  await expect(player.locator('.globals [data-name="ada"]')).toHaveAttribute('data-ref', 'student-1');
+  await expect(frame.locator('[data-name="new_name"]')).toContainText('"Lovelace"');
+  await expect(first.locator('.heap-owners')).toHaveText('Referenced by: ada, Student.rename #1.self');
+  await expect(second.locator('.heap-owners')).toHaveText('Referenced by: grace');
+  await goTo(player, 5);
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(first.locator('.field-value')).toHaveText('"Lovelace"');
+  await expect(second.locator('.field-value')).toHaveText('"Grace"');
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(frame).toHaveCount(0);
+  await expect(player.locator('.line.active')).toHaveText('ada.rename("Lovelace")');
+  await expect(player.locator('.badge')).toContainText('None');
+  await expect(player.locator('.badge .reference')).toHaveCount(0);
+  await expect(first.locator('.field-value')).toHaveText('"Lovelace"');
+  await expect(first.locator('.heap-owners')).toHaveText('Referenced by: ada');
+  await expect(player.locator('.globals [data-name]')).toHaveCount(2);
+  await expect(player.locator('.console pre')).toHaveText('');
+  for (const theme of ['paper', 'terminal', 'midnight'] as const) {
+    await selectTheme(page, theme);
+    await expect(player.locator('.badge')).toContainText('None');
+    await expect(player.locator('.counter')).toHaveText('Step 7 / 11');
+  }
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(frame.locator('[data-name="self"]')).toHaveAttribute('data-ref', 'student-1');
+  await expect(first.locator('.field-value')).toHaveText('"Lovelace"');
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(first.locator('.field-value')).toHaveText('"Ada"');
+  await expect(second.locator('.field-value')).toHaveText('"Grace"');
+  await goTo(player, 8);
+  await expect(player.locator('.badge')).not.toContainText('None');
+  await expect(player.locator('.badge')).toContainText('"Lovelace"');
+  await goTo(player, 11);
+  await expect(player.locator('.console pre')).toHaveText('Lovelace\nGrace\n');
+  const scrub = player.getByRole('slider', { name: 'Step', exact: true });
+  await scrub.focus();
+  await scrub.press('Home');
+  await expect(player.locator('.heap-object')).toHaveCount(0);
+  for (let step = 0; step < 4; step++) await scrub.press('ArrowRight');
+  await settle(player);
+  await expect(frame.locator('[data-name="self"]')).toHaveAttribute('data-ref', 'student-1');
+  await expect(first.locator('.field-value')).toHaveText('"Ada"');
+  await expect(second.locator('.field-value')).toHaveText('"Grace"');
+  await expect(player.locator('.console pre')).toHaveText('');
+});
+
+test('method frames and attribute changes fit short fullscreen layouts', async ({ page }) => {
+  await page.goto('/samples/python/instance-method/');
+  const player = await ready(page, 11);
+  await page.getByRole('button', { name: 'Enter fullscreen', exact: true }).click();
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 600 });
+    for (const [step, id, value] of [[6, 'student-1', '"Lovelace"'], [10, 'student-2', '"Grace"']] as const) {
+      await goTo(player, step);
+      const object = player.getByRole('article', { name: `Student instance ${id}`, exact: true });
+      await expect(object.locator('.field-value')).toHaveText(value);
+      const field = await object.locator('.object-field').boundingBox();
+      const pane = await player.locator('.data').boundingBox();
+      expect(field!.y).toBeGreaterThanOrEqual(pane!.y);
+      expect(field!.y + field!.height).toBeLessThanOrEqual(pane!.y + pane!.height);
+      const active = await player.locator('.line.active').boundingBox();
+      const code = await player.locator('.code-scroll').boundingBox();
+      expect(active!.y).toBeGreaterThanOrEqual(code!.y);
+      expect(active!.y + active!.height).toBeLessThanOrEqual(code!.y + code!.height);
+      const controls = await player.locator('.controls').boundingBox();
+      expect(controls!.y + controls!.height).toBeLessThanOrEqual(600);
+      expect(await page.locator('#lesson-view').evaluate(el => el.scrollWidth <= el.clientWidth)).toBe(true);
+    }
+  }
+});
+
 test('two-instance attribute reads follow the correct card in short fullscreen layouts', async ({ page }) => {
   await page.goto('/samples/python/two-instances/');
   const player = await ready(page, 21);

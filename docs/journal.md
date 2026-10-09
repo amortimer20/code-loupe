@@ -308,3 +308,17 @@ and separate instance identities explicit. Contrast with list aliasing: two
 variable names alone do not establish independence; separate allocations do.
 Reuse the existing constructor and scalar attribute format without extending the
 player. Ordinary instance-method calls remain the next lesson.
+
+## 2026-10-08 — An ordinary method call
+
+Model Student.rename with the existing call format: explicitly bind self to the
+receiver's instance, pass the scalar new_name parameter, and write the attribute
+through self. Omit construct so the authored null completion produces None
+instead of an instance reference. Removing the frame removes its locals while
+preserving the object mutation and global references.
+
+Summarize the two constructions in setup steps, with initialized objects, to
+focus this lesson on receiver binding and method completion. The prior lessons
+retain the detailed initializer sequence. This adds a canonical lesson without
+new schema or execution behavior; method lookup and implicit completion remain
+teacher-authored rather than inferred.

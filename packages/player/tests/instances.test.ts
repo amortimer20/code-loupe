@@ -71,6 +71,32 @@ test('two-instance lesson binds each initializer to its own object and changes o
   assert.equal(states[21].console.map(entry => entry.text).join(''), 'Lovelace\nGrace\n');
 });
 
+test('instance-method lesson mutates the receiver through self and returns None without replacing its identity', () => {
+  const lesson = parseLesson(readFileSync(new URL('../../../lessons/python/instance-method/lesson.yaml', import.meta.url), 'utf8'));
+  const states = buildSnapshots(lesson);
+  const fields = (step: number) => states[step].heap.map(object => 'fields' in object ? object.fields : object.value);
+  const bindings = [['ada', { ref: 'student-1' }], ['grace', { ref: 'student-2' }]];
+  assert.equal(states.length, 12);
+  assert.deepEqual(fields(2), [{ name: 'Ada' }, { name: 'Grace' }]);
+  assert.deepEqual(states[4].frames[0].vars.map(v => [v.name, v.value]), [['self', { ref: 'student-1' }], ['new_name', 'Lovelace']]);
+  assert.equal(states[4].frames[0].construct, undefined);
+  assert.deepEqual(states[4].vars.map(v => [v.name, v.value]), bindings);
+  assert.deepEqual(fields(6), [{ name: 'Lovelace' }, { name: 'Grace' }]);
+  assert.equal(states[6].events.updated?.frameId, 1);
+  assert.deepEqual(fields(5), [{ name: 'Ada' }, { name: 'Grace' }]);
+  assert.deepEqual(states[7].frames, []);
+  assert.equal(states[7].line, 10);
+  assert.equal(states[7].badges[0].value, null);
+  assert.equal(states[7].badges[0].over, 'ada.rename("Lovelace")');
+  assert.deepEqual(states[7].vars.map(v => [v.name, v.value]), bindings);
+  assert.deepEqual(fields(7), fields(6));
+  assert.deepEqual(states[7].console, []);
+  assert.deepEqual(states[8].badges.map(badge => badge.value), ['Lovelace']);
+  assert.equal(states[10].badges[0].value, 'Grace');
+  assert.equal(states[11].console.map(entry => entry.text).join(''), 'Lovelace\nGrace\n');
+  assert.deepEqual(states[11].vars.map(v => [v.name, v.value]), bindings);
+});
+
 test('invalid class metadata, constructor bindings, and attribute operations fail before rendering', () => {
   for (const [action, pattern] of [
     ['allocate: { id: another, class: "", fields: {} }', /nonempty/],

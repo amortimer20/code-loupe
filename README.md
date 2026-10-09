@@ -313,6 +313,14 @@ enclosing constructor expression produces a reference badge to the instance.
 `assign.from: badge` can bind that result without copying the object. Reference
 bindings cannot override the object's type.
 
+For an ordinary instance method, use `call` without `construct` and explicitly
+bind `self` with `ref` to the receiver's instance. Author its parameters and
+attribute writes using the same call and update actions. A method that reaches
+the end without returning a value can be modeled with `return: { value: null }`;
+this produces a None badge, not a constructor reference. See the
+[instance-method sample](lessons/python/instance-method/lesson.yaml). Receiver
+binding and method lookup are authored, rather than inferred from the code.
+
 `update.attribute` creates or replaces a scalar instance attribute; it accepts
 `value` or `from: badge`. `badge.from.attribute` reads an existing attribute as
 an animation origin, with a teacher-authored scalar badge value. Both support

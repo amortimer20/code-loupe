@@ -150,7 +150,7 @@ through a shared "where is this value on screen?" lookup.
       result distinct from the initializer's None completion.
 - [x] Two-instance lesson: separate initializer self bindings, independent scalar
       attributes, one-instance mutation, and contrasting outputs.
-- [ ] Instance-method lesson: a receiver bound to self, attribute mutation inside
+- [x] Instance-method lesson: a receiver bound to self, attribute mutation inside
       a method, and return to the caller.
 - [ ] Nested objects, reference-valued returns,
       and memory lifetime/garbage-collection visuals.
@@ -178,7 +178,8 @@ through a shared "where is this value on screen?" lookup.
        a conditional branch, a simple while loop, an accumulator loop, and a
        function call, nested calls, list iteration, element updates, append, and
        indexed removal, shared-list aliasing, a copying comparison, and named
-       dictionary fields, class-instance initialization, and two independent instances.
+       dictionary fields, class-instance initialization, two independent instances,
+       and an instance-method call.
        The initial five-lesson introductory sequence is complete.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
@@ -231,11 +232,11 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      thirty reviewed screenshot references for themes, nested calls/returns,
+      thirty-two reviewed screenshot references for themes, nested calls/returns,
       list selection/updates/length changes/aliasing/copying, the gallery, narrow player,
       short-laptop Focus lesson view, the final false while-loop condition, and
       dictionary fields in all three presets, instance initialization/results,
-      and two instances with independent attributes;
+      two instances with independent attributes, and a method's self binding/None result;
       pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,

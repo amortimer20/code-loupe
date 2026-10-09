@@ -43,8 +43,9 @@ object and constructor result. Scrubbing to Step 0 removes everything.
 
 Class labels, scalar attribute writes, and constructor completion are explicit.
 The player does not inspect class definitions, run methods, implement inheritance,
-or infer which attributes a class should have. Two independent instances and
-ordinary instance-method calls are later lessons.
+or infer which attributes a class should have. Continue with
+[two independent instances](/samples/python/two-instances/) and an
+[authored instance-method call](/samples/python/instance-method/).
 
 ## Try a variation
 

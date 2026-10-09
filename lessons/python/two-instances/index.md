@@ -36,8 +36,10 @@ comes from two separate allocations, not merely from having two variable names.
 Two variables can also refer to the same instance, although this lesson does not
 introduce that additional alias.
 
-This lesson uses existing scalar attribute operations. Instance-method calls,
-class attributes, inheritance, and nested attribute values are later topics.
+This lesson uses existing scalar attribute operations. Continue with
+[Calling an instance method](/samples/python/instance-method/) to move the
+attribute write into a method with its own self binding. Class attributes,
+inheritance, and nested attribute values are later topics.
 The code is displayed for explanation; changing it does not execute Python or
 recalculate the authored steps.
 

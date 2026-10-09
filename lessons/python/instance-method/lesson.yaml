@@ -1,0 +1,52 @@
+title: Calling an instance method
+language: python
+code: |
+  class Student:
+      def __init__(self, name):
+          self.name = name
+
+      def rename(self, new_name):
+          self.name = new_name
+
+  ada = Student("Ada")
+  grace = Student("Grace")
+  ada.rename("Lovelace")
+  print(ada.name)
+  print(grace.name)
+steps:
+  - line: 8
+    allocate: { id: student-1, class: Student, fields: { name: Ada } }
+    assign: { var: ada, ref: student-1 }
+    caption: Begin with ada pointing to a Student named "Ada". This setup step summarizes construction and initialization.
+  - line: 9
+    allocate: { id: student-2, class: Student, fields: { name: Grace } }
+    assign: { var: grace, ref: student-2 }
+    caption: Summarize construction of a second Student named "Grace". The two instances have independent state.
+  - line: 10
+    badge: { over: '"Lovelace"', value: Lovelace }
+    caption: ada identifies the instance receiving the method call. Evaluate "Lovelace" for the new_name argument.
+  - call:
+      name: Student.rename
+      line: 5
+      over: 'ada.rename("Lovelace")'
+      args:
+        - { var: self, ref: student-1 }
+        - { var: new_name, from: badge }
+    caption: Enter rename. The receiver ada becomes the local self reference; new_name holds "Lovelace". Both ada and self point to student-1.
+  - line: 6
+    badge: { over: new_name, value: Lovelace, from: { var: new_name } }
+    caption: Read the local parameter new_name. The instance's name attribute still holds "Ada".
+  - update: { var: self, attribute: name, from: badge }
+    caption: Update the instance through self. ada sees the same object's new name, while grace's separate instance stays unchanged.
+  - return: { value: null }
+    caption: rename reaches the end without an explicit return, so the call's result is None. Its locals disappear, but the attribute change remains. Unlike construction, this call does not produce an instance reference.
+  - line: 11
+    badge: { over: ada.name, value: Lovelace, from: { var: ada, attribute: name } }
+    caption: The unused None result is discarded. Read "Lovelace" through ada, which still points to student-1.
+  - print: { text: Lovelace, from: badge }
+    caption: Print the name changed by the method.
+  - line: 12
+    badge: { over: grace.name, value: Grace, from: { var: grace, attribute: name } }
+    caption: Read grace's name from student-2. The method was called on ada, so this instance still holds "Grace".
+  - print: { text: Grace, from: badge }
+    caption: The outputs show the method's lasting change to one instance. Its None result was not printed or assigned.

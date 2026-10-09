@@ -69,6 +69,16 @@ test('two Student instances retain independent attribute values', async ({ page 
   await expect(player).toHaveScreenshot('midnight-two-instances.png');
 });
 
+test('instance-method receiver binding and None result', async ({ page }) => {
+  await page.goto('/samples/python/instance-method/');
+  const player = await ready(page, 11);
+  await goTo(player, 6);
+  await page.mouse.move(0, 0);
+  await expect(player).toHaveScreenshot('midnight-instance-method-self.png');
+  await goTo(player, 7);
+  await expect(player).toHaveScreenshot('midnight-instance-method-none.png');
+});
+
 test('updated list cell and list-valued print badge', async ({ page }) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);

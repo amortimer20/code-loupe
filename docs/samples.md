@@ -129,6 +129,11 @@ Two-instances repeats construction using the same class: compare self at Steps 4
 and 11, then both global references at Step 15. Steps 16–17 change only the first
 instance's name, preserving the second instance's value. Steps 19 and 21 print
 Lovelace and Grace. Compare separate allocation with list-aliasing's shared object.
+Instance-method summarizes construction in Steps 1–2 to focus on rename. Step 4
+shows ada and self referring to the same instance; Steps 5–6 replace its name.
+Step 7 removes the frame and shows None while retaining the object change;
+Step 8 discards the unused result. Compare this with class-instance's constructor
+reference badge. The two outputs still contrast independent instance state.
 Checked-in Playwright tests cover the library/player/playground, with focused
 theme and nested-call screenshot references. Run `npm test` after changing the
 state model or a tested sample's authored outcomes, and `npm run test:docker`
