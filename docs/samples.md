@@ -115,8 +115,12 @@ element. Compare Steps 2 and 3 to see the second cell change from `4` to `10`,
 while the neighbors and length stay the same. Step 5 shows the whole updated
 list as a badge. List-append introduces a cell at the old list length; list-removal
 deletes by index and shifts later elements forward. Compare Steps 2 and 3 in
-both lessons for the length change, then Step 4 for the final indices. Shared
-references are introduced in list-aliasing: two variable arrows point to one
+both lessons for the length change, then Step 4 for the final indices.
+Every variable-held list is an object: `assign` with a list value allocates
+one, and variables point to cells in the Objects card. Binding a whole-list
+read shares the object; separate literals allocate separate objects.
+`allocate` remains available for chosen labels. Unreferenced objects stay
+visible. List-aliasing introduces two variable arrows pointing to one
 Objects card. Compare Steps 2 and 4 to see an append through `other` change
 what `numbers` reads, then step backward to restore the shared contents. The
 list-copying lesson contrasts those aliases with two distinct objects: Step 2

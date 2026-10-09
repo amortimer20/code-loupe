@@ -219,6 +219,15 @@ the badge in an earlier step, because console actions happen first. A `print` or
 rejects that combination. Combining them with `assign: { from: badge }` is valid
 because assignment happens afterward.
 
+Every list a variable holds is an object in the Objects card. For example,
+`assign: { var: numbers, value: [2, 4] }` allocates a list with the lowest
+unused `list-N` label; the Variables panel shows a reference arrow.
+A whole-list badge with `from: 'numbers'` retains that reference, so binding
+`from: badge` shares it (also for call arguments and return passthrough).
+A literal badge stays a value and allocates a separate object each time it is
+bound. Use `allocate` with `ref` for chosen labels. Unreferenced objects
+remain visible.
+
 Variables and console history persist across steps. Captions do not: a step
 without a caption clears the previous one.
 

@@ -36,8 +36,8 @@ test('the copying lesson preserves the original while its separate copy grows', 
   assert.deepEqual(states[3].heap[1].value, [2, 4]);
   assert.equal(states[4].events.appended?.ref, 'list-2');
   assert.equal(states[5].selection?.ref, 'list-2');
-  assert.deepEqual(states[6].badges.at(-1)?.value, [2, 4]);
-  assert.deepEqual(states[8].badges.at(-1)?.value, [2, 4, 6]);
+  assert.deepEqual(states[6].badges.at(-1)?.value, { ref: 'list-1' });
+  assert.deepEqual(states[8].badges.at(-1)?.value, { ref: 'list-2' });
   assert.equal(states[6].events.badgeAdded?.from?.kind, 'var');
   assert.equal(states[8].events.badgeAdded?.from?.kind, 'var');
   assert.deepEqual(states[9].console.map(entry => entry.text), ['[2, 4]\n', '[2, 4, 6]\n']);
@@ -99,7 +99,7 @@ test('shared references in call parameters preserve identity across locals, glob
   assert.deepEqual(states[5].heap[0].value, [2, 4, 6]);
 });
 
-test('ordinary list values keep their independent semantics when mixed with references', () => {
+test('literal bindings allocate independently while whole-list reads share references', () => {
   const states = buildSnapshots(fixture([
     create,
     { assign: { var: 'plain', value: [2, 4] } },
@@ -109,8 +109,8 @@ test('ordinary list values keep their independent semantics when mixed with refe
     { append: { target: "plain", value: 8 } },
   ]));
   assert.deepEqual(states[6].heap[0].value, [2, 4, 6]);
-  assert.deepEqual(states[6].vars[1].value, [2, 4, 8]);
-  assert.deepEqual(states[6].vars[2].value, [2, 4]);
+  assert.deepEqual(resolveVariableValue(states[6], states[6].vars[1]), [2, 4, 8]);
+  assert.deepEqual(states[6].vars[2].value, { ref: 'shared' });
 });
 
 test('invalid allocations and reference bindings fail with useful step errors', () => {

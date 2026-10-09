@@ -1,4 +1,4 @@
-import type { ObjectReference, StoredValue, Value } from './lesson';
+import type { ObjectReference, ScalarValue, StoredValue, Value } from './lesson';
 
 interface LanguageWords {
   true: string;
@@ -69,6 +69,7 @@ export function isReference(value: StoredValue): value is ObjectReference {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+export function cloneValue(value: ScalarValue | ObjectReference): ScalarValue | ObjectReference;
 export function cloneValue(value: Value): Value;
 export function cloneValue(value: StoredValue): StoredValue;
 export function cloneValue(value: StoredValue): StoredValue {

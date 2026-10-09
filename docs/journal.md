@@ -374,3 +374,12 @@ Badge, convert, and output mappings now reject unknown keys like other actions.
 Nested accessors remain open. Unifying ordinary list values and heap-backed
 list references into one list model is separate future work, not part of this
 authoring syntax change.
+
+## 2026-10-09 — One list model
+
+Every variable-held list now lives in the heap. Literal bindings allocate objects;
+whole-list reads and return passthrough preserve identity. This makes aliasing and
+function-argument mutation truthful to Python, matches the model a future tracer
+will emit, and replaces two list models with one. Explicit allocation still allows
+chosen labels, and unreferenced objects remain visible. Orphaned objects and
+garbage-collection visuals, and nested lists, remain open.

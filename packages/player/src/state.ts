@@ -1,8 +1,8 @@
-import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type StoredValue, type Value } from './lesson';
+import { LessonError, type AssignSpec, type Lesson, type OutputSpec, type ScalarValue, type ObjectReference, type StoredValue, type Value } from './lesson';
 import { cloneValue, formatValue, inferType, isReference, validateValue } from './values';
 import { appendCollectionElement, checkCollectionIndex, removeCollectionElement, replaceCollectionElement, type CollectionSelection } from './visuals/collection-state';
 import { activeScope, cloneFrames, findVariable, type CallFrame } from './visuals/call-stack-state';
-import { collectionVariable, referenceIdentity, replaceObjectField, selectionMatches, storeCollectionValue, type HeapObject } from './visuals/heap-state';
+import { badgeDisplayValue, collectionVariable, referenceIdentity, replaceObjectField, selectionMatches, storeCollectionValue, type HeapObject } from './visuals/heap-state';
 import { dictionaryField, type FieldTarget } from './visuals/dictionary-state';
 import { constructedInstance, instanceAttribute, type AttributeTarget } from './visuals/instance-state';
 import { programError, type ProgramError } from './visuals/error-state';
@@ -22,7 +22,7 @@ export interface BadgeState {
 
 export interface VarState {
   name: string;
-  value: StoredValue;
+  value: ScalarValue | ObjectReference;
   type: string;
 }
 
@@ -72,6 +72,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
   const lang = lesson.language;
   let nextBadgeId = 1;
   let nextFrameId = 1;
+  const autoAllocated = new Set<string>();
 
   let current: Snapshot = { error: null, line: null, caption: null, vars: [], frames: [], badges: [], console: [], selection: null, heap: [], events: { lineChanged: false, consoleFrom: 0 } };
   const snapshots = [current];
@@ -137,11 +138,17 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       }
     }
 
-    const readValue = (spec: Omit<AssignSpec, 'var'>, label: string) => {
+    function readValue(spec: Omit<AssignSpec, 'var'>, label: string): { value: Value; type: string; fromBadge?: number };
+    function readValue(spec: Omit<AssignSpec, 'var'>, label: string, allowListReference: true): { value: StoredValue; type: string; fromBadge?: number };
+    function readValue(spec: Omit<AssignSpec, 'var'>, label: string, allowListReference = false): { value: StoredValue; type: string; fromBadge?: number } {
       if (spec.from !== undefined && spec.from !== 'badge') fail(`${label} \`from\` must be \`badge\`.`);
       const badge = spec.from === 'badge' ? (s.badges.at(-1) ?? fail(`${label} uses \`from: badge\` but there is no badge.`)) : undefined;
       const value = spec.value !== undefined ? spec.value : badge?.value;
-      if (value === undefined) fail(`${label} needs a \`value\` (or \`from: badge\`).`);
+      if (value === undefined) return fail(`${label} needs a \`value\` (or \`from: badge\`).`);
+      if (allowListReference && badge && spec.value === undefined && isReference(value) && s.heap.some(object => object.id === value.ref && 'value' in object)) {
+        if (spec.type !== undefined) fail('reference bindings cannot override the object type.');
+        return { value: { ...value }, type: badge.type, fromBadge: badge.id };
+      }
       validateValue(value, fail, label);
       if (spec.type !== undefined && (typeof spec.type !== 'string' || !spec.type.length)) fail(`${label} \`type\` must be nonempty text.`);
       return {
@@ -149,14 +156,14 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
         type: spec.type ?? (spec.value !== undefined ? inferType(value as Value, lang) : badge!.type),
         fromBadge: badge?.id,
       };
-    };
+    }
 
     if (step.allocate !== undefined) {
       const object = step.allocate;
       if (!isRecord(object)) fail('`allocate` needs a mapping with id and value.');
       checkKeys(object, ['id', 'value', 'fields', 'class'], 'allocate', fail);
       if (typeof object.id !== 'string' || !object.id.length) fail('`allocate.id` must be nonempty text.');
-      if (s.heap.some(item => item.id === object.id)) fail(`object \`${object.id}\` already exists; allocate a new id.`);
+      if (s.heap.some(item => item.id === object.id)) fail(`object \`${object.id}\` already exists${autoAllocated.has(object.id) ? ' (created automatically by a list binding)' : ''}; allocate a new id.`);
       if ('class' in object && (typeof object.class !== 'string' || !object.class.length)) fail('`allocate.class` must be nonempty text.');
       if ('class' in object && !('fields' in object)) fail('class instances require `fields`, not list values.');
       if ('fields' in object) {
@@ -175,14 +182,23 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       }
     }
 
-    const readBinding = (spec: Omit<AssignSpec, 'var'>, label: string): { value: StoredValue; type: string; fromBadge?: number } => {
+    const readBinding = (spec: Omit<AssignSpec, 'var'>, label: string): { value: ScalarValue | ObjectReference; type: string; fromBadge?: number } => {
       const badge = spec.from === 'badge' && spec.value === undefined ? s.badges.at(-1) : undefined;
       if (spec.ref === undefined && badge && isReference(badge.value)) {
         if (spec.type !== undefined) fail('reference bindings cannot override the object type.');
         const object = s.heap.find(item => item.id === (badge.value as { ref: string }).ref)!;
         return { value: cloneValue(badge.value), type: object.type, fromBadge: badge.id };
       }
-      if (spec.ref === undefined) return readValue(spec, label);
+      if (spec.ref === undefined) {
+        const result = readValue(spec, label);
+        if (!Array.isArray(result.value)) return { ...result, value: result.value };
+        let n = 1;
+        while (s.heap.some(object => object.id === `list-${n}`)) n++;
+        const id = `list-${n}`;
+        s.heap.push({ id, value: [...result.value], type: result.type });
+        autoAllocated.add(id);
+        return { ...result, value: { ref: id } };
+      }
       if (typeof spec.ref !== 'string' || !spec.ref.length) fail(`${label} \`ref\` must be nonempty text.`);
       if (spec.value !== undefined || spec.from !== undefined || spec.type !== undefined) fail(`${label} \`ref\` cannot be combined with value, from, or type.`);
       const object = s.heap.find(item => item.id === spec.ref) ?? fail(`object \`${spec.ref}\` has not been allocated.`);
@@ -231,7 +247,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       if (!isRecord(step.return)) fail('`return` needs a mapping with value or from.');
       checkKeys(step.return, ['value', 'type', 'from'], 'return', fail);
       const frame = s.frames.at(-1) ?? fail('`return` needs an active function call.');
-      const result = readValue(step.return, 'return');
+      const result = readValue(step.return, 'return', true);
       if (frame.construct !== undefined && result.value !== null) fail('an initializer must finish with null (Python None), not return the instance.');
       const instance = frame.construct === undefined ? undefined : constructedInstance(s, frame.construct, fail);
       s.frames.pop();
@@ -269,7 +285,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
         if (target.index === undefined) fail('`select` needs an index accessor, e.g. numbers[1].');
         const origin = resolveOrigin(target, s, fail);
         if (origin?.kind === 'var' && origin.index !== undefined) {
-          s.selection = { name: origin.name, frameId: origin.frameId, index: origin.index, ...('ref' in origin && origin.ref !== undefined ? { ref: origin.ref } : {}) };
+          s.selection = { name: origin.name, frameId: origin.frameId, index: origin.index, ref: origin.ref! };
         } else fail('`select` needs a variable and index.');
       }
     }
@@ -281,10 +297,11 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const chunk: ConsoleChunk = { kind: 'out', text: `${text}${newline}` };
       if (from === 'badge') {
         const badge = s.badges.at(-1) ?? fail('`from: badge` but there is no badge to print.');
-        if (isReference(badge.value)) fail('printing reference badges is not supported; read a scalar attribute first.');
-        const printed = typeof badge.value === 'string' ? badge.value : formatValue(badge.value, lang, badge.type);
+        const value = badgeDisplayValue(s, badge.value);
+        if (isReference(value)) fail('printing reference badges is not supported; read a scalar attribute first.');
+        const printed = typeof value === 'string' ? value : formatValue(value, lang, badge.type);
         if (!String(text).includes(printed)) {
-          fail(`output badge holds ${formatValue(badge.value, lang, badge.type)}, but the given text ${JSON.stringify(String(text))} does not contain its printed form ${JSON.stringify(printed)}.`);
+          fail(`output badge holds ${formatValue(value, lang, badge.type)}, but the given text ${JSON.stringify(String(text))} does not contain its printed form ${JSON.stringify(printed)}.`);
         }
         chunk.fromBadge = badge.id;
       }
@@ -300,7 +317,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       checkKeys(step.badge, ['over', 'value', 'type', 'line', 'nth', 'from'], 'badge', fail);
       const { over, value } = step.badge;
       if (typeof over !== 'string') fail('`badge` needs `over`: the code the value floats above.');
-      if (value === undefined) fail('`badge` needs a `value`.');
+      if (value === undefined) return fail('`badge` needs a `value`.');
       validateValue(value, fail, 'badge');
       const line = step.badge.line ?? s.line ?? fail('`badge` needs a `line` because no line is active yet.');
       const nth = step.badge.nth ?? 1;
@@ -308,7 +325,8 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       const source = step.badge.from;
       const origin = resolveOrigin(source === undefined || source === 'console' ? source : normalizeAddress(source, 'from', fail), s, fail);
       if (origin?.kind === 'var') checkBadgeSourceValue(s, origin, value, lang, fail);
-      const badge: BadgeState = { id: nextBadgeId++, line, over, nth, value: cloneValue(value), type: step.badge.type ?? inferType(value, lang) };
+      const badge: BadgeState = { id: nextBadgeId++, line, over, nth, value: origin?.kind === 'var' && origin.ref !== undefined && origin.index === undefined && origin.key === undefined && origin.attribute === undefined
+        ? { ref: origin.ref } : cloneValue(value), type: step.badge.type ?? inferType(value, lang) };
       s.badges.push(badge);
       s.events.badgeAdded = { id: badge.id, from: origin };
     }
@@ -367,7 +385,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       } else {
         checkCollectionIndex(collectionVariable(s, found.variable), update.index, fail);
         storeCollectionValue(s, found.variable, replaceCollectionElement(collectionVariable(s, found.variable), update.index, value, fail));
-        s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge, ...referenceIdentity(found.variable) };
+        s.events.updated = { name: update.var, frameId: found.frameId, index: update.index, fromBadge, ref: referenceIdentity(found.variable).ref! };
       }
     }
 
@@ -383,12 +401,12 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
         const { value, fromBadge } = readValue(step.append!, 'append');
         const items = appendCollectionElement(collectionVariable(s, found.variable), value, fail);
         storeCollectionValue(s, found.variable, items);
-        s.events.appended = { name: spec.var, frameId: found.frameId, index: items.length - 1, fromBadge, ...referenceIdentity(found.variable) };
+        s.events.appended = { name: spec.var, frameId: found.frameId, index: items.length - 1, fromBadge, ref: referenceIdentity(found.variable).ref! };
       } else {
         const index = spec.index!;
         storeCollectionValue(s, found.variable, removeCollectionElement(collectionVariable(s, found.variable), index, fail));
-        s.events.removed = { name: spec.var, frameId: found.frameId, index, ...referenceIdentity(found.variable) };
-        if (selectionMatches(s.selection, found.variable, spec.var, found.frameId) && s.selection) {
+        s.events.removed = { name: spec.var, frameId: found.frameId, index, ref: referenceIdentity(found.variable).ref! };
+        if (selectionMatches(s.selection, found.variable) && s.selection) {
           if (s.selection.index === index) s.selection = null;
           else if (s.selection.index > index) s.selection.index--;
         }

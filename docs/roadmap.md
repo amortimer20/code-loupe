@@ -127,7 +127,7 @@ through a shared "where is this value on screen?" lookup.
 | Loops                   | Iteration counter, loop variable history, the arrow jumping back   |
 | Functions               | Call stack frames, arguments flying in, the return value flying out |
 | Scope                   | Frames that own variables; shadowing                              |
-| Lists and arrays        | Indexed cells, authored selection, update/append/remove transitions (done) |
+| Lists and arrays        | Heap objects with indexed cells, authored selection, update/append/remove transitions (done) |
 | Strings                 | Characters with indices, slicing                                   |
 | Objects and references  | Heap boxes with arrows; two variables pointing to one object       |
 | Errors                  | Exception badge, stack unwinding                                   |

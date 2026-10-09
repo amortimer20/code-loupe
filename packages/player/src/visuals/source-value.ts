@@ -19,7 +19,7 @@ function sourceValue(state: SourceState, origin: VariableOrigin, fail: (message:
     }
     return origin.index === undefined ? object.value : object.value[origin.index];
   }
-  return Array.isArray(stored) && origin.index !== undefined ? stored[origin.index] : stored;
+  return stored;
 }
 
 /** Flat lists compare element by element; scalar comparison never coerces types. */

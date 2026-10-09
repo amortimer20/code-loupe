@@ -1,6 +1,7 @@
 import type { StoredValue } from '../lesson';
 import type { Snapshot } from '../state';
 import { isReference } from '../values';
+import { badgeDisplayValue } from './heap-state';
 import { renderVariables, type ValueRenderer } from './variables';
 
 export interface CapturedValue { rect: DOMRect; html: string }
@@ -32,7 +33,7 @@ export class CallStackPanel {
       returnTo.textContent = `Returns to line ${frame.returnTo.line}`;
       const vars = document.createElement('div');
       vars.className = 'vars';
-      renderVariables(vars, frame.vars, renderer, snap.selection, frame.id);
+      renderVariables(vars, frame.vars, renderer);
       card.append(returnTo, vars);
       return card;
     });
@@ -86,7 +87,7 @@ export class CallStackPanel {
       const source = returned.fromBadge !== undefined ? oldBadges.get(returned.fromBadge) : undefined;
       if (source) {
         const badge = snap.badges.find(b => b.id === returned.badgeId)!;
-        delay += ctx.fly(ctx.literalHtml(badge.value, badge.type), source.rect, destination.getBoundingClientRect(), delay, 'center');
+        delay += ctx.fly(ctx.literalHtml(badgeDisplayValue(snap, badge.value), badge.type), source.rect, destination.getBoundingClientRect(), delay, 'center');
       }
       destination.animate([{ opacity: 0, transform: 'scale(0.8)' }, { opacity: 1, transform: 'none' }], {
         duration: ctx.ms(250), delay, fill: 'backwards', easing: 'ease-out',

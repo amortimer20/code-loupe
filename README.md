@@ -222,9 +222,10 @@ language; add `type: float` etc. to override.
 
 Flat lists of these scalar values are supported, including empty lists:
 `assign: { var: numbers, value: [2, 4, 6] }`. Python infers `list`; JavaScript
-infers `array`. Variable lists display indexed cells; list badges display a literal.
-Nested collections are not modeled yet. Shared lists use
-explicit allocation and reference bindings, described below.
+infers `array`. Every list held by a variable is an object: this assignment
+allocates the lowest unused `list-N` label and stores a reference. Variables
+display arrows; indexed cells live in the Objects card. List badges display
+contents with a list tag. Nested collections are not modeled yet.
 
 See the [list-iteration lesson](lessons/python/list-iteration/lesson.yaml). An
 indexed source such as `badge: { over: numbers, value: 2, from: 'numbers[0]' }`
@@ -234,8 +235,10 @@ integers within an existing list. Both `select` and indexed sources look up loca
 then globals; an address mapping with `scope: global` selects a shadowed global explicitly.
 Selection is applied before badge animation and remains through the loop body.
 Reassigning the selected list or returning from its owning frame clears it.
-Ordinary list literals and list badges remain snapshot values. To teach identity
-and aliasing, use explicit shared-list references rather than repeated literals.
+A whole-list read (`from: 'numbers'`) keeps that object's identity. Binding
+from its badge shares the list, including function arguments and return
+passthrough. Separate literal bindings allocate separate objects; a literal
+return allocates only when bound. Literal badges remain independent values.
 
 The [element-update lesson](lessons/python/list-update/lesson.yaml) replaces one
 cell while preserving its neighbors and list length. `update` requires an existing
@@ -287,11 +290,14 @@ teaching identifiers, not memory addresses. Reference bindings require an alread
 allocated id and cannot combine `ref` with `value`, `from`, or `type`. Function
 parameters can also use `ref`. Selection and indexed badge sources resolve the
 same shared object through either alias, including local/global scope lookup.
-Badges still contain teacher-authored values: reading from a shared list identifies
-an animation origin, and does not automatically compute the badge's contents.
+Badge values are still authored and validated against the source's current
+contents. Whole-list badges retain the reference and display/print its contents;
+they cannot be converted. Instance references remain unprintable.
 
-Allocated objects remain visible if all their bindings disappear; garbage
-collection, nested references, and reference-valued returns are not modeled.
+`allocate` remains available for chosen teaching labels instead of automatic
+ones. An explicit allocation cannot reuse an automatically allocated id.
+Unreferenced objects remain visible; garbage-collection visuals and nested lists
+remain open.
 Bounded players reveal the selected cell or relevant shared list inside the data
 pane, while preserving the host page's position.
 

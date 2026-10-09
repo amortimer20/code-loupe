@@ -4,12 +4,12 @@ export interface CollectionSelection {
   name: string;
   frameId: number;
   index: number;
-  ref?: string;
+  ref: string;
 }
 
 interface CollectionVariable { name: string; value: unknown }
 
-/** Copy on update so earlier snapshots and other variable values stay intact. */
+/** Copy on update so earlier snapshots and shared references stay intact. */
 export function replaceCollectionElement(variable: CollectionVariable, index: number, value: Value, fail: (message: string) => never): ScalarValue[] {
   checkCollectionIndex(variable, index, fail);
   if (Array.isArray(value)) return fail('`update` needs a scalar element value; nested lists are not supported.');

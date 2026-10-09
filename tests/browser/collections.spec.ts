@@ -4,12 +4,12 @@ import type { CodeLoupe } from '../../packages/player/src/code-loupe';
 test('list cells follow each iteration and restore selection through backward stepping and scrubbing', async ({ page }) => {
   await page.goto('/samples/python/list-iteration/');
   const player = await ready(page, 17);
-  const list = player.locator('[data-name="numbers"]');
+  const list = player.locator('.heap-object[data-ref="list-1"]');
   for (const [step, index, value, total] of [[4, 0, 2, 0], [8, 1, 4, 2], [12, 2, 6, 6]]) {
     await goTo(player, step);
     await expect(list.locator('.collection-cell')).toHaveCount(3);
     await expect(list.locator('[aria-current="true"]')).toHaveAttribute('data-index', String(index));
-    await expect(list.locator('[aria-current="true"]')).toHaveAttribute('aria-label', `numbers[${index}] is ${value}, selected`);
+    await expect(list.locator('[aria-current="true"]')).toHaveAttribute('aria-label', `list-1[${index}] is ${value}, selected`);
     await expect(player.locator('[data-name="n"] .value')).toHaveText(String(value));
     await expect(player.locator('[data-name="total"] .value')).toHaveText(String(total));
   }
@@ -68,9 +68,9 @@ steps:
 `);
   });
   await goTo(player, 2);
-  const local = player.locator('[data-frame-id="1"] [data-name="numbers"]');
+  const local = player.locator('.heap-object[data-ref="list-2"]');
   await expect(local.locator('.collection')).toHaveText('[]');
-  const global = player.locator('.globals [data-name="numbers"]');
+  const global = player.locator('.heap-object[data-ref="list-1"]');
   await expect(global.locator('.collection-item')).toHaveText(['True', 'None', '"<b>text</b>"']);
   await expect(global.locator('.collection b')).toHaveCount(0);
   await goTo(player, 3);
@@ -78,13 +78,14 @@ steps:
   await expect(local.locator('[aria-current]')).toHaveCount(0);
   await goTo(player, 5);
   await expect(global.locator('[aria-current]')).toHaveCount(0);
-  await expect(local.locator('[aria-current] .collection-item')).toHaveText('False');
+  await expect(player.locator('.heap-object[data-ref="list-3"] [aria-current] .collection-item')).toHaveText('False');
+  await expect(local.locator('.collection')).toHaveText('[]');
 });
 
 test('element updates animate one cell and restore values through backward stepping and scrubbing', async ({ page }, info) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);
-  const cells = player.locator('[data-name="numbers"] .collection-item');
+  const cells = player.locator('.heap-object[data-ref="list-1"] .collection-item');
   await goTo(player, 2);
   await expect(cells).toHaveText(['2', '4', '6']);
   await player.getByRole('button', { name: 'Next step', exact: true }).click();
@@ -94,7 +95,7 @@ test('element updates animate one cell and restore values through backward stepp
   } else expect(await player.evaluate(el => el.shadowRoot!.getAnimations().length)).toBe(0);
   await settle(player);
   await expect(cells).toHaveText(['2', '10', '6']);
-  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'numbers[1] is 10, selected');
+  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'list-1[1] is 10, selected');
   await player.getByRole('button', { name: 'Previous step', exact: true }).click();
   await settle(player);
   await expect(cells).toHaveText(['2', '4', '6']);
@@ -128,7 +129,7 @@ for (const [slug, before, after] of [
   test(`${slug}: cell transitions, indices, backward stepping, scrubbing, and fullscreen`, async ({ page }, info) => {
     await page.goto(`/samples/python/${slug}/`);
     const player = await ready(page, 6);
-    const cells = player.locator('[data-name="numbers"] .collection-cell');
+    const cells = player.locator('.heap-object[data-ref="list-1"] .collection-cell');
     await goTo(player, 2);
     await expect(cells.locator('.collection-item')).toHaveText([...before]);
     const cellFont = await cells.nth(1).evaluate(el => {
@@ -195,13 +196,54 @@ steps:
 `);
   });
   await goTo(player, 3);
-  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'numbers[1] is 6, selected');
+  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'list-1[1] is 6, selected');
   await goTo(player, 4);
-  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'numbers[0] is 6, selected');
+  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'list-1[0] is 6, selected');
   await goTo(player, 5);
   await expect(player.locator('.collection')).toHaveText('[]');
   await expect(player.locator('.collection-cell')).toHaveCount(0);
   await goTo(player, 6);
   await expect(player.locator('.collection-item')).toHaveText('None');
   await expect(player.locator('.collection-index')).toHaveText('0');
+});
+
+test('a function mutates its passed list and backward stepping restores contents and frames', async ({ page }) => {
+  await page.goto('/__test/fixtures/embed.html');
+  const player = await ready(page, 11);
+  await player.evaluate(async el => {
+    await (el as CodeLoupe).loadLesson(`language: python
+code: |
+  change(nums)
+  items.append(2)
+steps:
+  - line: 1
+    assign: { var: nums, value: [1] }
+  - badge: { over: nums, value: [1], from: nums }
+  - call: { name: change, line: 2, over: change(nums), args: [{ var: items, from: badge }] }
+  - append: { target: items, value: 2 }
+  - return: { value: null }
+`);
+  });
+  await goTo(player, 3);
+  const cells = player.locator('.heap-object[data-ref="list-1"] .collection-item');
+  await expect(player.locator('.heap-object')).toHaveCount(1);
+  await expect(player.locator('[data-name="nums"] .value')).toHaveText('→ list-1');
+  await expect(player.locator('[data-frame-id="1"] [data-name="items"] .value')).toHaveText('→ list-1');
+  await expect(cells).toHaveText(['1']);
+  await player.getByRole('button', { name: 'Next step', exact: true }).click();
+  await settle(player);
+  await expect(cells).toHaveText(['1', '2']);
+  await goTo(player, 5);
+  await expect(player.locator('[data-frame-id="1"]')).toHaveCount(0);
+  await expect(cells).toHaveText(['1', '2']);
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(player.locator('[data-frame-id="1"]')).toHaveCount(1);
+  await expect(cells).toHaveText(['1', '2']);
+  await player.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await settle(player);
+  await expect(cells).toHaveText(['1']);
+  await goTo(player, 2);
+  await expect(player.locator('[data-frame-id="1"]')).toHaveCount(0);
+  await expect(cells).toHaveText(['1']);
 });

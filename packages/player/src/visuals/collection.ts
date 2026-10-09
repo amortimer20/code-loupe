@@ -2,7 +2,7 @@ import type { ScalarValue } from '../lesson';
 import { formatValue, inferType } from '../values';
 import type { ValueRenderer } from './variables';
 
-/** Indexed cells share the Variables panel, including function-local lists. */
+/** Indexed cells live in the Objects panel. */
 export function renderCollection(name: string, items: ScalarValue[], selected: number | undefined, renderer: ValueRenderer) {
   const list = document.createElement('span');
   list.className = 'collection';
@@ -84,7 +84,6 @@ export function animateCollectionRemoval(row: HTMLElement, before: CapturedCell[
 }
 
 export const collectionStyles = /* css */ `
-.var.has-collection .value { flex-basis: 100%; order: 1; min-width: 0; }
 .collection { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.25rem 0; }
 .collection-cell { display: inline-flex; flex-direction: column; text-align: center; min-width: 2.25ch; max-width: 100%; box-sizing: border-box; border: 1px solid var(--ca-line); }
 .collection-index { font-size: 0.65rem; color: var(--ca-muted); border-bottom: 1px solid var(--ca-line); padding: 0.1rem 0.35rem; }

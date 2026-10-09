@@ -24,7 +24,7 @@ Step backward from Step 3 to see the list shrink back to `[2, 4]`.
 
 Python's `append()` changes the list and returns `None`. The badge over `6`
 shows the argument, not the result of the call. No return-value badge is authored.
-Shared references and nested lists are outside this lesson's model.
+Shared references are covered in another lesson; nested lists remain unsupported.
 
 ## Try a variation
 

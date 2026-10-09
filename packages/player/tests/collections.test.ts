@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { parseLesson, type Lesson, type Step } from '../src/lesson';
+import { resolveVariableValue } from '../src/visuals/heap-state';
 import { buildSnapshots } from '../src/state';
 import { formatValue, inferType } from '../src/values';
 
@@ -13,8 +14,8 @@ test('list iteration distinguishes indices, element bindings, accumulation, and 
   const states = buildSnapshots(lesson);
   assert.equal(states.length, 18);
   for (const [read, index, value, previousTotal, total] of [[3, 0, 2, 0, 2], [7, 1, 4, 2, 6], [11, 2, 6, 6, 12]]) {
-    assert.deepEqual(states[read].selection, { name: 'numbers', frameId: 0, index });
-    assert.deepEqual(states[read].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 0, index });
+    assert.deepEqual(states[read].selection, { name: 'numbers', frameId: 0, index, ref: 'list-1' });
+    assert.deepEqual(states[read].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 0, index, ref: 'list-1' });
     assert.equal(states[read + 1].vars.find(v => v.name === 'n')?.value, value);
     assert.equal(states[read + 1].vars.find(v => v.name === 'total')?.value, previousTotal);
     assert.equal(states[read + 3].vars.find(v => v.name === 'total')?.value, total);
@@ -22,7 +23,7 @@ test('list iteration distinguishes indices, element bindings, accumulation, and 
   }
   assert.equal(states[15].selection, null);
   assert.equal(states[17].console.at(-1)?.text, '12\n');
-  for (const state of states.slice(1)) assert.deepEqual(state.vars[0].value, [2, 4, 6]);
+  for (const state of states.slice(1)) assert.deepEqual(resolveVariableValue(state, state.vars[0]), [2, 4, 6]);
 });
 
 test('flat lists format their scalar elements in the lesson language, including empty lists', () => {
@@ -42,13 +43,13 @@ test('list values and selections in earlier snapshots are independent of later a
     { assign: { var: 'numbers', value: [] } },
   ]));
   assert.equal(states[5].selection, null);
-  assert.deepEqual(states[2].selection, { name: 'numbers', frameId: 0, index: 1 });
-  const copy = states[4].vars.find(v => v.name === 'copy')!.value as number[];
+  assert.deepEqual(states[2].selection, { name: 'numbers', frameId: 0, index: 1, ref: 'list-1' });
+  const copy = resolveVariableValue(states[4], states[4].vars.find(v => v.name === 'copy')!) as number[];
   copy[0] = 99;
   assert.deepEqual(states[4].badges[0].value, [2, 4, 6]);
-  assert.deepEqual(states[4].vars[0].value, [2, 4, 6]);
+  assert.deepEqual(resolveVariableValue(states[4], states[4].vars[0]), [2, 4, 6]);
   assert.deepEqual(states[3].badges[0].value, [2, 4, 6]);
-  assert.deepEqual(states[5].vars.find(v => v.name === 'copy')!.value, [2, 4, 6]);
+  assert.deepEqual(resolveVariableValue(states[5], states[5].vars.find(v => v.name === 'copy')!), [2, 4, 6]);
 });
 
 test('list selection and indexed origins respect local shadowing and explicit global scope', () => {
@@ -60,11 +61,11 @@ test('list selection and indexed origins respect local shadowing and explicit gl
     { select: "numbers[0]" },
     { return: { value: 9 } },
   ]));
-  assert.deepEqual(states[3].selection, { name: 'numbers', frameId: 1, index: 0 });
-  assert.deepEqual(states[3].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 1, index: 0 });
-  assert.deepEqual(states[4].selection, { name: 'numbers', frameId: 0, index: 2 });
+  assert.deepEqual(states[3].selection, { name: 'numbers', frameId: 1, index: 0, ref: 'list-2' });
+  assert.deepEqual(states[3].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 1, index: 0, ref: 'list-2' });
+  assert.deepEqual(states[4].selection, { name: 'numbers', frameId: 0, index: 2, ref: 'list-1' });
   assert.equal(states[6].selection, null);
-  assert.deepEqual(states[3].frames[0].vars[0].value, [9]);
+  assert.deepEqual(resolveVariableValue(states[3], states[3].frames[0].vars[0]), [9]);
 });
 
 test('invalid lists, selections, and indexed origins fail with useful step errors', () => {
@@ -88,17 +89,17 @@ test('element replacement preserves list length, neighbors, and earlier snapshot
   const lesson = parseLesson(readFileSync(new URL('../../../lessons/python/list-update/lesson.yaml', import.meta.url), 'utf8'));
   const states = buildSnapshots(lesson);
   assert.equal(states.length, 7);
-  assert.deepEqual(states[2].vars[0].value, [2, 4, 6]);
-  assert.deepEqual(states[3].vars[0].value, [2, 10, 6]);
+  assert.deepEqual(resolveVariableValue(states[2], states[2].vars[0]), [2, 4, 6]);
+  assert.deepEqual(resolveVariableValue(states[3], states[3].vars[0]), [2, 10, 6]);
   assert.equal(states[3].vars[0].type, 'list');
-  assert.deepEqual(states[3].selection, { name: 'numbers', index: 1, frameId: 0 });
-  assert.deepEqual(states[3].events.updated, { name: 'numbers', index: 1, frameId: 0, fromBadge: 1 });
+  assert.deepEqual(states[3].selection, { name: 'numbers', index: 1, frameId: 0, ref: 'list-1' });
+  assert.deepEqual(states[3].events.updated, { name: 'numbers', index: 1, frameId: 0, fromBadge: 1, ref: 'list-1' });
   assert.equal(states[4].selection, null);
   assert.equal(states[6].console.at(-1)?.text, '[2, 10, 6]\n');
   const extra = buildSnapshots(fixture([assign, { update: { target: "numbers[0]", value: null } }, { update: { target: "numbers[2]", value: false } }]));
-  assert.deepEqual(extra[1].vars[0].value, [2, 4, 6]);
-  assert.deepEqual(extra[2].vars[0].value, [null, 4, 6]);
-  assert.deepEqual(extra[3].vars[0].value, [null, 4, false]);
+  assert.deepEqual(resolveVariableValue(extra[1], extra[1].vars[0]), [2, 4, 6]);
+  assert.deepEqual(resolveVariableValue(extra[2], extra[2].vars[0]), [null, 4, 6]);
+  assert.deepEqual(resolveVariableValue(extra[3], extra[3].vars[0]), [null, 4, false]);
 });
 
 test('element updates resolve local shadowing and explicit or fallback globals without aliasing', () => {
@@ -112,16 +113,16 @@ test('element updates resolve local shadowing and explicit or fallback globals w
     { assign: { var: 'copy', from: 'badge' } },
     { update: { target: "copy[0]", value: 99 } },
   ]));
-  assert.deepEqual(states[3].frames[0].vars[0].value, [8]);
-  assert.deepEqual(states[3].vars[0].value, [2, 4, 6]);
-  assert.deepEqual(states[4].vars[0].value, [2, 10, 6]);
+  assert.deepEqual(resolveVariableValue(states[3], states[3].frames[0].vars[0]), [8]);
+  assert.deepEqual(resolveVariableValue(states[3], states[3].vars[0]), [2, 4, 6]);
+  assert.deepEqual(resolveVariableValue(states[4], states[4].vars[0]), [2, 10, 6]);
   assert.equal(states[3].events.updated?.frameId, 1);
   assert.equal(states[4].events.updated?.frameId, 0);
-  assert.deepEqual(states[8].vars[0].value, [2, 10, 6]);
-  assert.deepEqual(states[8].vars[1].value, [99, 10, 6]);
+  assert.deepEqual(resolveVariableValue(states[8], states[8].vars[0]), [2, 10, 6]);
+  assert.deepEqual(resolveVariableValue(states[8], states[8].vars[1]), [99, 10, 6]);
   const fallback = buildSnapshots(fixture([assign, { call: { name: 'change', line: 2, over: 'numbers' } }, { update: { target: "numbers[0]", value: 7 } }]));
   assert.equal(fallback[3].events.updated?.frameId, 0);
-  assert.deepEqual(fallback[3].vars[0].value, [7, 4, 6]);
+  assert.deepEqual(resolveVariableValue(fallback[3], fallback[3].vars[0]), [7, 4, 6]);
 });
 
 test('invalid element updates fail rather than growing a list or accepting nested values', () => {
@@ -154,8 +155,8 @@ test('append and removal lessons preserve earlier lists and publish their final 
   ] as const) {
     const states = buildSnapshots(parseLesson(readFileSync(new URL(`../../../lessons/python/${slug}/lesson.yaml`, import.meta.url), 'utf8')));
     assert.equal(states.length, 7);
-    assert.deepEqual(states[2].vars[0].value, before);
-    assert.deepEqual(states[3].vars[0].value, after);
+    assert.deepEqual(resolveVariableValue(states[2], states[2].vars[0]), before);
+    assert.deepEqual(resolveVariableValue(states[3], states[3].vars[0]), after);
     assert.equal(states[3].events[event]?.index, event === 'appended' ? 2 : 1);
     assert.equal(states[6].console.at(-1)?.text, `${formatValue([...after], 'python')}\n`);
   }
@@ -173,16 +174,16 @@ test('empty lists, null append, and first/middle/last deletions keep valid selec
     { remove: "numbers[1]" },
     { remove: "numbers[0]" },
   ]));
-  assert.deepEqual(states[1].vars[0].value, []);
-  assert.deepEqual(states[2].vars[0].value, [null]);
+  assert.deepEqual(resolveVariableValue(states[1], states[1].vars[0]), []);
+  assert.deepEqual(resolveVariableValue(states[2], states[2].vars[0]), [null]);
   assert.equal(states[4].selection?.index, 0);
-  assert.deepEqual(states[5].vars[0].value, [null, 4, 6]);
-  assert.deepEqual(states[7].vars[0].value, [4, 6]);
+  assert.deepEqual(resolveVariableValue(states[5], states[5].vars[0]), [null, 4, 6]);
+  assert.deepEqual(resolveVariableValue(states[7], states[7].vars[0]), [4, 6]);
   assert.equal(states[7].selection?.index, 1);
   assert.equal(states[6].selection?.index, 2);
-  assert.deepEqual(states[8].vars[0].value, [4]);
+  assert.deepEqual(resolveVariableValue(states[8], states[8].vars[0]), [4]);
   assert.equal(states[8].selection, null);
-  assert.deepEqual(states[9].vars[0].value, []);
+  assert.deepEqual(resolveVariableValue(states[9], states[9].vars[0]), []);
   const retained = buildSnapshots(fixture([assign, { select: "numbers[0]" }, { remove: "numbers[2]" }]));
   assert.equal(retained[3].selection?.index, 0);
 });
@@ -196,16 +197,16 @@ test('append and removal resolve local/global scopes without mutating other list
     { append: { target: "numbers", value: 10, scope: 'global' } },
     { remove: { target: "numbers[1]", scope: 'global' } },
   ]));
-  assert.deepEqual(states[2].frames[0].vars[0].value, [9]);
-  assert.deepEqual(states[3].frames[0].vars[0].value, [9, 8]);
-  assert.deepEqual(states[4].frames[0].vars[0].value, [8]);
-  assert.deepEqual(states[6].vars[0].value, [2, 6, 10]);
-  assert.deepEqual(states[6].frames[0].vars[0].value, [8]);
-  assert.deepEqual(states[1].vars[0].value, [2, 4, 6]);
+  assert.deepEqual(resolveVariableValue(states[2], states[2].frames[0].vars[0]), [9]);
+  assert.deepEqual(resolveVariableValue(states[3], states[3].frames[0].vars[0]), [9, 8]);
+  assert.deepEqual(resolveVariableValue(states[4], states[4].frames[0].vars[0]), [8]);
+  assert.deepEqual(resolveVariableValue(states[6], states[6].vars[0]), [2, 6, 10]);
+  assert.deepEqual(resolveVariableValue(states[6], states[6].frames[0].vars[0]), [8]);
+  assert.deepEqual(resolveVariableValue(states[1], states[1].vars[0]), [2, 4, 6]);
   assert.equal(states[3].events.appended?.frameId, 1);
   assert.equal(states[6].events.removed?.frameId, 0);
   const fallback = buildSnapshots(fixture([assign, { call: { name: 'change', line: 2, over: 'numbers' } }, { append: { target: "numbers", value: 7 } }, { remove: "numbers[0]" }]));
-  assert.deepEqual(fallback[4].vars[0].value, [4, 6, 7]);
+  assert.deepEqual(resolveVariableValue(fallback[4], fallback[4].vars[0]), [4, 6, 7]);
 });
 
 test('invalid append/removal operations fail with a step number', () => {

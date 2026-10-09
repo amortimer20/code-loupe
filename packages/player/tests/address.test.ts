@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { parseAddress } from '../src/address';
 import { parseLesson, type Lesson, type Step } from '../src/lesson';
+import { resolveVariableValue, badgeDisplayValue } from '../src/visuals/heap-state';
 import { buildSnapshots } from '../src/state';
 
 const fail = (message: string): never => { throw new Error(message); };
@@ -36,16 +37,16 @@ test('normalized list actions retain known snapshots and internal selection/muta
     { remove: 'numbers[1]' },
     { select: null, badge: { over: 'numbers', value: [4, 6], from: 'numbers' } },
   ]));
-  assert.deepEqual(states[2].selection, { name: 'numbers', frameId: 0, index: 1 });
-  assert.deepEqual(states[2].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 0, index: 1 });
-  assert.deepEqual(states[3].vars[0].value, [4, 4]);
-  assert.deepEqual(states[3].events.updated, { name: 'numbers', frameId: 0, index: 0, fromBadge: 1 });
-  assert.deepEqual(states[4].vars[0].value, [4, 4, 6]);
-  assert.deepEqual(states[4].events.appended, { name: 'numbers', frameId: 0, index: 2, fromBadge: undefined });
-  assert.deepEqual(states[5].vars[0].value, [4, 6]);
-  assert.deepEqual(states[5].events.removed, { name: 'numbers', frameId: 0, index: 1 });
-  assert.deepEqual(states[6].badges.at(-1)?.value, [4, 6]);
-  assert.deepEqual(states[1].vars[0].value, [2, 4]);
+  assert.deepEqual(states[2].selection, { name: 'numbers', frameId: 0, index: 1, ref: 'list-1' });
+  assert.deepEqual(states[2].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 0, index: 1, ref: 'list-1' });
+  assert.deepEqual(resolveVariableValue(states[3], states[3].vars[0]), [4, 4]);
+  assert.deepEqual(states[3].events.updated, { name: 'numbers', frameId: 0, index: 0, fromBadge: 1, ref: 'list-1' });
+  assert.deepEqual(resolveVariableValue(states[4], states[4].vars[0]), [4, 4, 6]);
+  assert.deepEqual(states[4].events.appended, { name: 'numbers', frameId: 0, index: 2, fromBadge: undefined, ref: 'list-1' });
+  assert.deepEqual(resolveVariableValue(states[5], states[5].vars[0]), [4, 6]);
+  assert.deepEqual(states[5].events.removed, { name: 'numbers', frameId: 0, index: 1, ref: 'list-1' });
+  assert.deepEqual(badgeDisplayValue(states[6], states[6].badges.at(-1)!.value), [4, 6]);
+  assert.deepEqual(resolveVariableValue(states[1], states[1].vars[0]), [2, 4]);
 });
 
 test('field addresses retain dictionary and instance identity and event selectors', () => {
@@ -75,13 +76,13 @@ test('global address mappings bypass a shadowing local for from/select/update/ap
     { remove: { target: 'numbers[1]', scope: 'global' } },
   ]));
   assert.equal(states[3].events.badgeAdded?.from?.kind, 'var');
-  assert.deepEqual(states[3].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 0, index: 0 });
+  assert.deepEqual(states[3].events.badgeAdded?.from, { kind: 'var', name: 'numbers', frameId: 0, index: 0, ref: 'list-1' });
   assert.equal(states[4].selection?.frameId, 0);
   assert.equal(states[5].events.updated?.frameId, 0);
   assert.equal(states[6].events.appended?.frameId, 0);
   assert.equal(states[7].events.removed?.frameId, 0);
-  assert.deepEqual(states[7].vars[0].value, [3, 4]);
-  assert.deepEqual(states[7].frames[0].vars[0].value, [9, 8]);
+  assert.deepEqual(resolveVariableValue(states[7], states[7].vars[0]), [3, 4]);
+  assert.deepEqual(resolveVariableValue(states[7], states[7].frames[0].vars[0]), [9, 8]);
 });
 
 test('console shorthand reads input while an address mapping reads a binding named console', () => {

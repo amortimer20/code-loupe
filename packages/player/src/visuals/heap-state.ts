@@ -1,4 +1,4 @@
-import type { ScalarValue, Value } from '../lesson';
+import type { ScalarValue, StoredValue, Value } from '../lesson';
 import type { Snapshot, VarState } from '../state';
 import { isReference } from '../values';
 import type { CollectionSelection } from './collection-state';
@@ -27,19 +27,24 @@ export function collectionVariable(state: Pick<Snapshot, 'heap'>, variable: VarS
 }
 
 export function storeCollectionValue(state: Pick<Snapshot, 'heap'>, variable: VarState, value: ScalarValue[]) {
-  if (isReference(variable.value)) {
-    const ref = variable.value.ref;
-    const object = state.heap.find(item => item.id === ref)!;
-    if ('fields' in object) throw new Error('Cannot store a list in a dictionary object.');
-    object.value = value;
-  } else variable.value = value;
+  if (!isReference(variable.value)) throw new Error('Cannot store a list in a scalar binding.');
+  const ref = variable.value.ref;
+  const object = state.heap.find(item => item.id === ref)!;
+  if ('fields' in object) throw new Error('Cannot store a list in a dictionary object.');
+  object.value = value;
 }
 
 export function referenceIdentity(variable: VarState): { ref?: string } {
   return isReference(variable.value) ? { ref: variable.value.ref } : {};
 }
 
-export function selectionMatches(selection: CollectionSelection | null, variable: VarState, name: string, frameId: number) {
-  if (!selection) return false;
-  return isReference(variable.value) ? selection.ref === variable.value.ref : selection.ref === undefined && selection.name === name && selection.frameId === frameId;
+export function selectionMatches(selection: CollectionSelection | null, variable: VarState) {
+  return !!selection && isReference(variable.value) && selection.ref === variable.value.ref;
+}
+
+/** A list badge retains identity while displaying the contents in this snapshot. */
+export function badgeDisplayValue(state: Pick<Snapshot, 'heap'>, value: StoredValue): StoredValue {
+  if (!isReference(value)) return value;
+  const object = state.heap.find(object => object.id === value.ref);
+  return object && 'value' in object ? object.value : value;
 }

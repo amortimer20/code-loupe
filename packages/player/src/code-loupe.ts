@@ -5,6 +5,7 @@ import { formatValue, isReference } from './values';
 import { styles } from './styles';
 import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
 import { renderVariables } from './visuals/variables';
+import { badgeDisplayValue } from './visuals/heap-state';
 import { animateCollectionAppend, animateCollectionRemoval, animateCollectionUpdate, captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
 import { heapStyles, renderHeap } from './visuals/heap-panel';
@@ -469,7 +470,7 @@ export class CodeLoupe extends HTMLElement {
     for (const animation of this.#root.getAnimations()) animation.finish();
     const oldBadges = animate ? this.#captureBadges() : new Map<number, CapturedValue>();
     const removed = snap.events.removed;
-    const oldCells = animate && removed ? captureCollectionCells(this.#collectionRow(removed.name, removed.frameId, removed.ref)) : [];
+    const oldCells = animate && removed ? captureCollectionCells(this.#collectionRow(removed.ref)) : [];
     this.#els.overlay.replaceChildren();
 
     renderProgramError(this.#els.diagnostic, snap.error);
@@ -500,7 +501,7 @@ export class CodeLoupe extends HTMLElement {
       ?? (assigned ? this.#varRow(assigned.name, assigned.frameId)?.dataset.ref : undefined);
     const update = snap.events.updated;
     const key = update && 'attribute' in update ? update.attribute : update && 'key' in update ? update.key : source?.kind === 'var' ? source.attribute ?? source.key : undefined;
-    const target = (ref !== undefined && key !== undefined ? this.#collectionRow('', 0, ref)?.querySelector<HTMLElement>(`.object-field[data-key="${CSS.escape(key)}"]`) : null)
+    const target = (ref !== undefined && key !== undefined ? this.#collectionRow(ref)?.querySelector<HTMLElement>(`.object-field[data-key="${CSS.escape(key)}"]`) : null)
       ?? pane.querySelector<HTMLElement>('.collection-cell[aria-current]')
       ?? (ref === undefined ? null : this.#els.heap.querySelector<HTMLElement>(`[data-ref="${CSS.escape(ref)}"]`));
     if (!target) return;
@@ -547,7 +548,7 @@ export class CodeLoupe extends HTMLElement {
   }
 
   #renderVars(snap: Snapshot) {
-    renderVariables(this.#els.vars, snap.vars, { language: this.#lesson!.language, literalHtml: (value, type) => this.#literalHtml(value, type) }, snap.selection);
+    renderVariables(this.#els.vars, snap.vars, { language: this.#lesson!.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
   }
 
   #renderBadges(snap: Snapshot) {
@@ -561,7 +562,7 @@ export class CodeLoupe extends HTMLElement {
           badge.style.left = `${rect.left + rect.width / 2 - scrollRect.left + this.#els.scroll.scrollLeft}px`;
           badge.style.top = `${rect.top - scrollRect.top + this.#els.scroll.scrollTop}px`;
         }
-        badge.append(this.#badgeInner(b.value, b.type));
+        badge.append(this.#badgeInner(badgeDisplayValue(snap, b.value), b.type));
         return badge;
       }),
     );
@@ -643,8 +644,9 @@ export class CodeLoupe extends HTMLElement {
       const badge = snap.badges.find((b) => b.id === chunk.fromBadge);
       const source = badge ? this.#badgeInnerEl(badge.id) : null;
       if (badge && source) {
-        const landing = textRect(chunkEl, this.#printedForm(badge.value, badge.type)) ?? chunkEl.getBoundingClientRect();
-        t += this.#fly(this.#literalHtml(badge.value, badge.type), source.getBoundingClientRect(), landing, t, 'start');
+        const value = badgeDisplayValue(snap, badge.value);
+        const landing = textRect(chunkEl, this.#printedForm(value, badge.type)) ?? chunkEl.getBoundingClientRect();
+        t += this.#fly(this.#literalHtml(value, badge.type), source.getBoundingClientRect(), landing, t, 'start');
         chunkEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(200), delay: t - this.#ms(80), fill: 'backwards' });
       } else {
         chunkEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(250), delay: t, fill: 'backwards' });
@@ -724,7 +726,7 @@ export class CodeLoupe extends HTMLElement {
       const update = (ev.updated ?? ev.appended)!;
       const key = 'attribute' in update ? update.attribute : 'key' in update ? update.key : undefined;
       const field = key !== undefined;
-      const cell = this.#collectionRow(update.name, update.frameId, update.ref)?.querySelector<HTMLElement>(field ? `.object-field[data-key="${CSS.escape(key)}"]` : `.collection-cell[data-index="${'index' in update ? update.index : ''}"]`);
+      const cell = this.#collectionRow(update.ref)?.querySelector<HTMLElement>(field ? `.object-field[data-key="${CSS.escape(key)}"]` : `.collection-cell[data-index="${'index' in update ? update.index : ''}"]`);
       const value = cell?.querySelector<HTMLElement>(field ? '.field-value' : '.collection-item');
       const source = update.fromBadge !== undefined ? this.#badgeInnerEl(update.fromBadge) : null;
       if (cell && value) {
@@ -737,7 +739,7 @@ export class CodeLoupe extends HTMLElement {
       }
     }
     if (ev.removed) {
-      const row = this.#collectionRow(ev.removed.name, ev.removed.frameId, ev.removed.ref);
+      const row = this.#collectionRow(ev.removed.ref);
       if (row) animateCollectionRemoval(row, oldCells, ev.removed.index, this.#els.overlay, t, this.#ms(300));
     }
   }
@@ -790,7 +792,8 @@ export class CodeLoupe extends HTMLElement {
     if (from?.kind === 'var') {
       const key = from.attribute ?? from.key;
       const target = key !== undefined ? `.object-field[data-key="${CSS.escape(key)}"] .field-value` : from.index === undefined ? '.value' : `.collection-cell[data-index="${from.index}"] .collection-item`;
-      return this.#collectionRow(from.name, from.frameId, from.ref)?.querySelector<HTMLElement>(target) ?? null;
+      const row = from.ref === undefined ? this.#varRow(from.name, from.frameId) : this.#collectionRow(from.ref);
+      return row?.querySelector<HTMLElement>(target) ?? null;
     }
     return null;
   }
@@ -800,8 +803,8 @@ export class CodeLoupe extends HTMLElement {
     return host?.querySelector<HTMLElement>(`[data-name="${CSS.escape(name)}"]`) ?? null;
   }
 
-  #collectionRow(name: string, frameId: number, ref?: string) {
-    return ref === undefined ? this.#varRow(name, frameId) : this.#els.heap.querySelector<HTMLElement>(`[data-ref="${CSS.escape(ref)}"]`);
+  #collectionRow(ref: string) {
+    return this.#els.heap.querySelector<HTMLElement>(`[data-ref="${CSS.escape(ref)}"]`);
   }
 
   /** How a value looks when printed: strings lose their quotes. */

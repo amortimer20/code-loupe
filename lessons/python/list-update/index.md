@@ -23,9 +23,9 @@ motion the updated state appears immediately. Compare Steps 2 and 3 by stepping
 backward and forward: the other cells stay `2` and `6`, and there are always three
 cells. Step 4 clears the teacher's selection cue.
 
-This demonstrates one indexed update. List length changes, negative indices,
-nested lists, and shared references are separate future work. The authored player
-does not execute this Python code or model object identity.
+This demonstrates one indexed update in the Objects card. List length changes
+and shared references are covered in other lessons; negative indices and nested
+lists remain future work. The authored player does not execute this Python code.
 
 ## Try a variation
 

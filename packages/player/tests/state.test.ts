@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import { LessonError, parseLesson, type Lesson, type Step, type Value, type ValueSource } from '../src/lesson';
+import { badgeDisplayValue } from '../src/visuals/heap-state';
 import { buildSnapshots, type Snapshot } from '../src/state';
 
 const sample = (name: string) => parseLesson(readFileSync(new URL(`../../../lessons/python/${name}/lesson.yaml`, import.meta.url), 'utf8'));
@@ -25,7 +26,8 @@ test('variable-source badges must match exact scoped, indexed, field, or referen
   ];
   for (const { label, setup, source, value, mismatches } of cases) {
     const lesson = (badgeValue: Value): Lesson => ({ language: 'python', code: 'x = example(x)\nx', steps: [...setup, { badge: { over: 'x', value: badgeValue, from: source } }] });
-    assert.deepEqual(buildSnapshots(lesson(value)).at(-1)?.badges.at(-1)?.value, value, label);
+    const final = buildSnapshots(lesson(value)).at(-1)!;
+    assert.deepEqual(badgeDisplayValue(final, final.badges.at(-1)!.value), value, label);
     for (const mismatch of mismatches) {
       assert.throws(() => buildSnapshots(lesson(mismatch)), new RegExp(`Step ${setup.length + 1}: badge value .*doesn't match.*currently holds.*must show`), label);
     }
