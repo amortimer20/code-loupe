@@ -5,6 +5,7 @@ import { activeScope, cloneFrames, findVariable, type CallFrame } from './visual
 import { collectionVariable, referenceIdentity, replaceObjectField, selectionMatches, storeCollectionValue, type HeapObject } from './visuals/heap-state';
 import { dictionaryField, type FieldTarget } from './visuals/dictionary-state';
 import { constructedInstance, instanceAttribute, type AttributeTarget } from './visuals/instance-state';
+import { programError, type ProgramError } from './visuals/error-state';
 
 export type { CallFrame } from './visuals/call-stack-state';
 
@@ -48,6 +49,7 @@ export interface StepEvents {
 
 /** The complete picture at one point in the lesson. Snapshot i is the state after i steps. */
 export interface Snapshot {
+  error: ProgramError | null;
   line: number | null;
   caption: string | null;
   vars: VarState[];
@@ -69,7 +71,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
   let nextBadgeId = 1;
   let nextFrameId = 1;
 
-  let current: Snapshot = { line: null, caption: null, vars: [], frames: [], badges: [], console: [], selection: null, heap: [], events: { lineChanged: false, consoleFrom: 0 } };
+  let current: Snapshot = { error: null, line: null, caption: null, vars: [], frames: [], badges: [], console: [], selection: null, heap: [], events: { lineChanged: false, consoleFrom: 0 } };
   const snapshots = [current];
 
   lesson.steps.forEach((step, i) => {
@@ -91,6 +93,7 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
     };
 
     const s: Snapshot = {
+      error: current.error ? { ...current.error } : null,
       line: current.line,
       caption: step.caption ?? null,
       vars: current.vars.map((v) => ({ ...v, value: cloneValue(v.value) })),
@@ -101,6 +104,20 @@ export function buildSnapshots(lesson: Lesson): Snapshot[] {
       heap: current.heap.map(object => 'fields' in object ? { ...object, fields: { ...object.fields } } : { ...object, value: [...object.value] }),
       events: { lineChanged: false, consoleFrom: current.console.length },
     };
+
+    if (current.error) fail('an unhandled program error ends execution; no later steps are allowed.');
+    if (step.error !== undefined) {
+      if (Object.keys(step).some(key => key !== 'error' && key !== 'caption')) fail('`error` must be its own step (with an optional caption).');
+      const error = programError(step.error, checkLine, checkTarget, fail);
+      if (error.kind === 'syntax' && i !== 0) fail('a syntax error must be the first step: the program never starts.');
+      s.error = error;
+      s.line = error.line;
+      s.badges = [];
+      s.events.lineChanged = s.line !== current.line;
+      current = s;
+      snapshots.push(s);
+      return;
+    }
 
     if (step.call !== undefined || step.return !== undefined) {
       const action = step.call !== undefined ? 'call' : 'return';

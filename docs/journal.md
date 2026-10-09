@@ -322,3 +322,26 @@ focus this lesson on receiver binding and method completion. The prior lessons
 retain the detailed initializer sequence. This adds a canonical lesson without
 new schema or execution behavior; method lookup and implicit completion remain
 teacher-authored rather than inferred.
+
+## 2026-10-08 — Authored program diagnostics
+
+Add an explicit terminal error action with a syntax/runtime kind, error name,
+message, location, and optional text target. Keep diagnostics separate from
+value badges, console output, and invalid-lesson loading. The marker identifies
+the error location rather than an executed line. Runtime errors replace the
+expression badges while retaining earlier variables, objects, frames, and output;
+syntax errors must precede execution. Autoplay pauses, and prior snapshots remain
+available for inspection.
+
+Use a missing colon and failed integer conversion as the first comparison pair.
+Messages are concise teacher-authored explanations rather than captured Python
+diagnostics. Do not infer failures from code or invent frame unwinding. Caught
+exceptions, traceback details, and failures across calls need later lessons and
+explicit pacing decisions.
+
+## 2026-10-08 — Pause corpus expansion
+
+Keep the current 24 lessons as the working comparison corpus. Pause new content
+and deeper language behavior to avoid growing complexity at this stage. Use the
+existing examples to assess the player and authoring experience; future topics
+remain in the backlog rather than becoming automatic next tasks.

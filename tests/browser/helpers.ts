@@ -37,6 +37,8 @@ export const corpus: { id: string; steps: number; output: string; vars?: RegExp 
   { id: 'class-instance', steps: 10, output: 'Ada', vars: /student\s*=\s*→ student-1/ },
   { id: 'two-instances', steps: 21, output: 'Lovelace\nGrace', vars: /grace\s*=\s*→ student-2/ },
   { id: 'instance-method', steps: 11, output: 'Lovelace\nGrace', vars: /ada\s*=\s*→ student-1/ },
+  { id: 'syntax-error', steps: 1, output: '' },
+  { id: 'runtime-error', steps: 5, output: 'Starting', vars: /age\s*=\s*"abc"/ },
 ];
 
 export async function canonical(id: string) {

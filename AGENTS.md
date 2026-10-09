@@ -35,6 +35,9 @@ This is an npm workspace monorepo:
   Variables hold references; list contents or scalar named fields live once in each
   snapshot's heap. Ordinary list values remain independent authored values.
   Keep browser panel imports out of the pure state path.
+  Authored unhandled program errors use pure `error-state.ts` validation and
+  `error-panel.ts` annotations. They end execution while preserving prior state;
+  they are distinct from invalid-YAML load failures.
 - `apps/site/`: Astro static gallery, sample pages, authoring guide, and playground.
   Import the browser player only in client scripts; its entry depends on DOM globals.
   Build-time validation uses `code-loupe/lesson` and `code-loupe/state` instead.

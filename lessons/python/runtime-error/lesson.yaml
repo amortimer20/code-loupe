@@ -1,0 +1,25 @@
+title: A runtime error during conversion
+language: python
+code: |
+  print("Starting")
+  age = "abc"
+  years = int(age)
+  print(years)
+steps:
+  - line: 1
+    caption: This program can begin executing. First it reaches a print statement.
+  - print: { text: Starting }
+    caption: The console records Starting before anything fails.
+  - line: 2
+    assign: { var: age, value: abc }
+    caption: Store the string "abc" in age. Assigning a string is valid.
+  - line: 3
+    badge: { over: age, value: abc, from: { var: age } }
+    caption: Read age before trying to convert it to an integer. years has not been assigned yet.
+  - error:
+      kind: runtime
+      name: ValueError
+      line: 3
+      over: int(age)
+      message: 'Cannot convert "abc" to an integer.'
+    caption: The conversion fails before assignment. age and the earlier output remain, but years is never created and the final print statement is not reached.

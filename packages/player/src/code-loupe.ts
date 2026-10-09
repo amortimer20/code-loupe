@@ -8,6 +8,7 @@ import { renderVariables } from './visuals/variables';
 import { animateCollectionAppend, animateCollectionRemoval, animateCollectionUpdate, captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
 import { heapStyles, renderHeap } from './visuals/heap-panel';
+import { errorStyles, renderProgramError, renderErrorTarget } from './visuals/error-panel';
 
 const DEFAULT_THEME = 'dark-plus';
 
@@ -32,7 +33,7 @@ const ICONS = {
 };
 
 const TEMPLATE = `
-<style>${styles}${callStackStyles}${collectionStyles}${heapStyles}</style>
+<style>${styles}${callStackStyles}${collectionStyles}${heapStyles}${errorStyles}</style>
 <div class="ca" part="container">
   <div class="viewer-actions"><slot name="viewer-actions"></slot></div>
   <div class="title" part="title" hidden></div>
@@ -53,7 +54,10 @@ const TEMPLATE = `
       </div>
     </section>
   </div>
-  <div class="caption" aria-live="polite"></div>
+  <div class="feedback">
+    <div class="caption" aria-live="polite"></div>
+    <section class="diagnostic" aria-label="Program error" role="status" aria-live="polite" hidden></section>
+  </div>
   <section class="console" aria-label="Console">
     <h3 class="label">Console</h3>
     <pre></pre>
@@ -107,6 +111,7 @@ export class CodeLoupe extends HTMLElement {
     codeHost: HTMLElement;
     badges: HTMLElement;
     caption: HTMLElement;
+    diagnostic: HTMLElement;
     console: HTMLElement;
     play: HTMLButtonElement;
     motion: HTMLButtonElement;
@@ -134,6 +139,7 @@ export class CodeLoupe extends HTMLElement {
       codeHost: $('.code-host'),
       badges: $('.badges'),
       caption: $('.caption'),
+      diagnostic: $('.diagnostic'),
       console: $('.console pre'),
       play: $('[data-act=play]'),
       motion: $('[data-act=motion]'),
@@ -458,6 +464,7 @@ export class CodeLoupe extends HTMLElement {
   #render(animate: boolean) {
     const snap = this.#snapshots[this.#index];
     if (!snap || !this.#lesson) return;
+    if (snap.error && this.#playing) this.pause();
 
     for (const animation of this.#root.getAnimations()) animation.finish();
     const oldBadges = animate ? this.#captureBadges() : new Map<number, CapturedValue>();
@@ -465,6 +472,7 @@ export class CodeLoupe extends HTMLElement {
     const oldCells = animate && removed ? captureCollectionCells(this.#collectionRow(removed.name, removed.frameId, removed.ref)) : [];
     this.#els.overlay.replaceChildren();
 
+    renderProgramError(this.#els.diagnostic, snap.error);
     this.#renderLine(snap, animate);
     this.#renderVars(snap);
     const stackEnabled = this.#lesson.steps.some(step => step.call !== undefined);
@@ -472,6 +480,8 @@ export class CodeLoupe extends HTMLElement {
     this.#callStack.render(snap, stackEnabled, { language: this.#lesson.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
     renderHeap(this.#els.heap, snap, { language: this.#lesson.language, literalHtml: (value, type) => this.#literalHtml(value, type) });
     this.#renderBadges(snap);
+    const error = snap.error;
+    renderErrorTarget(this.#els.badges, error, error?.over ? this.#targetRect(error.line, error.over, error.nth) : null, this.#els.scroll);
     this.#renderConsole(snap);
     this.#els.caption.textContent = snap.caption ?? '';
     this.#renderControls();
@@ -507,11 +517,16 @@ export class CodeLoupe extends HTMLElement {
   #renderLine(snap: Snapshot, animate: boolean) {
     const { arrow, scroll } = this.#els;
     const lines = this.#lineEls();
-    lines.forEach((el, i) => el.classList.toggle('active', i + 1 === snap.line));
+    lines.forEach((el, i) => {
+      el.classList.toggle('active', !snap.error && i + 1 === snap.line);
+      el.classList.toggle('fault', !!snap.error && i + 1 === snap.error.line);
+    });
     const lineEl = snap.line ? lines[snap.line - 1] : undefined;
 
     if (!animate) scroll.classList.add('instant');
     arrow.classList.toggle('visible', !!lineEl);
+    arrow.classList.toggle('error-marker', !!snap.error);
+    arrow.textContent = snap.error ? '!' : '';
     if (lineEl) {
       const top = lineEl.getBoundingClientRect().top - scroll.getBoundingClientRect().top + scroll.scrollTop;
       const y = top + lineEl.offsetHeight / 2;

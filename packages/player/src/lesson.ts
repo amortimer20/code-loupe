@@ -92,6 +92,16 @@ export interface ReturnSpec {
   from?: 'badge';
 }
 
+/** An authored, unhandled program error. This ends execution, not lesson loading. */
+export interface ErrorSpec {
+  kind: 'syntax' | 'runtime';
+  name: string;
+  message: string;
+  line: number;
+  over?: string;
+  nth?: number;
+}
+
 export interface Step {
   line?: number;
   caption?: string;
@@ -108,6 +118,7 @@ export interface Step {
   remove?: SelectSpec;
   call?: CallSpec;
   return?: ReturnSpec;
+  error?: ErrorSpec;
 }
 
 export interface Lesson {
@@ -119,7 +130,7 @@ export interface Lesson {
 
 export class LessonError extends Error {}
 
-const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'allocate', 'select', 'update', 'append', 'remove', 'call', 'return'];
+const STEP_KEYS = ['line', 'caption', 'write', 'print', 'input', 'badge', 'convert', 'assign', 'allocate', 'select', 'update', 'append', 'remove', 'call', 'return', 'error'];
 
 export function parseLesson(source: string): Lesson {
   let data: unknown;

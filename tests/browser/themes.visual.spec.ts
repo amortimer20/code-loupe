@@ -79,6 +79,19 @@ test('instance-method receiver binding and None result', async ({ page }) => {
   await expect(player).toHaveScreenshot('midnight-instance-method-none.png');
 });
 
+for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
+  test(`${theme}: syntax and runtime diagnostics`, async ({ page }) => {
+    for (const [id, steps] of [['syntax-error', 1], ['runtime-error', 5]] as const) {
+      await page.goto(`/samples/python/${id}/`);
+      const player = await ready(page, steps);
+      await selectTheme(page, theme);
+      await goTo(player, steps);
+      await page.mouse.move(0, 0);
+      await expect(player).toHaveScreenshot(`${theme}-${id}.png`);
+    }
+  });
+}
+
 test('updated list cell and list-valued print badge', async ({ page }) => {
   await page.goto('/samples/python/list-update/');
   const player = await ready(page, 6);

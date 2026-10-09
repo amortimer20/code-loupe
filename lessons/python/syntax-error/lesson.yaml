@@ -1,0 +1,14 @@
+title: A syntax error before execution
+language: python
+code: |
+  age = 20
+  if age >= 18
+      print("Adult")
+steps:
+  - error:
+      kind: syntax
+      name: SyntaxError
+      line: 2
+      over: if age >= 18
+      message: 'Expected ":" after the condition.'
+    caption: The if statement is missing its colon. Python cannot begin executing this program, so even the earlier age assignment has not happened.

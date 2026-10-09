@@ -10,7 +10,7 @@ export const styles = /* css */ `
 :host([fit]) .ca { height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto auto; }
 :host([fit]) .title { grid-row: 1; }
 :host([fit]) .stage { grid-row: 2; min-height: 0; }
-:host([fit]) .caption { grid-row: 3; }
+:host([fit]) .feedback { grid-row: 3; }
 :host([fit]) .console { grid-row: 4; }
 :host([fit]) .controls { grid-row: 5; }
 :host([fit]) .data { min-height: 0; overflow: auto; }

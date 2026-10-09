@@ -156,7 +156,7 @@ steps:
 
 Ordinary steps can combine actions. They animate in this order: console → badge →
 convert → assign → collection mutation. Use at most one `update`, `append`, or
-`remove` per step. `call` and `return` each require their own step, with an optional caption.
+`remove` per step. `call`, `return`, and `error` each require their own step, with an optional caption.
 Allocation precedes these value actions, so a step can allocate an object and bind
 a name to it.
 
@@ -177,6 +177,7 @@ a name to it.
 | `remove` | `remove: { var: numbers, index: 1 }` | Delete an element by zero-based index; later elements shift forward. |
 | `call` | `call: { name: add_one, line: 1, over: add_one(value), args: [{ var: value, from: badge }] }` | Save the current caller line and call target, enter a function frame at `line`, and bind its parameters. |
 | `return` | `return: { from: badge }` | Leave the active function, restore its caller, and show the result over the saved call target. Alternatively supply `value` and optional `type`. |
+| `error` | `error: { kind: runtime, name: ValueError, message: Cannot convert., line: 3, over: int(age) }` | End execution with an authored diagnostic, preserving earlier state/output. A syntax error must be the first step. |
 
 Values: `"30"` (quoted) is a string, `30` is a number, `true`/`false`/`null` are written in the
 lesson language's style (`True`/`None` in Python). Types like `str`/`int` are inferred per
@@ -332,6 +333,39 @@ infer attributes, execute `__init__` or `__new__`, or model inheritance. Constru
 references cannot be converted or printed as value badges; read a scalar
 attribute for output. General reference-valued function returns, nested instance
 references, and automatic implicit returns remain future work.
+
+## Authored program errors
+
+An `error` step shows an unhandled program failure while retaining the player,
+earlier variables, objects, call frames, and console output. The diagnostic is
+separate from Console and value badges; it is not an expression result.
+
+```yaml
+- error:
+    kind: runtime
+    name: ValueError
+    message: 'Cannot convert "abc" to an integer.'
+    line: 3
+    over: int(age)
+  caption: Conversion failed before years could be assigned.
+```
+
+`kind` is `syntax` or `runtime`; `name`, `message`, and `line` are required.
+`over` optionally identifies text to underline; `nth` chooses its occurrence
+and requires `over`. Runtime targets also receive an error-type annotation.
+A line-only diagnostic still has its location marker and diagnostic strip.
+Syntax errors must be the first step, because execution never starts. An error
+must occupy its own step, with an optional caption, and be the final step.
+Autoplay pauses immediately; backward stepping and scrubbing remain available.
+The step removes expression-value badges and preserves earlier program state;
+it does not create an assignment result or unwind frames.
+
+See the [syntax-error](lessons/python/syntax-error/lesson.yaml) and
+[runtime-error](lessons/python/runtime-error/lesson.yaml) samples. Messages and
+locations are teacher-authored, not interpreter output. The player does not
+detect or execute errors from code edits. Caught exceptions, tracebacks, and
+stack unwinding remain future work. Invalid lesson YAML still uses the separate
+load-error display and `lessonerror` event; authored program errors do not emit it.
 
 Mistakes in a lesson (unknown keys, code that isn't on the line, missing values) show up as
 a readable error inside the player.

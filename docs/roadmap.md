@@ -20,6 +20,10 @@ Phase 1 (proof of concept) is done:
 - Step, scrub, autoplay, keyboard controls, speed menu, animations toggle
 - Example lesson: `lessons/python/numeric-input/lesson.yaml` (casting input in Python)
 
+The corpus now contains 24 lessons. Pause content expansion here and use these
+examples to evaluate the existing player and authoring experience. More advanced
+lesson topics remain backlog items; they are not the current implementation focus.
+
 ---
 
 ## 1. Name and repository
@@ -156,12 +160,13 @@ through a shared "where is this value on screen?" lookup.
       and memory lifetime/garbage-collection visuals.
 - [ ] Extend module boundaries to the remaining visuals as new features need them.
 - [ ] Closures, nonlocal/global assignment declarations, implicit returns, and exception unwinding.
-- [ ] **Syntax and runtime error lessons (after classes and objects):** explore
-      showing syntax failures before execution versus runtime failures after
-      earlier steps have run. Decide how to present error locations, messages,
-      preserved state, and stopped execution in authored lessons, keeping program
-      errors distinct from invalid lesson-YAML errors. The format and visuals
-      remain to be designed.
+- [x] **First syntax and runtime error lessons:** authored terminal diagnostics,
+      a location marker/underline, runtime error-type annotation, and a separate
+      diagnostic strip. Syntax failures precede execution; runtime failures retain
+      earlier state/output. Backward stepping restores the pre-error view and
+      autoplay stops. Program errors remain distinct from lesson-YAML failures.
+- [ ] Extend error lessons to failures inside calls, expandable tracebacks,
+      stack unwinding, and caught exceptions; design pacing and recovery semantics.
 
 ## 5. Authoring: tutorial, playground, visual editor
 
@@ -179,7 +184,7 @@ through a shared "where is this value on screen?" lookup.
        function call, nested calls, list iteration, element updates, append, and
        indexed removal, shared-list aliasing, a copying comparison, and named
        dictionary fields, class-instance initialization, two independent instances,
-       and an instance-method call.
+       an instance-method call, and syntax/runtime errors.
        The initial five-lesson introductory sequence is complete.
 5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
        reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
@@ -232,11 +237,12 @@ through a shared "where is this value on screen?" lookup.
 - [x] Initial unit tests for step-to-snapshot logic: call/return, nested frames,
       shadowing, preserved snapshots, invalid transitions, and existing corpus outcomes.
 - [x] Checked-in Playwright behavior tests with full and reduced motion, plus
-      thirty-two reviewed screenshot references for themes, nested calls/returns,
+      thirty-eight reviewed screenshot references for themes, nested calls/returns,
       list selection/updates/length changes/aliasing/copying, the gallery, narrow player,
       short-laptop Focus lesson view, the final false while-loop condition, and
       dictionary fields in all three presets, instance initialization/results,
-      two instances with independent attributes, and a method's self binding/None result;
+      two instances with independent attributes, a method's self binding/None result,
+      and syntax/runtime diagnostics in all three presets;
       pinned Docker environment for CI parity.
 - [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,
