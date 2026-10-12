@@ -143,6 +143,22 @@ work. See the [styling notes](docs/styling.md) for the current boundaries.
 Start with the [lesson-writing tutorial](docs/tutorial.md) for a guided example.
 The tables below provide a quick reference.
 
+The [lesson JSON Schema](packages/player/lesson.schema.json) provides editor
+completion, hover descriptions, and structural checks. With the Red Hat YAML
+extension in VS Code, put this comment at the top of a canonical lesson:
+
+```yaml
+# yaml-language-server: $schema=../../../packages/player/lesson.schema.json
+```
+
+The path is relative to the YAML file; adjust it for files outside
+`lessons/<language>/<slug>/`. Consumers of the player package can use
+`code-loupe/lesson.schema.json`. Schema checks cover action shapes, addresses,
+and step combinations. The playground's current textarea does not provide
+schema autocomplete; its preview and the site build use runtime validation for
+source values, object identity, scope, and code targets.
+
+
 ```yaml
 title: Converting user input to a number   # optional
 language: python                           # any Shiki language id

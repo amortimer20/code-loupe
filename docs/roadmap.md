@@ -87,6 +87,27 @@ to "step 6". Ideas to explore:
 - [ ] How do we stop runaway programs (infinite loops) in a traced lesson? Step limits?
 - [ ] Which tracer-generated events map onto which visuals?
 
+### Current direction (2026-10-12)
+
+Keep YAML as the saved authored format while reducing manual authoring work.
+First add schema assistance, then take a focused accessibility slice (including
+list-cell labels that identify the relevant binding). Keep the 24-lesson corpus
+paused. Iframe embedding is useful independently of tracing; the host styling
+API remains deferred.
+
+The first tracer experiment should record a fixed-input Python execution into
+an editable authored lesson, using the existing player. Start with lines,
+scalar assignments, console output, and list identity. Expression badges and
+live student-controlled tracing come later. Evaluate whether the resulting
+lesson saves teacher effort before settling a permanent traced-file format.
+
+Ideas still to design, rather than settled API:
+
+- Optional author-defined input constraints, including unrestricted text for error lessons.
+- Independent execution-step and time limits, even when inputs are constrained.
+- Event-anchored captions and live-value templates, with conditional captions considered later.
+- Hosted iframe embeds and share links; hosting, sizing, and cross-origin loading need decisions.
+
 ### Tracers, language by language
 
 All tracers rewrite the code to record each expression's value, because the usual
@@ -169,6 +190,10 @@ through a shared "where is this value on screen?" lookup.
       stack unwinding, and caught exceptions; design pacing and recovery semantics.
 
 ## 5. Authoring: tutorial, playground, visual editor
+
+- [x] **Lesson JSON Schema:** editor completion/descriptions, structural validation,
+      corpus checks, and property coverage against authored TypeScript declarations.
+      Runtime state validation remains separate; playground editor integration is future work.
 
 1. [x] **Tutorial** ([`docs/tutorial.md`](tutorial.md)): build a lesson file from scratch, one concept at a time
 2. [x] **Playground page** (`/playground/` on the sample site): YAML on the left, live player on the right,
@@ -267,8 +292,8 @@ through a shared "where is this value on screen?" lookup.
 1. Name, repo, codebase walkthrough
 2. Tutorial and playground page (makes authoring pleasant now)
 3. Sample library, function-call visual, and nested-call lesson (complete)
-4. Grow the corpus with collections and references; extend visual modules as needed
-5. Design session on authored versus traced lessons, then the Python tracer proof of concept
+4. Grow the corpus with collections and references; currently paused at 24 lessons
+5. Schema assistance, focused accessibility review, then a design session and narrow Python trace-to-authored experiment
 6. Visual editor
 7. Themes, more languages, Emerald
 

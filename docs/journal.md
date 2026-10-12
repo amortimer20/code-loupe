@@ -383,3 +383,18 @@ function-argument mutation truthful to Python, matches the model a future tracer
 will emit, and replaces two list models with one. Explicit allocation still allows
 chosen labels, and unreferenced objects remain visible. Orphaned objects and
 garbage-collection visuals, and nested lists, remain open.
+
+## 2026-10-12 — Authoring assistance before tracing
+
+Keep YAML as the saved format and add an editor-facing JSON Schema without changing
+player validation. Maintain the schema explicitly so it can capture structural
+rules beyond the current TypeScript interfaces; tests cover authored property sets,
+the canonical corpus, and invalid action combinations. State-dependent meaning
+remains in snapshot generation. Ajv is a development dependency only.
+
+Next take a focused accessibility slice, then explore fixed-input Python tracing
+into an editable authored lesson before live student tracing. This should reduce
+manual value calculation while retaining teacher control. Input constraints,
+execution limits, caption anchors/templates, and a permanent traced-file format
+still need design. Iframe embedding can proceed independently; styling remains
+deferred.

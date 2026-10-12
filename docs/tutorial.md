@@ -42,6 +42,22 @@ breaks are preserved. Code line numbers start at 1 and refer to lines inside
 that block, not to lines in the YAML file. `language` chooses syntax highlighting
 and value formatting; `title` is optional.
 
+### Optional editor assistance
+
+If you edit YAML in VS Code with the Red Hat YAML extension, the
+[lesson schema](../packages/player/lesson.schema.json) supplies completion,
+hover descriptions, and errors for malformed actions. Add a schema comment
+pointing to that file relative to your lesson:
+
+```yaml
+# yaml-language-server: $schema=../../../packages/player/lesson.schema.json
+```
+
+That path works inside `lessons/python/<slug>/`; use a different relative
+path for a draft elsewhere. Keep checking the playground preview: a schema
+cannot tell whether a badge value matches the variable's current contents or
+whether its code target exists. The textarea itself has no schema assistance yet.
+
 ## 2. Show a value, then assign it
 
 Replace the `steps` section with:

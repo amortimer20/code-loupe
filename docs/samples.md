@@ -18,6 +18,13 @@ Keep an existing ID when changing a sample so links and browser drafts stay usef
 Start by copying a similar lesson folder and editing both files. Keep only one
 canonical YAML source; the site generates its downloadable copy automatically.
 
+The [lesson schema](../packages/player/lesson.schema.json) can help while editing.
+With a YAML language server, add
+`# yaml-language-server: $schema=../../../packages/player/lesson.schema.json`
+to a canonical lesson. It checks structure and action combinations; runtime
+validation still checks state and code targets. Unit tests validate the whole
+corpus against both layers.
+
 ## Metadata
 
 Every `index.md` begins with this frontmatter structure:
