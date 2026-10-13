@@ -65,6 +65,13 @@ the last successful preview (or the starting lesson when no checkpoint exists).
 Working copies persist across reloads when storage is available, and restoring
 can itself be undone. Nothing replaces a broken draft automatically.
 
+New Builder cards stay outside the YAML until **Save step** validates and adds
+them. The working preview remains available while you fill them in; **Cancel new
+step** drops the unsaved card. One new card can be open at a time, and its entries
+survive switching views but are not persisted across reloads or exported.
+Number display lives under **Optional settings**. Occurrence appears for repeated
+expression text or an existing explicit occurrence; hidden settings are preserved.
+
 The playground highlights YAML and supplies schema completion, hover descriptions,
 and source errors. Press Ctrl+Space for suggestions. Select a problem below the
 editor to jump to its location. Ctrl+M toggles whether Tab moves out of the editor;

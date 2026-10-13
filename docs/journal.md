@@ -489,3 +489,12 @@ last successfully previewed source in browser storage so a malformed saved draft
 can recover after reload without silently replacing it. Restoring is undoable.
 Strengthen form boundaries and selected-card contrast using the existing palettes.
 Drag reordering remains deferred; authored dependencies need clear feedback first.
+
+
+## 2026-10-13 — Smaller forms and unfinished cards
+
+Keep new teaching cards in form state until a validated Save adds them as one
+undoable source edit. Invalid candidates leave the shared YAML and working preview
+unchanged. Allow one unfinished card, with explicit Cancel; it survives view
+switching but is not exported or persisted. Move number display to optional
+settings and show occurrence only for repeated targets or existing overrides.

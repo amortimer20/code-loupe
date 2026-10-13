@@ -178,3 +178,18 @@ export function deleteStep(source: string, index: number, expected: string) {
   steps.items.splice(index, 1);
   return doc.toString();
 }
+
+
+export function newStepForm(action: Action): StepForm {
+  return { action, line: '1', caption: '', over: '', nth: '1', name: '',
+    source: 'literal', kind: 'Number', value: action === 'print' ? '' : '0', numericType: 'auto' };
+}
+
+/** Build and validate a candidate without touching the shared draft. */
+export function appendStepForm(source: string, form: StepForm): string {
+  if (form.action === 'badge' && !form.over) throw new Error('Enter the expression text to place the badge over.');
+  const candidate = addStep(source, form.action), index = stepsOf(readDocument(source)).length;
+  const next = editStep(candidate, index, form, JSON.stringify(stepsOf(readDocument(candidate))[index]));
+  buildSnapshots(parseLesson(next));
+  return next;
+}

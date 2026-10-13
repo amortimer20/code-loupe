@@ -91,3 +91,11 @@ textarea[aria-invalid='true'] { border-color: var(--error); }
 #working-recovery { padding:0.75rem; margin-bottom:1rem; border:1px solid var(--error); background:var(--panel); }
 #working-recovery[hidden] { display:none; }
 #working-recovery p { margin:0 0 0.65rem; font-size:0.85rem; }
+
+#builder-pane [data-occurrence][hidden] { display:none; }
+.builder-options { border-top:1px solid var(--border); padding-top:0.5rem; }
+.builder-options summary { cursor:pointer; font-size:0.85rem; color:var(--muted); }
+.builder-options label { margin-top:0.75rem; }
+.builder-delete { justify-self:start; padding:0.3rem 0.5rem; color:var(--muted); }
+
+.builder-add[hidden], .builder-add label[hidden] { display:none; }

@@ -231,3 +231,7 @@ restore, persisted separately from the draft. Forms gain stronger control border
 and selected-card separation. Reordering stays deferred; later steps may depend
 on earlier steps, including after deletion. Next, test these controls during real
 lesson editing before expanding actions or adding drag handles.
+
+New step cards now remain outside the shared YAML until validated Save. Only one
+new card is open at a time; Cancel drops it. Optional number-display settings and
+conditional occurrence fields shorten the forms without discarding authored values.

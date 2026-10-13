@@ -202,26 +202,30 @@ test('typed scalar values and shared history work in the plain-editor fallback o
 });
 
 
-test('deletes an unfinished step, restores it with Undo, and deletes the last card', async ({ page }) => {
+test('cancels an unsaved step and restores a saved deletion with Undo', async ({ page }) => {
   await page.goto('/playground/?new=1');
   await expect(page.locator('#builder-new-action')).toBeVisible();
+  const original = await page.locator('#lesson-source').inputValue();
   await add(page, 'badge');
-  const unfinished = await page.locator('#lesson-source').inputValue();
-  await form(page).getByRole('button', { name: 'Delete step', exact: true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await form(page).getByRole('button', { name: 'Cancel new step' }).click();
+  await expect(page.locator('.builder-card')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Add step', exact: true })).toBeFocused();
+  await add(page, 'highlight');
+  await form(page).getByLabel('Caption', { exact: true }).fill('A saved step.');
+  await apply(page, 1);
+  const saved = await page.locator('#lesson-source').inputValue();
+  await form(page).getByLabel('Caption', { exact: true }).fill('Do not save this.');
+  await form(page).getByRole('button', { name: 'Discard step edits' }).click();
+  await expect(form(page).getByLabel('Caption', { exact: true })).toHaveValue('A saved step.');
+  await form(page).getByRole('button', { name: 'Delete step' }).click();
   await expect(page.locator('.builder-card')).toHaveCount(0);
   await expect(page.locator('#preview-status')).toHaveText('Ready · 0 steps');
-  await expect(page.getByRole('button', { name: 'Add step', exact: true })).toBeFocused();
   await page.getByRole('button', { name: 'Undo', exact: true }).click();
-  await expect(page.locator('#lesson-source')).toHaveValue(unfinished);
+  await expect(page.locator('#lesson-source')).toHaveValue(saved);
   await expect(page.locator('.builder-card')).toHaveCount(1);
   await page.getByRole('button', { name: 'Redo', exact: true }).click();
   await expect(page.locator('.builder-card')).toHaveCount(0);
-  await add(page, 'highlight');
-  await form(page).getByLabel('Caption', { exact: true }).fill('Do not save this.');
-  await form(page).getByRole('button', { name: 'Discard step edits', exact: true }).click();
-  await expect(form(page).getByLabel('Caption', { exact: true })).toHaveValue('');
-  await form(page).getByRole('button', { name: 'Delete step', exact: true }).click();
-  await expect(page.locator('#preview-status')).toHaveText('Ready · 0 steps');
 });
 
 test('deletion preserves later cards and their unsaved form edits', async ({ page }) => {
@@ -293,4 +297,65 @@ test('a broken saved draft without a checkpoint offers the starting sample witho
   await page.getByRole('button', { name: 'Restore last working lesson' }).click();
   await expect(page.locator('#lesson-source')).toHaveValue(original);
   await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
+});
+
+
+test('a new card preserves the working preview and source until one successful save', async ({ page }) => {
+  await page.goto('/playground/?sample=python/simple-arithmetic');
+  await expect(form(page)).toBeVisible();
+  const original = await page.locator('#lesson-source').inputValue();
+  const player = await ready(page, 3);
+  const step = await player.evaluate(el => (el as CodeLoupe).step);
+  await add(page, 'badge');
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
+  expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(step);
+  await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();
+  await form(page).getByLabel('Expression text').fill('missing');
+  await form(page).getByRole('button', { name: 'Save step' }).click();
+  await expect(form(page).locator('.builder-field-error')).toBeVisible();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await expect(page.locator('#lesson-error')).toBeHidden();
+  await page.getByRole('tab', { name: 'YAML', exact: true }).click();
+  await page.getByRole('tab', { name: 'Builder', exact: true }).click();
+  await expect(form(page).getByLabel('Expression text')).toHaveValue('missing');
+  await expect(page.locator('.builder-card')).toHaveCount(4);
+  await page.locator('[data-step="0"]').click();
+  await page.getByRole('button', { name: 'Edit new step', exact: true }).click();
+  await expect(page.locator('.builder-card')).toHaveCount(4);
+  await form(page).getByLabel('Expression text').fill('2 + 3');
+  await form(page).getByLabel('Value', { exact: true }).fill('5');
+  await apply(page, 4);
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await expect(page.locator('.builder-card')).toHaveCount(3);
+  await page.getByRole('button', { name: 'Redo', exact: true }).click();
+  await expect(page.locator('.builder-card')).toHaveCount(4);
+});
+
+test('optional controls stay compact, reveal repeated expressions, and retain authored settings', async ({ page }) => {
+  await page.goto('/playground/?new=1');
+  await expect(page.locator('#builder-new-action')).toBeVisible();
+  await details(page, 'print(x + x)\n', 'Repeated expression');
+  await add(page, 'badge');
+  await expect(form(page).getByLabel('Occurrence')).toBeHidden();
+  await expect(form(page).getByLabel('Number display')).toBeHidden();
+  await form(page).getByLabel('Expression text').fill('x');
+  await expect(form(page).getByLabel('Occurrence')).toBeVisible();
+  await form(page).getByLabel('Occurrence').fill('2');
+  await form(page).locator('.builder-options summary').click();
+  await form(page).getByLabel('Number display').selectOption('float');
+  await form(page).getByLabel('Value', { exact: true }).fill('5');
+  await apply(page, 1);
+  const source = await page.locator('#lesson-source').inputValue();
+  expect(parse(source).steps[0].badge).toMatchObject({ nth: 2, type: 'float', value: 5 });
+  await expect(form(page).getByLabel('Number display')).toBeVisible();
+  await form(page).getByLabel('Caption', { exact: true }).fill('Keep the explicit settings.');
+  await apply(page, 1);
+  expect(parse(await page.locator('#lesson-source').inputValue()).steps[0].badge).toMatchObject({ nth: 2, type: 'float' });
+  await form(page).getByLabel('Occurrence').fill('1');
+  await form(page).getByLabel('Expression text').fill('x + x');
+  await expect(form(page).getByLabel('Occurrence')).toBeHidden();
+  await apply(page, 1);
+  await expect(form(page).getByLabel('Occurrence')).toBeHidden();
 });

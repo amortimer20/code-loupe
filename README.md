@@ -55,6 +55,13 @@ Restore is itself undoable. Older drafts without a checkpoint can recover the
 starting sample (or the blank new lesson); that fallback is not your earlier edits.
 Download YAML to keep a copy outside this browser.
 
+New Builder cards stay outside the YAML until **Save step** validates and adds
+them. The working preview remains available while you fill them in; **Cancel new
+step** drops the unsaved card. One new card can be open at a time, and its entries
+survive switching views but are not persisted across reloads or exported.
+Number display lives under **Optional settings**. Occurrence appears for repeated
+expression text or an existing explicit occurrence; hidden settings are preserved.
+
 Saved drafts from before the address-format change may show a migration error.
 Choose **Update draft syntax** to convert their old location mappings while keeping
 the authored code, values, and captions. The update shares Undo/Redo with other

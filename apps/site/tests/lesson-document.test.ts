@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { parse } from 'yaml';
 import { parseLesson } from 'code-loupe/lesson';
 import { buildSnapshots } from 'code-loupe/state';
-import { addStep, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
+import { addStep, appendStepForm, newStepForm, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
 
 const corpus = new URL('../../../lessons/python/', import.meta.url);
 const sample = (name: string) => readFileSync(new URL(`${name}/lesson.yaml`, corpus), 'utf8');
@@ -103,4 +103,18 @@ test('deleting steps preserves other actions and supports an empty list', () => 
   const empty = deleteStep(fixture, 0, JSON.stringify(parse(fixture).steps[0]));
   assert.deepEqual(parse(empty).steps, []);
   assert.equal(buildSnapshots(parseLesson(empty)).length, 1);
+});
+
+
+test('new form candidates validate before becoming a single authored source edit', () => {
+  const source = editDetails(newLesson, { title: 'Addition', language: 'python', code: 'print(2 + 3)\n' });
+  assert.throws(() => appendStepForm(source, newStepForm('badge')), /expression text/);
+  assert.throws(() => appendStepForm(source, { ...newStepForm('badge'), over: 'missing' }), /couldn't find/);
+  assert.throws(() => appendStepForm(source, newStepForm('assign')), /variable name/);
+  assert.throws(() => appendStepForm(source, { ...newStepForm('badge'), over: '2 + 3', value: 'NaN' }), /finite number/);
+  assert.deepEqual(parse(source).steps, []);
+  const next = appendStepForm(source, { ...newStepForm('badge'), over: '2 + 3', value: '5' });
+  assert.equal(buildSnapshots(parseLesson(next)).at(-1)!.badges[0].value, 5);
+  assert.equal(parse(next).steps.length, 1);
+  assert.throws(() => appendStepForm(next, { ...newStepForm('print'), source: 'badge', value: 'unrelated' }), /badge/);
 });
