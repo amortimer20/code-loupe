@@ -45,6 +45,18 @@ export async function canonical(id: string) {
   return readFile(new URL(`../../lessons/python/${id}/lesson.yaml`, import.meta.url), 'utf8');
 }
 
+export async function fillLessonSource(page: Page, yaml: string) {
+  await expect(page.locator('#lesson-editor')).toHaveAttribute('data-ready', 'true');
+  const input = page.locator('#lesson-editor textarea.inputarea');
+  await input.focus();
+  await page.keyboard.press('Control+Home');
+  await page.keyboard.press('Control+a');
+  await page.context().grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.evaluate(text => navigator.clipboard.writeText(text), yaml);
+  await page.keyboard.press('Control+v');
+  await expect(page.locator('#lesson-source')).toHaveValue(yaml.replaceAll('\r\n', '\n'));
+}
+
 export async function ready(page: Page, steps: number) {
   const player = page.locator('code-loupe');
   await expect.poll(() => player.evaluate(el => (el as CodeLoupe).total)).toBe(steps);

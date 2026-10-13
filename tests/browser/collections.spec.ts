@@ -9,7 +9,7 @@ test('list cells follow each iteration and restore selection through backward st
     await goTo(player, step);
     await expect(list.locator('.collection-cell')).toHaveCount(3);
     await expect(list.locator('[aria-current="true"]')).toHaveAttribute('data-index', String(index));
-    await expect(list.locator('[aria-current="true"]')).toHaveAttribute('aria-label', `list-1[${index}] is ${value}, selected`);
+    await expect(list.locator('[aria-current="true"]')).toHaveAttribute('aria-label', `numbers[${index}] is ${value}, selected`);
     await expect(player.locator('[data-name="n"] .value')).toHaveText(String(value));
     await expect(player.locator('[data-name="total"] .value')).toHaveText(String(total));
   }
@@ -95,7 +95,7 @@ test('element updates animate one cell and restore values through backward stepp
   } else expect(await player.evaluate(el => el.shadowRoot!.getAnimations().length)).toBe(0);
   await settle(player);
   await expect(cells).toHaveText(['2', '10', '6']);
-  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'list-1[1] is 10, selected');
+  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'numbers[1] is 10, selected');
   await player.getByRole('button', { name: 'Previous step', exact: true }).click();
   await settle(player);
   await expect(cells).toHaveText(['2', '4', '6']);
@@ -196,9 +196,9 @@ steps:
 `);
   });
   await goTo(player, 3);
-  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'list-1[1] is 6, selected');
+  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'numbers[1] is 6, selected');
   await goTo(player, 4);
-  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'list-1[0] is 6, selected');
+  await expect(player.locator('.collection-cell[aria-current]')).toHaveAttribute('aria-label', 'numbers[0] is 6, selected');
   await goTo(player, 5);
   await expect(player.locator('.collection')).toHaveText('[]');
   await expect(player.locator('.collection-cell')).toHaveCount(0);

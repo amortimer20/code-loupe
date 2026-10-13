@@ -4,11 +4,11 @@ import type { CodeLoupe } from '../../packages/player/src/code-loupe';
 test('syntax errors mark a location without execution or output and restore the unmarked snippet', async ({ page }) => {
   await page.goto('/samples/python/syntax-error/');
   const player = await ready(page, 1);
-  await expect(player.getByRole('status', { name: 'Program error' })).toBeHidden();
+  await expect(player.getByRole('region', { name: 'Program error' })).toBeHidden();
   await player.getByRole('button', { name: 'Next step', exact: true }).click();
   await settle(player);
-  await expect(player.getByRole('status', { name: 'Program error' })).toContainText('SyntaxError · Line 2');
-  await expect(player.getByRole('status', { name: 'Program error' })).toContainText('Program did not start.');
+  await expect(player.getByRole('region', { name: 'Program error' })).toContainText('SyntaxError · Line 2');
+  await expect(player.getByRole('region', { name: 'Program error' })).toContainText('Program did not start.');
   await expect(player.locator('.line.fault')).toHaveText('if age >= 18');
   await expect(player.locator('.line.active')).toHaveCount(0);
   await expect(player.locator('.error-marker.visible')).toHaveText('!');
@@ -20,7 +20,7 @@ test('syntax errors mark a location without execution or output and restore the 
   await expect(player.getByRole('button', { name: 'Next step', exact: true })).toBeDisabled();
   await player.getByRole('button', { name: 'Previous step', exact: true }).click();
   await settle(player);
-  await expect(player.getByRole('status', { name: 'Program error' })).toBeHidden();
+  await expect(player.getByRole('region', { name: 'Program error' })).toBeHidden();
   await expect(player.locator('.line.fault')).toHaveCount(0);
   await expect(player.locator('.arrow.visible')).toHaveCount(0);
   await expect(player.locator('.error-target')).toHaveCount(0);
@@ -39,7 +39,7 @@ test('runtime diagnostic preserves earlier state, restores argument badges, and 
   await expect(player.locator('.globals [data-name="age"]')).toContainText('"abc"');
   await expect(player.locator('.globals [data-name="years"]')).toHaveCount(0);
   await expect(player.locator('.console pre')).toHaveText('Starting\n');
-  await expect(player.getByRole('status', { name: 'Program error' })).toContainText('Execution stopped.');
+  await expect(player.getByRole('region', { name: 'Program error' })).toContainText('Execution stopped.');
   for (const theme of ['paper', 'terminal', 'midnight'] as const) {
     await selectTheme(page, theme);
     await expect(player.locator('.diagnostic-badge')).toHaveText('⚠ ValueError');
@@ -47,7 +47,7 @@ test('runtime diagnostic preserves earlier state, restores argument badges, and 
   }
   await player.getByRole('button', { name: 'Previous step', exact: true }).click();
   await settle(player);
-  await expect(player.getByRole('status', { name: 'Program error' })).toBeHidden();
+  await expect(player.getByRole('region', { name: 'Program error' })).toBeHidden();
   await expect(player.locator('.error-target')).toHaveCount(0);
   await expect(player.locator('.error-marker')).toHaveCount(0);
   await expect(player.locator('.line.active')).toHaveText('years = int(age)');
@@ -61,7 +61,7 @@ test('runtime diagnostic preserves earlier state, restores argument badges, and 
   await scrub.press('Home');
   await expect(player.locator('.globals [data-name]')).toHaveCount(0);
   await expect(player.locator('.console pre')).toHaveText('');
-  await expect(player.getByRole('status', { name: 'Program error' })).toBeHidden();
+  await expect(player.getByRole('region', { name: 'Program error' })).toBeHidden();
 });
 
 test('autoplay pauses immediately at a program error and can restart', async ({ page }) => {
@@ -70,11 +70,11 @@ test('autoplay pauses immediately at a program error and can restart', async ({ 
   await goTo(player, 4);
   await player.getByRole('combobox', { name: 'Playback speed' }).selectOption('2');
   await player.getByRole('button', { name: 'Play', exact: true }).click();
-  await expect(player.getByRole('status', { name: 'Program error' })).toBeVisible();
+  await expect(player.getByRole('region', { name: 'Program error' })).toBeVisible();
   await expect(player.getByRole('button', { name: 'Play', exact: true })).toBeVisible();
   await expect(player.locator('.counter')).toHaveText('Step 5 / 5');
   await player.getByRole('button', { name: 'Restart', exact: true }).click();
-  await expect(player.getByRole('status', { name: 'Program error' })).toBeHidden();
+  await expect(player.getByRole('region', { name: 'Program error' })).toBeHidden();
   await expect(player.locator('.counter')).toHaveText('Step 0 / 5');
 });
 
@@ -85,7 +85,7 @@ test('program messages are safe text and remain distinct from invalid lesson loa
   await player.evaluate(el => el.addEventListener('lessonerror', () => el.setAttribute('data-load-error', 'yes')));
   expect(await player.evaluate((el, source) => (el as CodeLoupe).loadLesson(source), yaml)).toBe(true);
   await goTo(player, 5);
-  await expect(player.getByRole('status', { name: 'Program error' })).toContainText('<img src=x onerror=alert(1)>');
+  await expect(player.getByRole('region', { name: 'Program error' })).toContainText('<img src=x onerror=alert(1)>');
   await expect(player.locator('.diagnostic img')).toHaveCount(0);
   await expect(player).not.toHaveAttribute('data-load-error');
   expect(await player.evaluate(el => (el as CodeLoupe).loadLesson('language: python\ncode: pass\nsteps:\n  - error: wrong'), undefined)).toBe(false);
@@ -94,7 +94,7 @@ test('program messages are safe text and remain distinct from invalid lesson loa
   expect(await player.evaluate((el, source) => (el as CodeLoupe).loadLesson(source), await canonical('syntax-error'))).toBe(true);
   await goTo(player, 1);
   await expect(player.locator('.error')).toBeHidden();
-  await expect(player.getByRole('status', { name: 'Program error' })).toContainText('SyntaxError');
+  await expect(player.getByRole('region', { name: 'Program error' })).toContainText('SyntaxError');
 });
 
 test('diagnostics and failing code stay visible in short and narrow fullscreen views', async ({ page }) => {

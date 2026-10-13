@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./lesson": "./src/lesson.ts",
     "./state": "./src/state.ts",
-    "./themes": "./src/themes.ts"
+    "./themes": "./src/themes.ts",
+    "./lesson.schema.json": "./lesson.schema.json"
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
@@ -21,6 +22,7 @@
     "yaml": "^2.9.1"
   },
   "devDependencies": {
+    "ajv": "^8.20.0",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vite": "^8.3.2"

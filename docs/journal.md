@@ -398,3 +398,61 @@ manual value calculation while retaining teacher control. Input constraints,
 execution limits, caption anchors/templates, and a permanent traced-file format
 still need design. Iframe embedding can proceed independently; styling remains
 deferred.
+
+## 2026-10-12 — Accessible execution context
+
+Use one polite, atomic status region for step/line, relevant values, output,
+program diagnostics, and the teacher's caption. Keep visual badges hidden from
+the accessibility tree and supply their values through the status text.
+Cosmetic renders do not repeat unchanged messages, and announcements do not
+move focus. Preserve native keyboard handling on form controls and editable
+slotted content. When a navigation button becomes disabled at a lesson boundary,
+return focus to the player without scrolling the host page.
+
+Name list cells through a current highlighted or relevant action binding, then
+active locals/globals, with function/frame labels for locals. Keep the object id and
+alias list on the card; orphaned lists retain their id as an accessible fallback.
+Combined steps announce every affected binding, deduplicating repeated list
+locations. Source events must still point through a current binding before their
+name labels an object. Automated checks cover both motion modes. Real
+screen-reader testing and the usefulness of announcement verbosity remain open.
+
+## 2026-10-12 — Prioritize the authoring workflow
+
+Shift the near-term direction from tracing to using the existing authored tool
+comfortably. Improve the playground's YAML editor first, then build introductory
+action forms, code-target selection, and step organization. Builder and source
+views share one saved lesson and preserve advanced content. Teachers still supply
+outcomes and explanations; the builder supplies syntax.
+
+The implementation plan defines small reviewable slices and acceptance examples.
+Tracing may later populate this workflow, but is deferred while we test it.
+Editor/library adoption is subject to a browser integration check; broader action
+forms follow teacher trials. The 24-lesson corpus remains paused.
+
+## 2026-10-13 — Source assistance in the playground
+
+Use Monaco with the checked-in lesson schema for YAML highlighting, indentation,
+completion, hover descriptions, and source diagnostics. The preview still checks
+state-dependent rules. Preserve raw drafts/downloads and undo; load the editor only
+on the playground, with a plain textarea fallback. The player stays independent.
+
+Pin Monaco to 0.52.2 for the YAML integration's older worker API and replace its
+embedded sanitizer with maintained DOMPurify. The editor and workers add roughly
+1.1 MB gzipped; this loading cost and real assistive-technology testing remain
+considerations. GUI action forms are the next slice, not part of this change.
+
+## 2026-10-13 — Agree on the builder's Step cards design
+
+Adopt the reviewed Step cards layout: expandable teaching steps on the left,
+live preview on the right, collapsible lesson details, and Builder/YAML views
+sharing one draft. Preserve square corners and the existing palettes. Selecting
+a card previews its completed state; typed value controls keep numbers, text,
+Booleans, and None distinct. This keeps the explanation's sequence visible while
+limiting the form detail shown at once.
+
+Begin with highlight, show-value, store-value, and print forms, reviewed against
+the naming-value and simple-arithmetic lessons. The mockup is a design reference;
+implementation must use the real player and preserve advanced YAML. Code selection
+and richer step organization remain the following slice. The builder is not yet
+implemented.

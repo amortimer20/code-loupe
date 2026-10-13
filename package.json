@@ -3,6 +3,9 @@
   "private": true,
   "type": "module",
   "license": "MIT",
+  "overrides": {
+    "monaco-editor": "0.52.2"
+  },
   "workspaces": [
     "packages/*",
     "apps/*"

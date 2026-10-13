@@ -115,6 +115,19 @@ Direct loads don't change the `src` attribute. Changing `src` or reconnecting th
 element loads its configured URL or inline lesson again. Changing `theme` pauses
 playback and recolors the current lesson, preserving its step and directly loaded draft.
 
+When the player itself is focused, ←/→ step, Home/End jump, and Space
+plays or pauses. Form controls and editable slotted content keep their native
+keyboard behavior; `no-keyboard` disables player shortcuts while leaving
+buttons and the step slider usable. The slider exposes its current step in words. When a navigation button becomes
+disabled at a lesson boundary, focus returns to the player so shortcuts remain usable.
+
+A polite status region announces the displayed step, line, relevant values,
+output/errors, and caption without moving focus. Theme/resize renders do not
+repeat unchanged announcements. List cells use the relevant binding name; local
+names include the function/frame, and orphaned lists use their object label.
+The object card retains its identity label and alias list. This is an initial
+accessibility improvement; manual screen-reader and cross-browser audits remain open.
+
 ## Starter themes
 
 ```html
@@ -154,9 +167,15 @@ extension in VS Code, put this comment at the top of a canonical lesson:
 The path is relative to the YAML file; adjust it for files outside
 `lessons/<language>/<slug>/`. Consumers of the player package can use
 `code-loupe/lesson.schema.json`. Schema checks cover action shapes, addresses,
-and step combinations. The playground's current textarea does not provide
-schema autocomplete; its preview and the site build use runtime validation for
-source values, object identity, scope, and code targets.
+and step combinations. The playground uses the same schema for completion,
+hover descriptions, and source diagnostics, with YAML highlighting and two-space
+indentation. Select a source problem to go to its location. Ctrl+Space opens
+suggestions; Ctrl+M lets Tab leave the editor. Its preview and the site build
+also validate source values, object identity, scope, and code targets.
+
+The enhanced editor loads only on the playground; if it cannot load, a plain
+textarea remains available. Draft storage and downloads keep your YAML text,
+including comments and incomplete work. The player package has no editor dependency.
 
 
 ```yaml

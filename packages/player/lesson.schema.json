@@ -1,0 +1,763 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/amortimer20/code-loupe/main/packages/player/lesson.schema.json",
+  "title": "Code Loupe authored lesson",
+  "description": "Editor assistance for authored lessons. Execution-state consistency is checked by buildSnapshots, not this schema.",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Optional lesson title."
+    },
+    "language": {
+      "type": "string",
+      "description": "Shiki language id, e.g. python.",
+      "minLength": 1
+    },
+    "code": {
+      "type": "string",
+      "description": "Displayed source code. Authored lessons do not execute it."
+    },
+    "steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/step"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "language",
+    "code",
+    "steps"
+  ],
+  "definitions": {
+    "scalar": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "null"
+      ],
+      "description": "A language string, finite number, Boolean, or null (Python None)."
+    },
+    "value": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/scalar"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/scalar"
+          }
+        }
+      ],
+      "description": "A scalar or flat list of scalars. Nested values are not supported."
+    },
+    "address": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:\\[[0-9]+\\]|\\[(?:\"(?:[^\"\\\\\\s\\x00-\\x1f]|\\\\(?:[\"\\\\/bfnrt]|u[0-9a-fA-F]{4}))+\"|'[^'\\\\\\s]+')\\]|\\.[A-Za-z_][A-Za-z0-9_]*)?$",
+      "description": "Existing location: numbers, numbers[1], report[\"score\"], or ada.name. No whitespace or nested accessors. console means console input in badge.from; use { target: console } for that variable."
+    },
+    "indexAddress": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*\\[[0-9]+\\]$",
+      "description": "List element address with a nonnegative integer index, e.g. numbers[1]."
+    },
+    "accessorAddress": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*(?:\\[[0-9]+\\]|\\[(?:\"(?:[^\"\\\\\\s\\x00-\\x1f]|\\\\(?:[\"\\\\/bfnrt]|u[0-9a-fA-F]{4}))+\"|'[^'\\\\\\s]+')\\]|\\.[A-Za-z_][A-Za-z0-9_]*)$",
+      "description": "List element, dictionary field, or instance attribute. Use assign to rebind a bare name."
+    },
+    "bareAddress": {
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+      "description": "List binding name without an accessor, e.g. numbers."
+    },
+    "addressMapping": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/address"
+        },
+        "scope": {
+          "const": "global",
+          "description": "Look up a shadowed global binding explicitly."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "target"
+      ]
+    },
+    "indexAddressMapping": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/indexAddress"
+        },
+        "scope": {
+          "const": "global",
+          "description": "Look up a shadowed global binding explicitly."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "target"
+      ]
+    },
+    "source": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/address"
+        },
+        {
+          "$ref": "#/definitions/addressMapping"
+        }
+      ]
+    },
+    "selection": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/indexAddress"
+        },
+        {
+          "$ref": "#/definitions/indexAddressMapping"
+        }
+      ]
+    },
+    "badge": {
+      "type": "object",
+      "properties": {
+        "over": {
+          "type": "string",
+          "description": "Exact code text to place the badge above.",
+          "minLength": 1
+        },
+        "value": {
+          "$ref": "#/definitions/value"
+        },
+        "type": {
+          "type": "string",
+          "description": "Optional language type tag, otherwise inferred from the value.",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based line number in the displayed code."
+        },
+        "nth": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based occurrence of the code target; defaults to 1."
+        },
+        "from": {
+          "$ref": "#/definitions/source"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "over",
+        "value"
+      ],
+      "description": "Show an authored value over code. Variable sources must match current contents."
+    },
+    "convert": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "#/definitions/value"
+        },
+        "type": {
+          "type": "string",
+          "description": "Optional language type tag, otherwise inferred from the value.",
+          "minLength": 1
+        },
+        "over": {
+          "type": "string",
+          "description": "Exact code text to place the badge above.",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based line number in the displayed code."
+        },
+        "nth": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based occurrence of the code target; defaults to 1."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "value"
+      ],
+      "description": "Transform the latest literal/scalar badge. Reference-backed list badges cannot be converted."
+    },
+    "output": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "Console output text."
+        },
+        {
+          "type": "object",
+          "properties": {
+            "text": {
+              "type": "string",
+              "description": "Printed text; must contain the printed badge value when from: badge is used."
+            },
+            "from": {
+              "const": "badge",
+              "description": "Use the most recent badge; a literal value, when supplied, takes precedence."
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "text"
+          ]
+        }
+      ]
+    },
+    "assign": {
+      "type": "object",
+      "properties": {
+        "var": {
+          "type": "string",
+          "description": "Binding to create or rebind in the active frame.",
+          "minLength": 1
+        },
+        "value": {
+          "$ref": "#/definitions/value"
+        },
+        "type": {
+          "type": "string",
+          "description": "Optional language type tag, otherwise inferred from the value.",
+          "minLength": 1
+        },
+        "from": {
+          "const": "badge",
+          "description": "Use the most recent badge; a literal value, when supplied, takes precedence."
+        },
+        "ref": {
+          "type": "string",
+          "description": "Existing heap object label. Cannot combine with value, from, or type.",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "var"
+      ],
+      "description": "Bind a scalar or reference. A literal list allocates; a whole-list read shares identity.",
+      "anyOf": [
+        {
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "required": [
+            "from"
+          ]
+        },
+        {
+          "required": [
+            "ref"
+          ]
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "ref"
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "value"
+                  ]
+                },
+                {
+                  "required": [
+                    "from"
+                  ]
+                },
+                {
+                  "required": [
+                    "type"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "update": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/accessorAddress"
+        },
+        "scope": {
+          "const": "global"
+        },
+        "value": {
+          "$ref": "#/definitions/scalar"
+        },
+        "from": {
+          "const": "badge",
+          "description": "Use the most recent badge; a literal value, when supplied, takes precedence."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "target"
+      ],
+      "description": "Change an existing location using a scalar or the latest badge.",
+      "anyOf": [
+        {
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "required": [
+            "from"
+          ]
+        }
+      ]
+    },
+    "append": {
+      "type": "object",
+      "properties": {
+        "target": {
+          "$ref": "#/definitions/bareAddress"
+        },
+        "scope": {
+          "const": "global"
+        },
+        "value": {
+          "$ref": "#/definitions/scalar"
+        },
+        "from": {
+          "const": "badge",
+          "description": "Use the most recent badge; a literal value, when supplied, takes precedence."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "target"
+      ],
+      "description": "Change an existing location using a scalar or the latest badge.",
+      "anyOf": [
+        {
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "required": [
+            "from"
+          ]
+        }
+      ]
+    },
+    "allocate": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique teaching label; automatic list bindings may already have claimed list-N labels.",
+          "minLength": 1
+        },
+        "value": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/scalar"
+          }
+        },
+        "fields": {
+          "type": "object",
+          "propertyNames": {
+            "minLength": 1
+          },
+          "additionalProperties": {
+            "$ref": "#/definitions/scalar"
+          }
+        },
+        "class": {
+          "type": "string",
+          "description": "Class name for an instance with scalar attributes.",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "id"
+      ],
+      "description": "Allocate a list, flat dictionary, or class instance using a chosen label.",
+      "oneOf": [
+        {
+          "required": [
+            "value"
+          ],
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "fields"
+                ]
+              },
+              {
+                "required": [
+                  "class"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "required": [
+            "fields"
+          ],
+          "not": {
+            "required": [
+              "value"
+            ]
+          }
+        }
+      ]
+    },
+    "call": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Function name shown in the call stack.",
+          "minLength": 1
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based line number in the displayed code."
+        },
+        "over": {
+          "type": "string",
+          "description": "Exact code text to place the badge above.",
+          "minLength": 1
+        },
+        "nth": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based occurrence of the code target; defaults to 1."
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/assign"
+          },
+          "description": "Parameter bindings in the new frame."
+        },
+        "construct": {
+          "type": "string",
+          "description": "Allocated instance whose initializer this call represents.",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "line",
+        "over"
+      ],
+      "description": "Enter a function. Must occupy its own step, with an optional caption."
+    },
+    "return": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "#/definitions/value"
+        },
+        "type": {
+          "type": "string",
+          "description": "Optional language type tag, otherwise inferred from the value.",
+          "minLength": 1
+        },
+        "from": {
+          "const": "badge",
+          "description": "Use the most recent badge; a literal value, when supplied, takes precedence."
+        }
+      },
+      "additionalProperties": false,
+      "description": "Leave the active call. A list-reference badge shares identity; a literal list allocates when bound.",
+      "anyOf": [
+        {
+          "required": [
+            "value"
+          ]
+        },
+        {
+          "required": [
+            "from"
+          ]
+        }
+      ]
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "enum": [
+            "syntax",
+            "runtime"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Exception or syntax error name.",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "message": {
+          "type": "string",
+          "description": "Teacher-authored diagnostic message.",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based line number in the displayed code."
+        },
+        "over": {
+          "type": "string",
+          "description": "Exact code text to place the badge above.",
+          "minLength": 1
+        },
+        "nth": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based occurrence of the code target; defaults to 1."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "name",
+        "message",
+        "line"
+      ],
+      "description": "Unhandled program diagnostic. Must occupy its own terminal step; syntax errors come first.",
+      "dependencies": {
+        "nth": [
+          "over"
+        ]
+      }
+    },
+    "step": {
+      "type": "object",
+      "properties": {
+        "line": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "One-based line number in the displayed code."
+        },
+        "caption": {
+          "type": "string",
+          "description": "Teacher explanation for this step."
+        },
+        "write": {
+          "$ref": "#/definitions/output"
+        },
+        "print": {
+          "$ref": "#/definitions/output"
+        },
+        "input": {
+          "type": "string",
+          "description": "Authored console input; the player does not ask the student for this value."
+        },
+        "badge": {
+          "$ref": "#/definitions/badge"
+        },
+        "convert": {
+          "$ref": "#/definitions/convert"
+        },
+        "assign": {
+          "$ref": "#/definitions/assign"
+        },
+        "allocate": {
+          "$ref": "#/definitions/allocate"
+        },
+        "select": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/selection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Mark a list cell, or null to clear selection."
+        },
+        "update": {
+          "$ref": "#/definitions/update"
+        },
+        "append": {
+          "$ref": "#/definitions/append"
+        },
+        "remove": {
+          "$ref": "#/definitions/selection"
+        },
+        "call": {
+          "$ref": "#/definitions/call"
+        },
+        "return": {
+          "$ref": "#/definitions/return"
+        },
+        "error": {
+          "$ref": "#/definitions/error"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Teacher-paced actions. Output runs before badges/conversion; assignment runs after them.",
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "call"
+            ]
+          },
+          "then": {
+            "propertyNames": {
+              "enum": [
+                "call",
+                "caption"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "return"
+            ]
+          },
+          "then": {
+            "propertyNames": {
+              "enum": [
+                "return",
+                "caption"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "error"
+            ]
+          },
+          "then": {
+            "propertyNames": {
+              "enum": [
+                "error",
+                "caption"
+              ]
+            }
+          }
+        },
+        {
+          "not": {
+            "anyOf": [
+              {
+                "required": [
+                  "update",
+                  "append"
+                ]
+              },
+              {
+                "required": [
+                  "update",
+                  "remove"
+                ]
+              },
+              {
+                "required": [
+                  "append",
+                  "remove"
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {
+                "required": [
+                  "print"
+                ],
+                "properties": {
+                  "print": {
+                    "type": "object",
+                    "required": [
+                      "from"
+                    ],
+                    "properties": {
+                      "from": {
+                        "const": "badge"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "required": [
+                  "write"
+                ],
+                "properties": {
+                  "write": {
+                    "type": "object",
+                    "required": [
+                      "from"
+                    ],
+                    "properties": {
+                      "from": {
+                        "const": "badge"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          "then": {
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "badge"
+                  ]
+                },
+                {
+                  "required": [
+                    "convert"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

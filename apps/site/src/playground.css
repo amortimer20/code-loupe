@@ -6,7 +6,7 @@
 .panel-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; min-height: 2.5rem; }
 #editor-help, .preview-help, #preview-status { font-size: 0.85rem; }
 #editor-help { min-height: 3em; }
-textarea {
+#lesson-source {
   display: block;
   width: 100%;
   min-height: 34rem;
@@ -30,11 +30,19 @@ button {
   cursor: pointer;
 }
 button:disabled { opacity: 0.5; cursor: default; }
+#lesson-source[hidden], #lesson-editor[hidden] { display: none; }
+#lesson-editor { height: 34rem; border: 1px solid var(--border); }
+#editor-shortcuts, #editor-status { font-size: 0.8rem; color: var(--muted); }
+#editor-problems { padding-left: 1.5rem; font-size: 0.85rem; }
+#editor-problems button { text-align: left; overflow-wrap: anywhere; }
+/* Keep site button styling out of Monaco's internal controls. */
+.monaco-editor button { padding: revert; font: revert; border-radius: revert; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 #preview { margin-top: 0.5rem; }
 #lesson-error { padding: 0.75rem; border: 1px solid var(--error); color: var(--error); white-space: pre-wrap; overflow-wrap: anywhere; }
 textarea[aria-invalid='true'] { border-color: var(--error); }
 @media (max-width: 960px) {
   .workspace { grid-template-columns: minmax(0, 1fr); }
-  textarea { min-height: 24rem; }
+  #lesson-source { min-height: 24rem; }
+  #lesson-editor { height: 24rem; }
 }

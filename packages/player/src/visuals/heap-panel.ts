@@ -1,5 +1,6 @@
 import type { Snapshot } from '../state';
 import { isReference } from '../values';
+import { listAccessibleName } from './accessibility';
 import { renderCollection } from './collection';
 import type { ValueRenderer } from './variables';
 import { formatValue, inferType } from '../values';
@@ -59,7 +60,7 @@ export function renderHeap(host: HTMLElement, snap: Snapshot, renderer: ValueRen
     const refs = names.filter(({ variable }) => isReference(variable.value) && variable.value.ref === object.id);
     owners.textContent = refs.length ? `Referenced by: ${refs.map(({ variable, prefix }) => prefix + variable.name).join(', ')}` : 'No variable references';
     const selected = snap.selection?.ref === object.id ? snap.selection.index : undefined;
-    const cells = 'fields' in object ? renderFields(object, renderer) : renderCollection(object.id, object.value, selected, renderer);
+    const cells = 'fields' in object ? renderFields(object, renderer) : renderCollection(listAccessibleName(snap, object.id), object.value, selected, renderer);
     cells.classList.add('value');
     card.append(title, owners, cells);
     host.append(card);

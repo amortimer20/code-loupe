@@ -42,7 +42,12 @@ breaks are preserved. Code line numbers start at 1 and refer to lines inside
 that block, not to lines in the YAML file. `language` chooses syntax highlighting
 and value formatting; `title` is optional.
 
-### Optional editor assistance
+### Editor assistance
+
+The playground highlights YAML and supplies schema completion, hover descriptions,
+and source errors. Press Ctrl+Space for suggestions. Select a problem below the
+editor to jump to its location. Ctrl+M toggles whether Tab moves out of the editor;
+Escape closes suggestions. Preview errors remain visible alongside source checks.
 
 If you edit YAML in VS Code with the Red Hat YAML extension, the
 [lesson schema](../packages/player/lesson.schema.json) supplies completion,
@@ -56,7 +61,7 @@ pointing to that file relative to your lesson:
 That path works inside `lessons/python/<slug>/`; use a different relative
 path for a draft elsewhere. Keep checking the playground preview: a schema
 cannot tell whether a badge value matches the variable's current contents or
-whether its code target exists. The textarea itself has no schema assistance yet.
+whether its code target exists. The preview checks those rules separately.
 
 ## 2. Show a value, then assign it
 

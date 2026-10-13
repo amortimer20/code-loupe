@@ -63,6 +63,18 @@ validation, preserved frames/heap without unwinding, backward restoration,
 scrubbing, autoplay pausing, theme switching, safe text rendering, distinction
 from load errors, and short/narrow fullscreen visibility.
 
+Source-editor checks cover YAML highlighting, indentation, completion and hover
+from the local schema, actionable syntax/shape/semantic problems, undo and keyboard
+exit, theme selection preservation, exact CRLF downloads, narrow screens, and the
+plain-editor fallback when its enhancement cannot load. Canonical draft tests edit
+through the visible editor and verify saved/restored text for every sample.
+
+Monaco is pinned to 0.52.2 because the current `monaco-yaml` worker manager uses
+the pre-0.53 worker API. Keep the shared version override when updating dependencies
+until completion/hover/diagnostics work on a newer release. Vite replaces Monaco's
+embedded sanitizer with the maintained `dompurify` package; verify hover rendering
+and dependency advisories when changing that integration.
+
 The test server serves `apps/site/dist/` plus `packages/player/dist/` and an
 independent embedding fixture. That verifies both production outputs; test-only
 routes are not part of the published site. Its port is 4321, and an occupied port
@@ -104,6 +116,23 @@ npm run test:browser:built -- --project=chromium-reduced --grep "nested calls"
 npm run test:browser:built -- --project=chromium --grep "standalone"
 npx playwright show-report
 ```
+
+## Accessibility checks
+
+`tests/browser/accessibility.spec.ts` checks control tab order, native slider
+and speed-selector keys, player shortcuts, keyboard fullscreen entry/exit,
+focus behavior, relevant list-cell names (including aliases, locals, and orphans),
+and live-region text. Combined-step cases cover same-step rebindings, every
+affected binding, duplicate list summaries, and backward restoration. Mutation checks verify that theme and resize renders do
+not repeat unchanged step announcements. These tests run with full and reduced
+motion; pure helper tests cover recursion, backward snapshots, and diagnostic
+summaries.
+
+These automated checks inspect DOM/accessibility semantics, not spoken output.
+Manual testing with NVDA, VoiceOver, and other assistive technology remains open,
+including announcement usefulness during autoplay and long lessons. See
+[W3C status-message guidance](https://www.w3.org/WAI/WCAG22/Understanding/status-messages.html)
+for the distinction between announcing updates and moving focus.
 
 ## Visual references
 

@@ -18,6 +18,10 @@ const samples = await getSamples();
       </div>
       <p id="editor-help">Preview updates after you stop typing and restarts at Step 0. Your draft is saved in this browser when storage is available.</p>
       <textarea id="lesson-source" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="editor-help lesson-error" disabled></textarea>
+      <div id="lesson-editor" hidden></div>
+      <p id="editor-shortcuts" hidden>Ctrl+Space: suggestions. Ctrl+M: let Tab leave the editor. Escape: close suggestions.</p>
+      <p id="editor-status" role="status">Loading source editor…</p>
+      <ul id="editor-problems" aria-label="Source problems" hidden></ul>
       <pre id="lesson-error" role="alert" hidden></pre>
     </section>
     <section class="preview-panel" aria-labelledby="preview-heading">

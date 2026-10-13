@@ -1,4 +1,4 @@
-import { test, expect, canonical, ready, goTo, selectTheme, palettes } from './helpers';
+import { test, expect, fillLessonSource, canonical, ready, goTo, selectTheme, palettes } from './helpers';
 import type { CodeLoupe } from '../../packages/player/src/code-loupe';
 
 test('themes preserve steps and frames without refetching and persist across pages', async ({ page }) => {
@@ -23,7 +23,7 @@ test('rapid theme changes during editing preserve the draft and current step', a
   const draft = (await canonical('nested-function-call')).replace('title: Following nested function calls', 'title: My themed draft');
   await page.goto('/playground/?sample=python/nested-function-call');
   await expect(page.locator('#preview-status')).toHaveText('Ready · 19 steps');
-  await page.locator('#lesson-source').fill(draft);
+  await fillLessonSource(page, draft);
   await selectTheme(page, 'paper');
   await expect(page.locator('code-loupe .title')).toHaveText('My themed draft');
   const player = await ready(page, 19);
@@ -45,7 +45,7 @@ test('theme selection and lesson editing work when storage is blocked', async ({
   await page.goto('/playground/?sample=python/function-call');
   await expect(page.locator('#preview-status')).toHaveText('Ready · 11 steps');
   await selectTheme(page, 'paper');
-  await page.locator('#lesson-source').fill((await canonical('function-call')) + '\n# unstored draft\n');
+  await fillLessonSource(page, (await canonical('function-call')) + '\n# unstored draft\n');
   await expect(page.locator('#preview-status')).toHaveText('Ready · 11 steps');
   await expect(page.locator('#lesson-source')).toHaveValue(/# unstored draft/);
 });

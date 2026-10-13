@@ -1,5 +1,6 @@
 import { CodeLoupe } from 'code-loupe';
 import './playground.css';
+import { enhanceSourceEditor } from './lesson-source-editor';
 
 interface SampleOption { id: string; title: string; source: string }
 const samples: SampleOption[] = JSON.parse(document.querySelector<HTMLElement>('.workspace')!.dataset.samples!);
@@ -19,6 +20,8 @@ inline.type = 'text/yaml';
 let revision = 0;
 let timer: ReturnType<typeof setTimeout> | undefined;
 let lastError = '';
+let draftText = '';
+let assistance: Awaited<ReturnType<typeof enhanceSourceEditor>> | undefined;
 
 player.addEventListener('lessonerror', (event) => {
   lastError = (event as CustomEvent<{ message: string }>).detail.message;
@@ -26,7 +29,7 @@ player.addEventListener('lessonerror', (event) => {
 
 function saveDraft() {
   try {
-    localStorage.setItem(DRAFT_KEY, editor.value);
+    localStorage.setItem(DRAFT_KEY, draftText);
   } catch {
     // Editing and downloading still work when browser storage is unavailable.
   }
@@ -34,12 +37,13 @@ function saveDraft() {
 
 async function updatePreview(currentRevision: number) {
   lastError = '';
-  inline.textContent = editor.value;
-  const loaded = await player.loadLesson(editor.value);
+  inline.textContent = draftText;
+  const loaded = await player.loadLesson(draftText);
   if (currentRevision !== revision) return;
   preview.style.visibility = '';
   preview.setAttribute('aria-busy', 'false');
   status.textContent = loaded ? `Ready · ${player.total} steps` : 'Check your lesson';
+  assistance?.setRuntimeError(loaded ? '' : lastError);
   if (loaded) {
     error.hidden = true;
     error.textContent = '';
@@ -52,6 +56,7 @@ async function updatePreview(currentRevision: number) {
 }
 
 editor.addEventListener('input', () => {
+  draftText = assistance?.getValue() ?? editor.value;
   saveDraft();
   player.pause();
   clearTimeout(timer);
@@ -61,12 +66,13 @@ editor.addEventListener('input', () => {
   preview.style.visibility = 'hidden';
   error.hidden = true;
   editor.removeAttribute('aria-invalid');
+  assistance?.setRuntimeError('');
   timer = setTimeout(() => void updatePreview(currentRevision), 400);
 });
 
 download.addEventListener('click', () => {
   // Download the exact draft, even when it is incomplete or invalid.
-  const url = URL.createObjectURL(new Blob([editor.value], { type: 'application/yaml;charset=utf-8' }));
+  const url = URL.createObjectURL(new Blob([draftText], { type: 'application/yaml;charset=utf-8' }));
   const link = document.createElement('a');
   link.href = url;
   link.download = `${sample.id.split('/').at(-1)}-draft.yaml`;
@@ -99,6 +105,7 @@ async function start() {
     document.querySelector('#draft-context')!.textContent = `Unknown sample. Using “${sample.title}” instead.`;
   }
   editor.value = draft;
+  draftText = draft;
   inline.textContent = draft;
   player.append(inline);
   preview.append(player);
@@ -107,6 +114,8 @@ async function start() {
   await updatePreview(revision);
   editor.disabled = false;
   download.disabled = false;
+  assistance = await enhanceSourceEditor(editor, () => draftText);
+  assistance.setRuntimeError(lastError);
 }
 
 void start();

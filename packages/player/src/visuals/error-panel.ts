@@ -3,7 +3,7 @@ import type { ProgramError } from './error-state';
 export function renderProgramError(host: HTMLElement, error: ProgramError | null) {
   host.hidden = error === null;
   const text = error ? `⚠ ${error.name} · Line ${error.line}\n${error.message}\n${error.kind === 'syntax' ? 'Program did not start.' : 'Execution stopped.'}` : '';
-  // Resize/theme rendering should not repeat the live announcement.
+  // Avoid rewriting unchanged diagnostics on resize/theme renders.
   if (host.textContent !== text) host.textContent = text;
 }
 

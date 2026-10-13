@@ -89,17 +89,17 @@ to "step 6". Ideas to explore:
 
 ### Current direction (2026-10-12)
 
-Keep YAML as the saved authored format while reducing manual authoring work.
-First add schema assistance, then take a focused accessibility slice (including
-list-cell labels that identify the relevant binding). Keep the 24-lesson corpus
-paused. Iframe embedding is useful independently of tracing; the host styling
-API remains deferred.
+Prioritize making the existing authored tool understandable and pleasant to use.
+Follow the [authoring implementation plan](authoring-plan.md): improve the YAML
+editor, add a small GUI builder for introductory actions, then add code selection
+and step organization. Both views edit the same saved lesson; teachers retain
+control of values, captions, and pacing. The schema and focused accessibility
+work provide foundations for these authoring improvements.
 
-The first tracer experiment should record a fixed-input Python execution into
-an editable authored lesson, using the existing player. Start with lines,
-scalar assignments, console output, and list identity. Expression badges and
-live student-controlled tracing come later. Evaluate whether the resulting
-lesson saves teacher effort before settling a permanent traced-file format.
+Keep the corpus paused at 24 lessons. Tracing is deferred while we evaluate this
+workflow. A future fixed-input trace-to-authored experiment may populate the
+builder, but it is not the next implementation task. Iframe embedding and the
+host styling API remain independent backlog items.
 
 Ideas still to design, rather than settled API:
 
@@ -193,7 +193,7 @@ through a shared "where is this value on screen?" lookup.
 
 - [x] **Lesson JSON Schema:** editor completion/descriptions, structural validation,
       corpus checks, and property coverage against authored TypeScript declarations.
-      Runtime state validation remains separate; playground editor integration is future work.
+      Runtime state validation remains separate; the playground uses the same schema.
 
 1. [x] **Tutorial** ([`docs/tutorial.md`](tutorial.md)): build a lesson file from scratch, one concept at a time
 2. [x] **Playground page** (`/playground/` on the sample site): YAML on the left, live player on the right,
@@ -211,8 +211,13 @@ through a shared "where is this value on screen?" lookup.
        dictionary fields, class-instance initialization, two independent instances,
        an instance-method call, and syntax/runtime errors.
        The initial five-lesson introductory sequence is complete.
-5. [ ] **Visual editor**: click a line, click a piece of code to attach a badge, drag steps to
-       reorder, preview while editing. It saves the same YAML format, so hand-editing still works.
+5. [x] **Improved source editor:** YAML highlighting/indentation plus schema completion,
+       hover help, and diagnostics in the playground. Preserve saved drafts and downloads.
+6. [ ] **Small GUI builder:** introductory action forms, code-target selection,
+       keyboard step organization, and shared preview/undo with the source editor.
+       Use the agreed Step cards layout: expandable cards beside the live preview.
+       Follow [the implementation plan](authoring-plan.md); advanced content is preserved
+       while its dedicated forms remain future work.
 
 ## 6. Styling Code Loupes
 
@@ -269,7 +274,10 @@ through a shared "where is this value on screen?" lookup.
       two instances with independent attributes, a method's self binding/None result,
       and syntax/runtime diagnostics in all three presets;
       pinned Docker environment for CI parity.
-- [ ] Accessibility review: screen-reader announcements per step, keyboard-only use, focus order
+- [x] First focused accessibility slice: binding-based list-cell labels, concise
+      step announcements, native form-control keys, and automated focus checks.
+- [ ] Manual accessibility review: real screen-reader announcements, keyboard-only
+      use across browsers, focus order, and autoplay verbosity.
 - [x] GitHub Actions workflow: lockfile install, unit tests, browser types,
       production builds/corpus validation, behavioral and visual tests, and
       retained failure reports/traces. Runs on pushes and pull requests.
@@ -293,9 +301,9 @@ through a shared "where is this value on screen?" lookup.
 2. Tutorial and playground page (makes authoring pleasant now)
 3. Sample library, function-call visual, and nested-call lesson (complete)
 4. Grow the corpus with collections and references; currently paused at 24 lessons
-5. Schema assistance, focused accessibility review, then a design session and narrow Python trace-to-authored experiment
-6. Visual editor
-7. Themes, more languages, Emerald
+5. Improve the YAML editor, then build and trial a small GUI lesson builder
+6. Reassess trace-to-authored recording after the authoring workflow is usable
+7. Further embedding, styling, languages, and Emerald as needs emerge
 
 The Reveal.js adapter remains in the embedding backlog; it is not part of the
 near-term sequence.

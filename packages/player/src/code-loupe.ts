@@ -5,6 +5,7 @@ import { formatValue, isReference } from './values';
 import { styles } from './styles';
 import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/call-stack-panel';
 import { renderVariables } from './visuals/variables';
+import { stepAnnouncement } from './visuals/accessibility';
 import { badgeDisplayValue } from './visuals/heap-state';
 import { animateCollectionAppend, animateCollectionRemoval, animateCollectionUpdate, captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
@@ -56,8 +57,8 @@ const TEMPLATE = `
     </section>
   </div>
   <div class="feedback">
-    <div class="caption" aria-live="polite"></div>
-    <section class="diagnostic" aria-label="Program error" role="status" aria-live="polite" hidden></section>
+    <div class="caption"></div>
+    <section class="diagnostic" aria-label="Program error" hidden></section>
   </div>
   <section class="console" aria-label="Console">
     <h3 class="label">Console</h3>
@@ -75,6 +76,7 @@ const TEMPLATE = `
       ${SPEEDS.map((s) => `<option value="${s}">${s}×</option>`).join('')}
     </select>
   </nav>
+  <div class="step-status" role="status" aria-live="polite" aria-atomic="true"></div>
   <div class="overlay" aria-hidden="true"></div>
   <pre class="error" role="alert" hidden></pre>
 </div>`;
@@ -112,6 +114,7 @@ export class CodeLoupe extends HTMLElement {
     codeHost: HTMLElement;
     badges: HTMLElement;
     caption: HTMLElement;
+    status: HTMLElement;
     diagnostic: HTMLElement;
     console: HTMLElement;
     play: HTMLButtonElement;
@@ -140,6 +143,7 @@ export class CodeLoupe extends HTMLElement {
       codeHost: $('.code-host'),
       badges: $('.badges'),
       caption: $('.caption'),
+      status: $('.step-status'),
       diagnostic: $('.diagnostic'),
       console: $('.console pre'),
       play: $('[data-act=play]'),
@@ -346,6 +350,7 @@ export class CodeLoupe extends HTMLElement {
       this.#index = 0;
       this.#renderControls();
       this.#els.ca.classList.add('has-error');
+      this.#els.status.textContent = '';
       this.#els.error.hidden = false;
       this.#els.error.textContent = `Couldn't load this lesson.\n\n${(err as Error).message}`;
       this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message: (err as Error).message }, bubbles: true }));
@@ -394,6 +399,7 @@ export class CodeLoupe extends HTMLElement {
     } catch (error) {
       if (loadId !== this.#loadId || lesson !== this.#lesson) return;
       this.#els.ca.classList.add('has-error');
+      this.#els.status.textContent = '';
       this.#els.error.hidden = false;
       this.#els.error.textContent = `Couldn't apply this theme.\n\n${(error as Error).message}`;
       this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message: (error as Error).message }, bubbles: true }));
@@ -484,7 +490,9 @@ export class CodeLoupe extends HTMLElement {
     const error = snap.error;
     renderErrorTarget(this.#els.badges, error, error?.over ? this.#targetRect(error.line, error.over, error.nth) : null, this.#els.scroll);
     this.#renderConsole(snap);
-    this.#els.caption.textContent = snap.caption ?? '';
+    if (this.#els.caption.textContent !== (snap.caption ?? '')) this.#els.caption.textContent = snap.caption ?? '';
+    const announcement = stepAnnouncement(snap, this.#index, this.total, this.#lesson.language);
+    if (this.#els.status.textContent !== announcement) this.#els.status.textContent = announcement;
     this.#renderControls();
     this.#revealData(snap);
 
@@ -597,11 +605,16 @@ export class CodeLoupe extends HTMLElement {
     const { play, first, prev, next, scrub, counter } = this.#els;
     const atStart = this.#index === 0;
     const atEnd = this.#index >= this.total;
+    const focused = this.#root.activeElement;
     first.disabled = prev.disabled = atStart;
     next.disabled = atEnd;
+    if ((focused === next && atEnd) || ((focused === first || focused === prev) && atStart)) {
+      this.focus({ preventScroll: true });
+    }
     play.innerHTML = this.#playing ? ICONS.pause : ICONS.play;
     play.setAttribute('aria-label', this.#playing ? 'Pause' : 'Play');
     scrub.value = String(this.#index);
+    scrub.setAttribute('aria-valuetext', `Step ${this.#index} of ${this.total}`);
     counter.textContent = `Step ${this.#index} / ${this.total}`;
   }
 
@@ -873,7 +886,9 @@ export class CodeLoupe extends HTMLElement {
   }
 
   #onKey(e: KeyboardEvent) {
-    if (this.hasAttribute('no-keyboard') || e.composedPath()[0] === this.#els.scrub) return;
+    const target = e.composedPath()[0];
+    if (this.hasAttribute('no-keyboard') || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey
+      || (target instanceof HTMLElement && (target.matches('input, select, textarea') || target.isContentEditable))) return;
     if ((e.composedPath()[0] as Element).tagName === 'BUTTON' && (e.key === ' ' || e.key === 'Enter')) return;
     const actions: Record<string, () => void> = {
       ArrowRight: () => this.next(),

@@ -1,5 +1,5 @@
 import { readFile } from 'node:fs/promises';
-import { test, expect, corpus, canonical, ready, goTo, settle } from './helpers';
+import { test, expect, fillLessonSource, corpus, canonical, ready, goTo, settle } from './helpers';
 import type { CodeLoupe } from '../../packages/player/src/code-loupe';
 
 test('gallery combines search and topic filters and reports empty results', async ({ page }) => {
@@ -194,7 +194,7 @@ for (const sample of corpus) {
     await page.getByRole('link', { name: 'Edit in playground', exact: true }).click();
     await expect(page.locator('#preview-status')).toHaveText(`Ready · ${sample.steps} steps`);
     await expect(page.locator('#lesson-source')).toHaveValue(yaml);
-    await page.locator('#lesson-source').fill(yaml + '\n# browser draft\n');
+    await fillLessonSource(page, yaml + '\n# browser draft\n');
     await expect(page.locator('#preview-status')).toHaveText(`Ready · ${sample.steps} steps`);
     await expect.poll(() => page.evaluate(id => localStorage.getItem(`code-loupe:playground-draft:python/${id}`), sample.id)).toContain('# browser draft');
     await page.reload();
@@ -208,21 +208,21 @@ test('drafts stay separate and invalid YAML can be downloaded and corrected', as
   const yaml = await canonical('numeric-input');
   await page.goto('/playground/?sample=python/numeric-input');
   await expect(page.locator('#preview-status')).toHaveText('Ready · 9 steps');
-  await page.locator('#lesson-source').fill(yaml + '\n# numeric only\n');
+  await fillLessonSource(page, yaml + '\n# numeric only\n');
   await page.goto('/playground/?sample=python/accumulator-loop');
   await expect(page.locator('#preview-status')).toHaveText('Ready · 13 steps');
   await expect(page.locator('#lesson-source')).toHaveValue(await canonical('accumulator-loop'));
   await page.goto('/playground/?sample=python/numeric-input');
   await expect(page.locator('#lesson-source')).toHaveValue(yaml + '\n# numeric only\n');
   const invalid = 'language: python\ncode: |\n  x = 5\nsteps:\n  - line: 10\n';
-  await page.locator('#lesson-source').fill(invalid);
+  await fillLessonSource(page, invalid);
   await expect(page.locator('#lesson-error')).toBeVisible();
   await expect(page.locator('#lesson-error')).toContainText("doesn't exist");
   await expect(page.locator('#lesson-source')).toHaveAttribute('aria-invalid', 'true');
   const event = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download YAML' }).click();
   expect(await readFile((await (await event).path())!, 'utf8')).toBe(invalid);
-  await page.locator('#lesson-source').fill(yaml);
+  await fillLessonSource(page, yaml);
   await expect(page.locator('#preview-status')).toHaveText('Ready · 9 steps');
   await expect(page.locator('#lesson-error')).toBeHidden();
   await expect(page.locator('#lesson-source')).not.toHaveAttribute('aria-invalid');
