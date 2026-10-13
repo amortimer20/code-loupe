@@ -193,3 +193,30 @@ export function appendStepForm(source: string, form: StepForm): string {
   buildSnapshots(parseLesson(next));
   return next;
 }
+
+/** Insert a validated introductory card at a saved-step boundary. */
+export function insertStepForm(source: string, index: number, form: StepForm, expectedSteps?: string): string {
+  const doc = readDocument(source), steps = doc.get('steps', true);
+  if (!isSeq(steps) || !Number.isInteger(index) || index < 0 || index > steps.items.length) throw new Error('That insertion position is no longer available.');
+  if (expectedSteps !== undefined && JSON.stringify(stepsOf(doc)) !== expectedSteps) throw new Error('Steps changed in YAML. Cancel this new card and choose its position again.');
+  // Reuse the same form conversion as an appended card, but validate in place:
+  // later steps can depend on the badge, line, or bindings this card changes.
+  const candidate = readDocument(addStep(source, form.action));
+  const items = candidate.get('steps', true);
+  if (!isSeq(items)) throw new Error('Use YAML to repair the steps list.');
+  items.items.splice(index, 0, items.items.pop()!);
+  const next = editStep(candidate.toString(), index, form, JSON.stringify(stepsOf(candidate)[index]));
+  buildSnapshots(parseLesson(next));
+  return next;
+}
+
+/** Copy the saved YAML node, preserving comments, quoted values and advanced actions. */
+export function duplicateStep(source: string, index: number, expected: string): string {
+  const doc = readDocument(source), steps = doc.get('steps', true);
+  if (!isSeq(steps) || !Number.isInteger(index) || index < 0 || index >= steps.items.length) throw new Error('That step is no longer available.');
+  if (JSON.stringify(stepsOf(doc)[index]) !== expected) throw new Error('This step changed in YAML. Select it again before duplicating it.');
+  const node = steps.items[index];
+  if (!isMap(node)) throw new Error('Use YAML to repair this step.');
+  steps.items.splice(index + 1, 0, node.clone());
+  return doc.toString();
+}

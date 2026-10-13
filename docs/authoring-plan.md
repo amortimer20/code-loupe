@@ -239,5 +239,7 @@ conditional occurrence fields shorten the forms without discarding authored valu
 
 Explicit preview picking now fills supported forms' code line and, for badges,
 single-line expression text and occurrence. It is an unsaved form edit and keeps
-values/captions intact. Manual controls remain available. Step duplication,
-insertion and keyboard reordering remain separate work; no dragging is added.
+values/captions intact. Manual controls remain available. Step insertion and duplication are now implemented under Organize step. Inserted
+cards validate at their chosen position before Save; duplicates clone the saved
+YAML node and remain undoable even when the sequence needs repair. Keyboard
+reordering and dragging remain separate work.

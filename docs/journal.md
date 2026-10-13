@@ -537,3 +537,14 @@ Keep square corners. Site appearance follows the system initially; its saved
 choice is independent of the Paper/Midnight/Terminal lesson preference. Existing
 preferences migrate, and YAML highlighting follows site appearance. This keeps
 website readability separate from the palette a teacher chooses for code.
+
+
+## 2026-10-13 — Insert and duplicate teaching steps
+
+Add positional insertion through the existing unsaved-card workflow, validating
+the entire candidate before Save. Copy saved YAML nodes for duplication so
+advanced actions, quotes, and attached comments survive. Duplicate requires the
+selected form to be saved or discarded first, and uses shared Undo. Invalid
+repetitions remain repairable rather than silently simplified. Pending insertion
+positions are guarded against changed steps. Reordering and dragging remain future
+work.

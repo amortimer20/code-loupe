@@ -144,3 +144,7 @@ textarea[aria-invalid='true'] { border-color: var(--error); }
   .author-actions .button, .author-actions button, .author-toolbar button { padding:0.35rem 0.6rem; line-height:1.4; }
   #editor-help, #editor-shortcuts, #editor-status { line-height:1.4; }
 }
+
+.builder-organize { border-top:1px solid var(--border); padding-top:0.5rem; }
+.builder-organize summary { cursor:pointer; font-size:0.85rem; }
+.builder-step-actions { display:flex; flex-wrap:wrap; gap:0.5rem; margin:0.65rem 0; }

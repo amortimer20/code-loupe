@@ -83,6 +83,14 @@ Picking changes only the unsaved form; it preserves the authored value and capti
 Escape or **Cancel picking** stops the picker. Manual line/text/occurrence fields
 remain available for keyboard use. Advanced targets remain editable in YAML.
 
+A saved card's **Organize step** section offers **Insert after this step** and
+**Duplicate step**. Insertion stays outside YAML until Save passes whole-lesson
+validation. Cancel drops it. Duplicate copies the saved step rather than pending
+form edits, preserving comments and advanced actions. Both saved operations use
+shared Undo. A duplicated call, allocation, or error may make the sequence invalid;
+repair the preserved draft in YAML or Undo the copy. If steps change while an
+inserted card is pending, cancel it and choose its position again.
+
 Picking highlights the hovered line. Preview stepping, scrubbing and autoplay
 select and reveal the matching saved card without moving keyboard focus. Pending
 edits and new cards are kept; focusing a form pauses autoplay. Lesson details

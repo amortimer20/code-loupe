@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { parse } from 'yaml';
 import { parseLesson } from 'code-loupe/lesson';
 import { buildSnapshots } from 'code-loupe/state';
-import { addStep, appendStepForm, newStepForm, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
+import { insertStepForm, duplicateStep, addStep, appendStepForm, newStepForm, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
 
 const corpus = new URL('../../../lessons/python/', import.meta.url);
 const sample = (name: string) => readFileSync(new URL(`${name}/lesson.yaml`, corpus), 'utf8');
@@ -117,4 +117,40 @@ test('new form candidates validate before becoming a single authored source edit
   assert.equal(buildSnapshots(parseLesson(next)).at(-1)!.badges[0].value, 5);
   assert.equal(parse(next).steps.length, 1);
   assert.throws(() => appendStepForm(next, { ...newStepForm('print'), source: 'badge', value: 'unrelated' }), /badge/);
+});
+
+
+test('insertion validates at its position and preserves later authored steps', () => {
+  const source = sample('naming-value'), before = parse(source);
+  const form = { ...newStepForm('highlight'), line: '1', caption: 'Pause here.' };
+  const next = insertStepForm(source, 1, form, JSON.stringify(before.steps));
+  const expected = structuredClone(before); expected.steps.splice(1, 0, { line: 1, caption: 'Pause here.' });
+  assert.deepEqual(parse(next), expected);
+  assert.deepEqual(buildSnapshots(parseLesson(next)).at(-1)!.vars, buildSnapshots(parseLesson(source)).at(-1)!.vars);
+  assert.throws(() => insertStepForm(source, 1, { ...newStepForm('assign'), name: 'score', value: '99' }), /doesn't match/);
+  assert.throws(() => insertStepForm(source, 1, form, '[]'), /Steps changed/);
+  assert.throws(() => insertStepForm(source, -1, form), /position/);
+  assert.throws(() => insertStepForm(source, 99, form), /position/);
+  assert.equal(parse(insertStepForm(newLesson, 0, form)).steps.length, 1);
+});
+
+test('duplication preserves saved YAML nodes, advanced actions and comments without sharing edits', () => {
+  for (const name of readdirSync(corpus)) {
+    const source = sample(name), before = parse(source);
+    for (let index = 0; index < before.steps.length; index++) {
+      const next = duplicateStep(source, index, JSON.stringify(before.steps[index]));
+      const expected = structuredClone(before); expected.steps.splice(index + 1, 0, structuredClone(before.steps[index]));
+      assert.deepEqual(parse(next), expected, `${name} step ${index + 1}`);
+    }
+  }
+  const source = fixture.replace('  - line: 1', '  - line: 1 # teacher note').replace('value: 0', 'value: 5.0, type: float');
+  const next = duplicateStep(source, 0, JSON.stringify(parse(source).steps[0]));
+  assert.equal(next.match(/# teacher note/g)?.length, 2);
+  assert.equal(next.match(/5\.0/g)?.length, 2);
+  assert.equal(next.match(/type: float/g)?.length, 2);
+  const revised = editCaption(next, 1, 'Only the copy changes.', JSON.stringify(parse(next).steps[1]));
+  assert.equal(parse(revised).steps[0].caption, undefined);
+  assert.equal(parse(revised).steps[1].caption, 'Only the copy changes.');
+  assert.throws(() => duplicateStep(source, 0, '{}'), /changed in YAML/);
+  assert.throws(() => duplicateStep(source, 99, '{}'), /no longer available/);
 });

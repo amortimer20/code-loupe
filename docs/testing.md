@@ -216,3 +216,11 @@ those comparisons independent of site appearance without altering player pixels
 or existing player reference pixels. Full-page site captures use the actual site
 surfaces. The narrow sample capture was refreshed for the new header geometry;
 other player references remain unchanged.
+
+
+Step-organization checks cover unsaved positional insertion/cancellation, whole-
+lesson dependency validation, stale insertion positions, shifted pending forms,
+saved/advanced duplication, invalid repeated calls, and shared Undo/Redo. Pure
+checks duplicate every corpus step without changing its authored fields and
+preserve attached comments and explicit float spelling. Browser cases run with
+both motion preferences.

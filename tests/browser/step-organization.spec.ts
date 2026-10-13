@@ -1,0 +1,97 @@
+import { test, expect, ready, canonical, fillLessonSource } from './helpers';
+import type { CodeLoupe } from '../../packages/player/src/code-loupe';
+
+const organize = async (page: import('@playwright/test').Page) => {
+  await page.locator('[data-step-form] .builder-organize summary').click();
+};
+
+test('inserted cards remain unsaved, cancel cleanly and save at the chosen boundary with Undo', async ({ page }) => {
+  await page.goto('/playground/?sample=python/naming-value');
+  const player = await ready(page, 3), original = await page.locator('#lesson-source').inputValue();
+  await page.locator('[data-step="2"]').click();
+  await page.getByLabel('Caption', { exact:true }).fill('Pending last caption');
+  await page.locator('[data-step="0"]').click();
+  await organize(page);
+  await page.getByRole('button', { name:'Insert after this step', exact:true }).click();
+  await expect(page.locator('[data-new-step]')).toBeVisible();
+  await expect(page.locator('[data-new-card] .builder-number')).toHaveText('+');
+  await expect(page.locator('[data-step="1"] .builder-number')).toHaveText('2');
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(1);
+  await page.getByLabel('Caption', { exact:true }).fill('Pause before reading score.');
+  await page.locator('[data-step="0"]').click();
+  await page.locator('[data-new-card]').click();
+  await expect(page.locator('[data-new-card]')).toBeFocused();
+  await expect(page.getByLabel('Caption', { exact:true })).toHaveValue('Pause before reading score.');
+  await page.getByRole('button', { name:'Cancel new step', exact:true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await organize(page);
+  await page.getByRole('button', { name:'Insert after this step', exact:true }).click();
+  await page.getByLabel('Caption', { exact:true }).fill('Pause before reading score.');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 4 steps');
+  expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(2);
+  await expect(page.locator('[data-step="1"]')).toHaveAttribute('aria-expanded','true');
+  await page.locator('[data-step="3"]').click();
+  await expect(page.getByLabel('Caption', { exact:true })).toHaveValue('Pending last caption');
+  await expect(page.locator('#lesson-source')).not.toHaveValue(/Pending last caption/);
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
+  await page.locator('[data-step="2"]').click();
+  await expect(page.getByLabel('Caption', { exact:true })).toHaveValue('Pending last caption');
+});
+
+test('duplication copies saved advanced YAML and reports invalid transitions without losing source', async ({ page }) => {
+  await page.goto('/playground/?sample=python/hello-world');
+  const player = await ready(page, 2), original = await page.locator('#lesson-source').inputValue();
+  await page.locator('[data-step="1"]').click();
+  await page.getByLabel('Caption', { exact:true }).fill('Pending caption');
+  await organize(page);
+  await expect(page.getByRole('button', { name:'Duplicate step', exact:true })).toBeDisabled();
+  await page.getByRole('button', { name:'Discard step edits', exact:true }).click();
+  await organize(page);
+  await page.getByRole('button', { name:'Duplicate step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
+  await expect(page.locator('[data-step="2"]')).toHaveAttribute('aria-expanded','true');
+  await expect(player.locator('.console pre')).toHaveText('Hello, world!\nHello, world!');
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await page.getByRole('button', { name:'Redo', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
+  const advanced = await canonical('nested-function-call');
+  await fillLessonSource(page, advanced);
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 19 steps');
+  await page.getByRole('tab', { name:'Builder', exact:true }).click();
+  await page.locator('[data-step="2"]').click();
+  await organize(page);
+  await page.getByRole('button', { name:'Duplicate step', exact:true }).click();
+  await expect(page.locator('.builder-card')).toHaveCount(20);
+  const raw = await page.locator('#lesson-source').inputValue();
+  expect((raw.match(/call:/g) ?? []).length).toBe((advanced.match(/call:/g) ?? []).length + 1);
+  await expect(page.locator('#preview-status')).toHaveText('Check your lesson');
+  await expect(page.locator('#lesson-error')).toBeVisible();
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(advanced);
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 19 steps');
+});
+
+test('insert validates downstream dependencies and guards a position changed in YAML', async ({ page }) => {
+  await page.goto('/playground/?sample=python/naming-value');
+  await ready(page, 3);
+  const original = await page.locator('#lesson-source').inputValue();
+  await organize(page);
+  await page.getByRole('button', { name:'Insert after this step', exact:true }).click();
+  await page.getByLabel('Step action', { exact:true }).selectOption('assign');
+  await page.getByLabel('Variable name', { exact:true }).fill('score');
+  await page.getByLabel('Value', { exact:true }).fill('99');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('[data-new-step] .builder-field-error')).toContainText("doesn't match");
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await fillLessonSource(page, original.replace('value: 5', 'value: 6'));
+  await page.getByRole('tab', { name:'Builder', exact:true }).click();
+  await expect(page.locator('[data-new-step]')).toBeVisible();
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('[data-new-step] .builder-field-error')).toContainText('Steps changed');
+  await expect(page.getByLabel('Value', { exact:true })).toHaveValue('99');
+});
