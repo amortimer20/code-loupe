@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { parse } from 'yaml';
 import { parseLesson } from 'code-loupe/lesson';
 import { buildSnapshots } from 'code-loupe/state';
-import { insertStepForm, duplicateStep, addStep, appendStepForm, newStepForm, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
+import { insertStepForm, duplicateStep, moveStep, addStep, appendStepForm, newStepForm, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, latestConsoleInput, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
 
 const corpus = new URL('../../../lessons/python/', import.meta.url);
 const sample = (name: string) => readFileSync(new URL(`${name}/lesson.yaml`, corpus), 'utf8');
@@ -65,6 +65,9 @@ test('variable reads use authored prefix contents and active local scope, never 
   const bindings = scalarBindings(prefixSnapshot(sample('nested-function-call'), 7));
   assert.ok(bindings.some(v => v.name === 'value'));
   assert.throws(() => edit(source, 1, { source: 'missing' }), /not available/);
+  const read = stepsOf(readDocument(source))[1];
+  const refreshed = editStep(source, 1, formOf(read)!, JSON.stringify(read));
+  assert.equal(parse(refreshed).steps[1].badge.value, 3);
 });
 
 test('unsafe documents, advanced actions, and stale forms cannot be silently simplified', () => {
@@ -153,4 +156,97 @@ test('duplication preserves saved YAML nodes, advanced actions and comments with
   assert.equal(parse(revised).steps[1].caption, 'Only the copy changes.');
   assert.throws(() => duplicateStep(source, 0, '{}'), /changed in YAML/);
   assert.throws(() => duplicateStep(source, 99, '{}'), /no longer available/);
+});
+
+
+test('moving saved steps preserves every corpus action and reports bounds and stale cards', () => {
+  for (const name of readdirSync(corpus)) {
+    const source = sample(name), before = parse(source);
+    for (let index = 0; index + 1 < before.steps.length; index++) {
+      const next = moveStep(source, index, 1, JSON.stringify(before.steps[index]));
+      const expected = structuredClone(before);
+      [expected.steps[index], expected.steps[index + 1]] = [expected.steps[index + 1], expected.steps[index]];
+      assert.deepEqual(parse(next), expected, `${name} step ${index + 1}`);
+      const restored = moveStep(next, index + 1, -1, JSON.stringify(before.steps[index]));
+      assert.deepEqual(parse(restored), before);
+    }
+  }
+  const source = sample('naming-value'), steps = parse(source).steps;
+  assert.throws(() => moveStep(source, 0, -1, JSON.stringify(steps[0])), /cannot move further/);
+  assert.throws(() => moveStep(source, steps.length - 1, 1, JSON.stringify(steps.at(-1))), /cannot move further/);
+  assert.throws(() => moveStep(source, 0, 1, '{}'), /changed in YAML/);
+  const broken = moveStep(source, 1, -1, JSON.stringify(steps[1]));
+  assert.throws(() => buildSnapshots(parseLesson(broken)), /score/);
+});
+
+test('moving nodes retains their attached comments, quoted strings and float spelling', () => {
+  const source = 'language: python\ncode: |\n  x\nsteps:\n  - line: 1 # first\n    badge: { over: "x", value: 5.0, type: float }\n  - line: 1 # second\n    caption: "keep these quotes"\n';
+  const next = moveStep(source, 0, 1, JSON.stringify(parse(source).steps[0]));
+  assert.ok(next.indexOf('# second') < next.indexOf('# first'));
+  assert.match(next, /value: 5\.0/);
+  assert.match(next, /caption: "keep these quotes"/);
+  assert.match(next, /over: "x"/);
+});
+
+
+test('numeric input can be built entirely from forms with the same snapshots as the canonical lesson', () => {
+  const canonical = sample('numeric-input'), doc = readDocument(canonical);
+  let source = editDetails(newLesson, { title: String(doc.get('title')), language: 'python', code: String(doc.get('code')) });
+  for (const step of stepsOf(doc)) {
+    const form = formOf(step); assert.ok(form, JSON.stringify(step));
+    source = appendStepForm(source, form);
+  }
+  assert.deepEqual(buildSnapshots(parseLesson(source)), buildSnapshots(parseLesson(canonical)));
+  assert.equal(parse(source).steps[1].input, '30');
+  assert.equal(typeof parse(source).steps[2].badge.value, 'string');
+  assert.equal(typeof parse(source).steps[5].convert.value, 'number');
+  assert.equal(parse(source).steps[5].convert.from, undefined);
+});
+
+test('console reads use the latest authored input, including empty and whitespace text', () => {
+  const base = editDetails(newLesson, { title: 'Input', language: 'python', code: 'input()\n' });
+  assert.throws(() => appendStepForm(base, { ...newStepForm('badge'), source: 'console', over: 'input()' }), /entered-text/);
+  for (const text of ['', '30', '  hello  ', 'True']) {
+    let source = appendStepForm(base, { ...newStepForm('input'), value: 'earlier' });
+    source = appendStepForm(source, { ...newStepForm('input'), value: text });
+    source = appendStepForm(source, { ...newStepForm('badge'), source: 'console', over: 'input()', value: 'ignored' });
+    const last = buildSnapshots(parseLesson(source)).at(-1)!;
+    assert.equal(latestConsoleInput(last), text);
+    assert.equal(last.badges.at(-1)!.value, text);
+    assert.equal(last.badges.at(-1)!.type, 'str');
+    const changed = edit(source, 1, { value: 'new response' });
+    const read = stepsOf(readDocument(changed))[2];
+    const refreshed = editStep(changed, 2, formOf(read)!, JSON.stringify(read));
+    assert.equal(buildSnapshots(parseLesson(refreshed)).at(-1)!.badges.at(-1)!.value, 'new response');
+  }
+});
+
+test('conversion keeps or changes a badge target, preserves typed results and rejects missing badges', () => {
+  const base = editDetails(newLesson, { title: 'Convert', language: 'python', code: 'int(text) + int(text)\n' });
+  assert.throws(() => appendStepForm(base, newStepForm('convert')), /needs a badge/);
+  const badge = appendStepForm(base, { ...newStepForm('badge'), over: 'text', kind: 'Text', value: '30' });
+  const unchangedTarget = appendStepForm(badge, { ...newStepForm('convert'), value: '30' });
+  const kept = buildSnapshots(parseLesson(unchangedTarget)).at(-1)!.badges.at(-1)!;
+  assert.equal(kept.over, 'text'); assert.equal(kept.value, 30);
+  const moved = appendStepForm(badge, { ...newStepForm('convert'), over: 'int(text)', nth: '2', value: '30', numericType: 'float' });
+  const result = buildSnapshots(parseLesson(moved)).at(-1)!.badges.at(-1)!;
+  assert.equal(result.over, 'int(text)'); assert.equal(result.nth, 2); assert.equal(result.type, 'float');
+  for (const [kind, value, expected] of [['Text','30','30'], ['Boolean','true',true], ['None','',null]] as const) {
+    const next = appendStepForm(badge, { ...newStepForm('convert'), kind, value });
+    assert.equal(buildSnapshots(parseLesson(next)).at(-1)!.badges.at(-1)!.value, expected);
+  }
+  assert.throws(() => appendStepForm(badge, { ...newStepForm('convert'), value: 'NaN' }), /finite number/);
+  assert.equal(formOf({ convert: { value: 30, line: 2 } }), null);
+  assert.equal(formOf({ convert: { value: [1] } }), null);
+  assert.equal(formOf({ input: '30', assign: { var: 'x', value: 30 } }), null);
+  assert.equal(formOf({ badge: { over:'x', from:'console', value:30 } }), null);
+});
+
+test('prompt and entered-text edits preserve whitespace, quotes and attached comments', () => {
+  const source = 'language: python\ncode: |\n  input()\nsteps:\n  - line: 1\n    write: "Age: " # prompt\n  - input: "30" # response\n';
+  const next = edit(source, 1, { value: ' 31 ', caption: 'Entered text.' });
+  assert.equal(parse(next).steps[1].input, ' 31 ');
+  assert.match(next, /# response/); assert.match(next, /# prompt/);
+  const output = edit(next, 0, { value: 'Age please: ' });
+  assert.equal(buildSnapshots(parseLesson(output))[1].console[0].text, 'Age please: ');
 });

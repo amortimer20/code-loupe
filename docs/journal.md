@@ -548,3 +548,25 @@ selected form to be saved or discarded first, and uses shared Undo. Invalid
 repetitions remain repairable rather than silently simplified. Pending insertion
 positions are guarded against changed steps. Reordering and dragging remain future
 work.
+
+
+## 2026-10-13 — Move teaching steps with keyboard controls
+
+Add Move up/down under Organize step. Move saved YAML nodes without rewriting
+teacher-authored actions or repairing dependencies automatically. Keep selection,
+preview destination, and pending neighboring forms with their cards, including
+through shared Undo/Redo. Exact move transitions live only in Builder state;
+exported lessons gain no IDs or format changes. Finish an unsaved new card before
+moving saved steps. Invalid sequences stay available for repair. Dragging remains
+future work.
+
+
+## 2026-10-13 — Input and conversion forms
+
+Extend Builder to cover the numeric-input lesson: prompt output without a newline,
+scripted entered text, badges filled from the latest authored console input, and
+scalar conversion results with optional target picking. Input remains text, even
+when empty or digit-looking. Conversion changes an existing badge; teachers choose
+the result and review subsequent values. No displayed code executes, and no YAML
+format or player state/rendering changes are needed. Unsupported fields and
+multi-action steps remain source-editable.

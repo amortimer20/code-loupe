@@ -34,6 +34,15 @@ assignment, or print step. Choose Number, Text, Boolean, or None explicitly.
 entries stay in the form while switching views, but are not saved across reloads.
 **New lesson** has a separate browser draft from the samples.
 
+Builder also supports **Show a prompt** (output without a newline), **Show entered
+text**, and **Convert a value**. A badge's **Latest console input** source fills a
+text value from the most recent authored response, including empty input. Conversion
+changes the latest badge to the result you enter; its optional expression can be
+picked from the preview. These forms can author the whole numeric-input example.
+After changing a source, Save its console/variable-source badge to refresh that read.
+Changing code or input does not calculate later conversion/expression results:
+review the remaining values and captions yourself.
+
 The **YAML** tab edits the same draft. Source edits restart the preview at Step 0
 after a short pause; errors appear below the editor and in the player. Undo/Redo
 share one history between both views. Advanced actions retain their YAML and have
@@ -73,12 +82,16 @@ Picking changes only the unsaved form; it preserves the authored value and capti
 Escape or **Cancel picking** stops the picker. Manual line/text/occurrence fields
 remain available for keyboard use. Advanced targets remain editable in YAML.
 
-Open **Organize step** on a saved card to **Insert after this step** or
-**Duplicate step**. Insert creates an unsaved card at that position; Save validates
+Open **Organize step** on a saved card to **Move up**, **Move down**,
+**Insert after this step**, or **Duplicate step**. Insert creates an unsaved card at that position; Save validates
 the whole lesson, and Cancel leaves the draft untouched. Duplicate copies the
 saved YAML, including advanced actions and comments, as one undoable edit. Save
 or discard that card's pending edits first. Repeating an action can require later
 steps to be repaired; invalid drafts remain available in YAML and through Undo.
+Moves reorder saved actions without saving pending form values. The selected card,
+its preview destination, and neighboring pending forms follow the move and its
+Undo/Redo. Save or cancel a new card before moving saved steps. If two saved cards are identical,
+save their edits before swapping them.
 
 Picking highlights the hovered line. Preview stepping, scrubbing and autoplay
 select and reveal the matching saved card without moving keyboard focus. Pending

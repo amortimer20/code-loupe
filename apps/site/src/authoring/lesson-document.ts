@@ -2,13 +2,13 @@ import { isAlias, isMap, isNode, isScalar, isSeq, parseDocument, stringify, visi
 import { parseLesson, type ScalarValue } from 'code-loupe/lesson';
 import { buildSnapshots, type Snapshot } from 'code-loupe/state';
 
-export type Action = 'highlight' | 'badge' | 'assign' | 'print';
+export type Action = 'highlight' | 'badge' | 'assign' | 'print' | 'write' | 'input' | 'convert';
 export type ValueKind = 'Number' | 'Text' | 'Boolean' | 'None';
 export interface StepForm {
   action: Action; line: string; caption: string; over: string; nth: string;
   source: string; name: string; kind: ValueKind; value: string; numericType: string;
 }
-export const actionLabels: Record<Action, string> = { highlight: 'Highlight a line', badge: 'Show a value', assign: 'Store a value', print: 'Print' };
+export const actionLabels: Record<Action, string> = { highlight: 'Highlight a line', badge: 'Show a value', assign: 'Store a value', print: 'Print', write: 'Show a prompt', input: 'Show entered text', convert: 'Convert a value' };
 export const newLesson = 'title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: []\n';
 export const record = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
 const scalar = (value: unknown): value is ScalarValue => value === null || ['string', 'number', 'boolean'].includes(typeof value);
@@ -36,14 +36,17 @@ export function stepsOf(doc: Document): Record<string, unknown>[] {
 
 export function formOf(step: Record<string, unknown>): StepForm | null {
   const actions = Object.keys(step).filter(key => key !== 'line' && key !== 'caption');
-  if (actions.length > 1 || (actions.length && !['badge', 'assign', 'print'].includes(actions[0]))) return null;
+  if (actions.length > 1 || (actions.length && !['badge', 'assign', 'print', 'write', 'input', 'convert'].includes(actions[0]))) return null;
   const action = (actions[0] ?? 'highlight') as Action;
   const spec = step[action];
   if (action === 'badge' && (!record(spec) || !knownKeys(spec, ['over', 'value', 'type', 'nth', 'from']) || !scalar(spec.value)
-    || (spec.from !== undefined && !(typeof spec.from === 'string' && /^[A-Za-z_]\w*$/.test(spec.from) && spec.from !== 'console')))) return null;
+    || (spec.from !== undefined && !(typeof spec.from === 'string' && /^[A-Za-z_]\w*$/.test(spec.from))))) return null;
+  if (action === 'badge' && record(spec) && spec.from === 'console' && typeof spec.value !== 'string') return null;
+  if (action === 'convert' && (!record(spec) || !knownKeys(spec, ['over', 'value', 'type', 'nth']) || !scalar(spec.value) || (spec.over !== undefined && (typeof spec.over !== 'string' || !spec.over.length)) || (spec.over === undefined && spec.nth !== undefined))) return null;
+  if (action === 'input' && typeof spec !== 'string') return null;
   if (action === 'assign' && (!record(spec) || !knownKeys(spec, ['var', 'value', 'type', 'from']) || (spec.from !== 'badge' && !scalar(spec.value)))) return null;
   if (action === 'assign' && record(spec) && ((spec.from !== undefined && spec.from !== 'badge') || (spec.from === 'badge' && ('value' in spec || 'type' in spec)))) return null;
-  if (action === 'print' && !(typeof spec === 'string' || (record(spec) && knownKeys(spec, ['text', 'from']) && typeof spec.text === 'string' && (spec.from === undefined || spec.from === 'badge')))) return null;
+  if (['print', 'write'].includes(action) && !(typeof spec === 'string' || (record(spec) && knownKeys(spec, ['text', 'from']) && typeof spec.text === 'string' && (spec.from === undefined || spec.from === 'badge')))) return null;
   const obj = record(spec) ? spec : {};
   if (obj.type !== undefined && !['int', 'float', 'str', 'bool', 'NoneType'].includes(String(obj.type))) return null;
   const value = obj.value;
@@ -51,8 +54,8 @@ export function formOf(step: Record<string, unknown>): StepForm | null {
   if ('value' in obj && obj.type !== undefined && !({ Number: ['int', 'float'], Text: ['str'], Boolean: ['bool'], None: ['NoneType'] }[kind].includes(String(obj.type)))) return null;
   return { action, line: step.line === undefined ? '' : String(step.line), caption: String(step.caption ?? ''),
     over: String(obj.over ?? ''), nth: String(obj.nth ?? 1), name: String(obj.var ?? ''),
-    source: action === 'print' ? (obj.from === 'badge' ? 'badge' : 'literal') : String(obj.from ?? 'literal'),
-    kind, value: action === 'print' ? String(typeof spec === 'string' ? spec : obj.text) : value === null ? '' : String(value ?? ''),
+    source: action === 'convert' ? 'badge' : ['print', 'write'].includes(action) ? (obj.from === 'badge' ? 'badge' : 'literal') : String(obj.from ?? 'literal'),
+    kind: action === 'input' ? 'Text' : kind, value: action === 'input' ? String(spec) : ['print', 'write'].includes(action) ? String(typeof spec === 'string' ? spec : obj.text) : value === null ? '' : String(value ?? ''),
     numericType: obj.type === 'float' ? 'float' : obj.type === 'int' ? 'int' : 'auto' };
 }
 
@@ -70,6 +73,25 @@ export function scalarBindings(snapshot: Snapshot) {
     seen.add(variable.name);
     return scalar(variable.value) && variable.name !== 'console';
   });
+}
+
+/** Input is always text, including empty input and digit-looking strings. */
+export function latestConsoleInput(snapshot: Snapshot): string | undefined {
+  return snapshot.console.findLast(chunk => chunk.kind === 'in')?.text;
+}
+
+/** Explicit Save refreshes a source read without evaluating the displayed code. */
+function badgeSourceValue(source: string, index: number, form: StepForm, old: unknown): { value: ScalarValue; type?: string } {
+  const snapshot = prefixSnapshot(source, index);
+  if (form.source === 'console') {
+    const value = latestConsoleInput(snapshot);
+    if (value === undefined) throw new Error('Add an entered-text step before reading console input.');
+    return { value, type: record(old) && old.from === 'console' && old.type === 'str' ? 'str' : undefined };
+  }
+  const variable = scalarBindings(snapshot).find(item => item.name === form.source);
+  if (!variable || !scalar(variable.value)) throw new Error('That scalar variable is not available before this step.');
+  const type = record(old) && old.from === form.source && typeof old.type === 'string' ? old.type : variable.type;
+  return { value: variable.value, type };
 }
 
 function formValue(form: StepForm): ScalarValue {
@@ -93,7 +115,8 @@ export function editStep(source: string, index: number, form: StepForm, expected
   const doc = readDocument(source), steps = stepsOf(doc), step = steps[index];
   if (!step || JSON.stringify(step) !== expected) throw new Error('This step changed in YAML. Discard its form edits before saving changes.');
   if (!formOf(step)) throw new Error('Use YAML to edit this advanced action.');
-  if (JSON.stringify(form) === JSON.stringify(formOf(step))) return source;
+  const sourced = form.action === 'badge' && form.source !== 'literal' ? badgeSourceValue(source, index, form, step.badge) : undefined;
+  if (JSON.stringify(form) === JSON.stringify(formOf(step)) && (!sourced || (record(step.badge) && step.badge.value === sourced.value))) return source;
   const base = ['steps', index];
   if (form.line && (!Number.isInteger(Number(form.line)) || Number(form.line) < 1)) throw new Error('Choose a positive code line number.');
   setOptional(doc, [...base, 'line'], form.line ? Number(form.line) : undefined);
@@ -102,32 +125,35 @@ export function editStep(source: string, index: number, form: StepForm, expected
   if (previous && previous !== form.action) doc.deleteIn([...base, previous]);
   if (form.action === 'highlight') return doc.toString();
   const path = [...base, form.action];
+  if (form.action === 'input') {
+    const old = doc.getIn(path, true);
+    // Updating the scalar in place retains quotes and attached comments.
+    if (isScalar(old)) old.value = form.value;
+    else doc.setIn(path, form.value);
+    return doc.toString();
+  }
   if (!isMap(doc.getIn(path, true))) {
     const old = doc.getIn(path, true), next = doc.createNode({});
     if (isNode(old)) { next.comment = old.comment; next.commentBefore = old.commentBefore; }
     doc.setIn(path, next);
   }
-  if (form.action === 'print') {
+  if (['print', 'write'].includes(form.action)) {
     doc.setIn([...path, 'text'], form.value);
     setOptional(doc, [...path, 'from'], form.source === 'badge' ? 'badge' : undefined);
     return doc.toString();
   }
-  if (form.action === 'badge') {
-    if (!form.over) throw new Error('Enter the expression text to place the badge over.');
-    if (!Number.isInteger(Number(form.nth)) || Number(form.nth) < 1) throw new Error('Occurrence must be a positive integer.');
-    doc.setIn([...path, 'over'], form.over);
-    setOptional(doc, [...path, 'nth'], Number(form.nth) === 1 ? undefined : Number(form.nth));
+  if (['badge', 'convert'].includes(form.action)) {
+    if (form.action === 'badge' && !form.over) throw new Error('Enter the expression text to place the badge over.');
+    if ((form.action === 'badge' || form.over) && (!Number.isInteger(Number(form.nth)) || Number(form.nth) < 1)) throw new Error('Occurrence must be a positive integer.');
+    setOptional(doc, [...path, 'over'], form.over || undefined);
+    setOptional(doc, [...path, 'nth'], !form.over || Number(form.nth) === 1 ? undefined : Number(form.nth));
   } else {
     if (!/^[A-Za-z_]\w*$/.test(form.name)) throw new Error('Enter a variable name, such as score.');
     doc.setIn([...path, 'var'], form.name);
   }
   let value: ScalarValue | undefined, type: string | undefined;
-  if (form.action === 'badge' && form.source !== 'literal') {
-    const variable = scalarBindings(prefixSnapshot(source, index)).find(item => item.name === form.source);
-    if (!variable || !scalar(variable.value)) throw new Error('That scalar variable is not available before this step.');
-    value = variable.value; type = variable.type;
-    const old = step.badge;
-    if (record(old) && old.from === form.source && typeof old.type === 'string') type = old.type;
+  if (sourced) {
+    value = sourced.value; type = sourced.type;
   } else if (form.action === 'assign' && form.source === 'badge') {
     doc.deleteIn([...path, 'value']); doc.deleteIn([...path, 'type']);
     doc.setIn([...path, 'from'], 'badge');
@@ -140,7 +166,7 @@ export function editStep(source: string, index: number, form: StepForm, expected
   }
   doc.setIn([...path, 'value'], value);
   setOptional(doc, [...path, 'type'], type);
-  setOptional(doc, [...path, 'from'], form.source === 'literal' ? undefined : form.source);
+  if (form.action !== 'convert') setOptional(doc, [...path, 'from'], form.source === 'literal' ? undefined : form.source);
   return doc.toString();
 }
 
@@ -165,7 +191,7 @@ export function editDetails(source: string, values: { title: string; language: s
 export function addStep(source: string, action: Action) {
   const doc = readDocument(source), steps = doc.get('steps', true);
   if (!isSeq(steps)) throw new Error('Use YAML to repair the steps list.');
-  const specs: Record<Action, unknown> = { highlight: { line: 1 }, badge: { badge: { over: '', value: 0 } }, assign: { assign: { var: '', value: 0 } }, print: { print: '' } };
+  const specs: Record<Action, unknown> = { highlight: { line: 1 }, badge: { badge: { over: '', value: 0 } }, assign: { assign: { var: '', value: 0 } }, print: { print: '' }, write: { write: '' }, input: { input: '' }, convert: { convert: { value: 0 } } };
   steps.add(doc.createNode(specs[action]));
   return doc.toString();
 }
@@ -182,7 +208,7 @@ export function deleteStep(source: string, index: number, expected: string) {
 
 export function newStepForm(action: Action): StepForm {
   return { action, line: '1', caption: '', over: '', nth: '1', name: '',
-    source: 'literal', kind: 'Number', value: action === 'print' ? '' : '0', numericType: 'auto' };
+    source: action === 'convert' ? 'badge' : 'literal', kind: action === 'input' ? 'Text' : 'Number', value: ['print', 'write', 'input'].includes(action) ? '' : '0', numericType: 'auto' };
 }
 
 /** Build and validate a candidate without touching the shared draft. */
@@ -218,5 +244,15 @@ export function duplicateStep(source: string, index: number, expected: string): 
   const node = steps.items[index];
   if (!isMap(node)) throw new Error('Use YAML to repair this step.');
   steps.items.splice(index + 1, 0, node.clone());
+  return doc.toString();
+}
+
+/** Reorder saved YAML nodes without rewriting actions or repairing dependencies. */
+export function moveStep(source: string, index: number, direction: -1 | 1, expected: string): string {
+  const doc = readDocument(source), steps = doc.get('steps', true), target = index + direction;
+  if (!isSeq(steps) || !Number.isInteger(index) || ![-1, 1].includes(direction) || index < 0 || index >= steps.items.length || target < 0 || target >= steps.items.length) throw new Error('That step cannot move further in this direction.');
+  if (JSON.stringify(stepsOf(doc)[index]) !== expected) throw new Error('This step changed in YAML. Select it again before moving it.');
+  const [node] = steps.items.splice(index, 1);
+  steps.items.splice(target, 0, node);
   return doc.toString();
 }

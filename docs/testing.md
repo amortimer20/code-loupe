@@ -224,3 +224,24 @@ saved/advanced duplication, invalid repeated calls, and shared Undo/Redo. Pure
 checks duplicate every corpus step without changing its authored fields and
 preserve attached comments and explicit float spelling. Browser cases run with
 both motion preferences.
+
+
+Movement checks cover corpus node permutations, comments/quotes/float spelling,
+bounds and stale-source guards, two adjacent pending forms, selected-card/preview
+alignment through Undo/Redo, repeated keyboard moves and boundary focus, invalid
+advanced calls, disabled moves during pending insertion, and the plain-editor
+fallback at narrow widths. Browser cases run in both motion modes; this slice
+changes no screenshot references.
+
+Focused movement controls stay visible within short-laptop editor panes. Identical
+JSON steps with different attached comments retain both pending forms through
+moves/Undo; identical saved YAML with pending edits requires Save before swapping.
+
+
+Input/conversion form checks rebuild the numeric-input lesson with identical
+snapshots, retain input as text, preserve empty/whitespace responses, require prior
+input/badges, and cover typed conversion results and optional/repeated targets.
+Browser tests author all nine steps, exercise conversion expression picking,
+pending invalid values/view switching, shared Undo/Redo and restoration, plus
+canonical input forms in the narrow plain-editor fallback. Both motion modes run.
+No player, lesson-file, or screenshot-reference change is expected from these forms.

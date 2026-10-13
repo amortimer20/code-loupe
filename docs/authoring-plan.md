@@ -136,7 +136,8 @@ Create simple new steps with one primary action plus optional line/caption.
 Imported multi-action steps retain their combinations and order. Present advanced
 actions or unsupported fields as preserved cards with a YAML-edit option; do not
 silently drop them or simplify them into a supported form. Support for collections,
-calls, conversions, and errors in builder forms comes after the introductory trial.
+calls, and errors in builder forms comes after the introductory trial. Input and
+scalar conversion forms now cover the numeric-input example.
 
 Acceptance:
 
@@ -228,8 +229,8 @@ content is paused. Choose subsequent action forms from observed authoring needs.
 Step deletion is undoable. Save/Discard labels distinguish pending form entries
 from the shared draft history. Invalid YAML offers an explicit last-working
 restore, persisted separately from the draft. Forms gain stronger control borders
-and selected-card separation. Reordering stays deferred; later steps may depend
-on earlier steps, including after deletion. Next, test these controls during real
+and selected-card separation. Keyboard Move up/down is now available; later steps may depend
+on earlier steps, including after deletion or moving. Next, test these controls during real
 lesson editing before expanding actions or adding drag handles.
 
 New step cards now remain outside the shared YAML until validated Save. Only one
@@ -242,4 +243,15 @@ single-line expression text and occurrence. It is an unsaved form edit and keeps
 values/captions intact. Manual controls remain available. Step insertion and duplication are now implemented under Organize step. Inserted
 cards validate at their chosen position before Save; duplicates clone the saved
 YAML node and remain undoable even when the sequence needs repair. Keyboard
-reordering and dragging remain separate work.
+Move up/down is now implemented, including selected-card/preview tracking and
+shared Undo/Redo. Pending forms follow adjacent swaps; a pending new card must be
+saved or cancelled first. Invalid transitions remain repairable. Dragging remains
+future work. Next, trial an introductory lesson before expanding the action forms.
+
+
+Input/conversion forms now provide prompt output without a newline, authored
+entered text, console-source text badges, and scalar conversion of the latest
+badge with optional preview target picking. Numeric-input can be built through
+forms with the same snapshots as its canonical lesson. Results remain authored;
+changing code/input does not recompute later steps. Multi-action or unsupported
+fields stay in YAML. Next, review this workflow before expanding collection forms.

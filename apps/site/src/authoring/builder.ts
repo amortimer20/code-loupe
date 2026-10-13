@@ -1,4 +1,4 @@
-import { insertStepForm, duplicateStep, newStepForm, deleteStep, actionLabels, editCaption, editDetails, editStep, formOf, prefixSnapshot, readDocument, scalarBindings, stepsOf, type Action, type StepForm } from './lesson-document';
+import { insertStepForm, duplicateStep, moveStep, newStepForm, deleteStep, actionLabels, editCaption, editDetails, editStep, formOf, prefixSnapshot, readDocument, scalarBindings, latestConsoleInput, stepsOf, type Action, type StepForm } from './lesson-document';
 
 import { languageChoices, type LanguageChoice } from './languages';
 import { findNth } from 'code-loupe/state';
@@ -19,6 +19,23 @@ export function createBuilder(container: HTMLElement, host: Host) {
   let newPosition = 0, newStepsBase: string | undefined;
   let editingNew = false, newPreviewStep = 0, optionsOpen = false;
   const pending = new Map<number, Pending>();
+  // Record exact source transitions so Undo/Redo can follow moved cards even
+  // when both neighbors have unsaved forms or identical authored values.
+  const moves = new Map<string, Map<string, { from: number; to: number }>>();
+  let renderedSource = host.source(), organizeOpen = false;
+  const movedIndex = (index: number, from: number, to: number) => index === from ? to : index === to ? from : index;
+  function swapPending(from: number, to: number) {
+    const left = pending.get(from), right = pending.get(to);
+    pending.delete(from); pending.delete(to);
+    if (left) pending.set(to, left);
+    if (right) pending.set(from, right);
+  }
+  function rememberMove(before: string, after: string, from: number, to: number) {
+    for (const [a, b] of [[before, after], [after, before]]) {
+      if (!moves.has(a)) moves.set(a, new Map());
+      moves.get(a)!.set(b, { from, to });
+    }
+  }
   let detailsPending: { base: string; title: string; language: string; code: string } | undefined;
   let detailsOpen = false;
 
@@ -33,10 +50,22 @@ export function createBuilder(container: HTMLElement, host: Host) {
       behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
   }
 
+  function revealControl(control: HTMLElement) {
+    const scroller = container.closest<HTMLElement>('#author-scroll');
+    if (!scroller || !matchMedia('(min-width:961px)').matches) return;
+    const pane = scroller.getBoundingClientRect(), box = control.getBoundingClientRect();
+    const delta = box.top < pane.top + 8 ? box.top - pane.top - 8 : box.bottom > pane.bottom - 8 ? box.bottom - pane.bottom + 8 : 0;
+    if (delta) scroller.scrollTo({ top:scroller.scrollTop + delta,
+      behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }
+
   function summary(step: Record<string, unknown>) {
     const form = formOf(step);
     if (!form) return `Advanced · ${Object.keys(step).filter(key => !['line', 'caption'].includes(key)).join(', ') || 'YAML'}`;
     if (form.action === 'badge') return form.source === 'literal' ? `Show ${form.kind === 'Text' ? JSON.stringify(form.value) : form.kind === 'None' ? 'None' : form.value}` : `Read ${form.source}`;
+    if (form.action === 'input') return `Enter ${JSON.stringify(form.value)}`;
+    if (form.action === 'write') return `Prompt ${JSON.stringify(form.value)}`;
+    if (form.action === 'convert') return `Convert to ${form.kind === 'Text' ? JSON.stringify(form.value) : form.kind === 'None' ? 'None' : form.value}`;
     if (form.action === 'assign') return `Store a value in ${form.name || 'a variable'}`;
     if (form.action === 'print') return form.source === 'badge' ? 'Print the latest badge' : `Print ${JSON.stringify(form.value)}`;
     return form.line ? `Highlight line ${form.line}` : 'Explain the current moment';
@@ -61,7 +90,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
     const doc = readDocument(host.source());
     let line = 0;
     try { line = prefixSnapshot(host.source(), selected).line ?? 0; } catch { /* Earlier steps may need repair. */ }
-    field.hidden = !occurrenceNeeded(values, String(doc.get('code') ?? ''), line);
+    field.hidden = (values.action === 'convert' && !values.over) || !occurrenceNeeded(values, String(doc.get('code') ?? ''), line);
   }
 
   function stepFields(form: StepForm, code: string) {
@@ -74,26 +103,33 @@ export function createBuilder(container: HTMLElement, host: Host) {
     html += `<button type="button" class="builder-pick" data-pick-code aria-pressed="false" ${host.canPick() ? '' : 'disabled'}>Pick from preview</button><p class="builder-note" data-code-pick-status role="status"></p>`;
     if (form.action === 'badge') {
       const vars = context ? scalarBindings(context) : [];
-      if (form.source !== 'literal' && !vars.some(variable => variable.name === form.source)) html += '<p class="builder-note">This source needs a valid earlier step. Its current value cannot be filled yet.</p>';
-      html += `<div class="builder-fields">${field('over', 'Expression text', form.over)}<div data-occurrence ${occurrenceNeeded(form, code, context?.line ?? 0) ? '' : 'hidden'}>${field('nth', 'Occurrence', form.nth)}</div><label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${vars.map(variable => option(variable.name, `Variable: ${variable.name}`, form.source)).join('')}${form.source !== 'literal' && !vars.some(variable => variable.name === form.source) ? option(form.source, `Variable: ${form.source}`, form.source) : ''}</select></label></div>`;
-      html += form.source === 'literal' ? valueFields(form) : '<p class="builder-note">Saving fills the value from the authored state before this step. It does not execute the code.</p>';
+      if (form.source !== 'literal' && form.source !== 'console' && !vars.some(variable => variable.name === form.source)) html += '<p class="builder-note">This source needs a valid earlier step. Its current value cannot be filled yet.</p>';
+      html += `<div class="builder-fields">${field('over', 'Expression text', form.over)}<div data-occurrence ${occurrenceNeeded(form, code, context?.line ?? 0) ? '' : 'hidden'}>${field('nth', 'Occurrence', form.nth)}</div><label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${option('console', 'Latest console input', form.source)}${vars.map(variable => option(variable.name, `Variable: ${variable.name}`, form.source)).join('')}${form.source !== 'literal' && form.source !== 'console' && !vars.some(variable => variable.name === form.source) ? option(form.source, `Variable: ${form.source}`, form.source) : ''}</select></label></div>`;
+      html += form.source === 'literal' ? valueFields(form) : form.source === 'console'
+        ? `<p class="builder-note">${context && latestConsoleInput(context) !== undefined ? `Latest entered text: ${escape(JSON.stringify(latestConsoleInput(context)))}` : 'No earlier entered text is available.'} Saving fills a text value from that authored input.</p>`
+        : '<p class="builder-note">Saving fills the value from the authored state before this step. It does not execute the code.</p>';
     }
     if (form.action === 'assign') {
       html += `<div class="builder-fields">${field('name', 'Variable name', form.name)}<label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${option('badge', 'Latest badge', form.source)}</select></label></div>`;
       if (form.source === 'literal') html += valueFields(form);
     }
-    if (form.action === 'print') {
+    if (['print', 'write'].includes(form.action)) {
       html += `<label>Output source<select aria-label="Output source" name="source">${option('literal', 'Enter output text', form.source)}${option('badge', 'Latest badge', form.source)}</select></label>`;
+      if (form.action === 'write') html += '<p class="builder-note">Writes without a newline, so entered text can follow the prompt on the same line. Include any trailing space you want.</p>';
       html += `<label>Output text<textarea aria-label="Output text" name="value" rows="2">${escape(form.value)}</textarea></label>`;
+    }
+    if (form.action === 'input') html += `<label>Entered text<textarea aria-label="Entered text" name="value" rows="2">${escape(form.value)}</textarea></label><p class="builder-note">Text the teacher chooses for this explanation, including digits or empty input. Students are stepping through an authored response.</p>`;
+    if (form.action === 'convert') {
+      html += `<div class="builder-fields">${field('over', 'Result expression (optional)', form.over)}<div data-occurrence ${form.over && occurrenceNeeded(form, code, context?.line ?? 0) ? '' : 'hidden'}>${field('nth', 'Occurrence', form.nth)}</div></div><p class="builder-note">Leave the expression blank to keep the badge in place. Enter the converted result below; no conversion code is executed.</p>${valueFields(form)}`;
     }
     if (form.source === 'badge') {
       const changedLine = form.line && Number(form.line) !== context?.line;
       const badge = changedLine ? undefined : context?.badges.at(-1);
       const value = badge && typeof badge.value !== 'object' ? JSON.stringify(badge.value) : badge?.value === null ? 'None' : badge ? `a ${badge.type} value` : 'none on this line';
-      html += `<p class="builder-note">Latest badge: ${escape(value)}. Printing must use a separate step from creating a badge.</p>`;
+      html += `<p class="builder-note">Latest badge: ${escape(value)}. ${form.action === 'convert' ? 'This step changes that badge to your authored result.' : 'Printing must use a separate step from creating a badge.'}</p>`;
     }
     if (contextError) html += `<p class="builder-note">Earlier state needs repair: ${escape(contextError)}</p>`;
-    if (['badge', 'assign'].includes(form.action) && form.source === 'literal' && form.kind === 'Number') {
+    if (['badge', 'assign', 'convert'].includes(form.action) && (form.source === 'literal' || form.action === 'convert') && form.kind === 'Number') {
       html += `<details class="builder-options" ${optionsOpen || form.numericType !== 'auto' ? 'open' : ''}><summary>Optional settings</summary><label>Number display<select aria-label="Number display" name="numericType">${option('auto', 'Automatic', form.numericType)}${option('int', 'Integer', form.numericType)}${option('float', 'Float (e.g. 5.0)', form.numericType)}</select></label></details>`;
     }
     return html + captionField(form.caption) + errorBox + `<div class="builder-apply">${applyButton}</div>`;
@@ -108,6 +144,13 @@ export function createBuilder(container: HTMLElement, host: Host) {
       return;
     }
     const steps = stepsOf(doc);
+    const source = host.source(), move = moves.get(renderedSource)?.get(source);
+    if (source !== renderedSource && move) {
+      swapPending(move.from, move.to);
+      selected = movedIndex(selected, move.from, move.to);
+      if (newPreviewStep) newPreviewStep = movedIndex(newPreviewStep - 1, move.from, move.to) + 1;
+    }
+    renderedSource = source;
     // Undo/Redo can shift saved cards back across an insertion. Follow a unique
     // unchanged YAML step; ambiguous/stale forms keep their guarded original slot.
     let moved: boolean;
@@ -135,11 +178,12 @@ export function createBuilder(container: HTMLElement, host: Host) {
         const index = newStep && position > newPosition ? position - 1 : position;
         const base = JSON.stringify(step), cache = isNew ? undefined : pending.get(index), form = isNew ? newStep : cache?.values ?? formOf(step), supported = form && 'action' in form;
         const current = isNew ? editingNew : !editingNew && index === selected;
-        return `<article class="builder-card" data-selected="${current}"><button type="button" class="builder-step" ${isNew ? 'data-new-card' : `data-step="${index}"`} aria-expanded="${current}"><span class="builder-number">${isNew ? '+' : index + 1}</span><span>${escape(isNew ? `New · ${actionLabels[newStep!.action]}` : summary(step))}</span><small>${step.line === undefined ? '' : `Line ${escape(step.line)}`}${isNew ? 'Not saved' : cache ? ' · Unsaved' : ''}</small></button>${current ? `<form data-step-form ${isNew ? 'data-new-step' : ''} data-base="${escape(cache?.base ?? base)}">${supported ? stepFields(form as StepForm, details.code) : `<p class="builder-note">This action is preserved. Edit its caption here, or open YAML for other fields.</p><button type="button" data-yaml>Open this step in YAML</button>${captionField(cache?.values.caption ?? String(step.caption ?? ''))}${errorBox}<div class="builder-apply">${applyButton}</div>`}${isNew ? '<button type="button" class="builder-reload" data-cancel-new>Cancel new step</button><p class="builder-note">This card is not in your YAML yet. Save inserts it here; Cancel drops it.</p>' : `<button type="button" class="builder-reload" data-reload-step ${cache ? '' : 'hidden'}>Discard step edits</button><details class="builder-organize"><summary>Organize step</summary><div class="builder-step-actions"><button type="button" data-insert-step ${newStep ? 'disabled' : ''}>Insert after this step</button><button type="button" data-duplicate-step data-base="${escape(base)}" ${newStep || cache ? 'disabled' : ''}>Duplicate step</button></div><p class="builder-note">Duplicate copies the saved step. Save or discard its edits first. Later steps may need repair.</p></details><button type="button" class="builder-delete" data-delete-step data-base="${escape(base)}" title="Undo restores a deleted step. Later steps may need repair.">Delete step</button>`}</form>` : ''}</article>`;
+        return `<article class="builder-card" data-selected="${current}"><button type="button" class="builder-step" ${isNew ? 'data-new-card' : `data-step="${index}"`} aria-expanded="${current}"><span class="builder-number">${isNew ? '+' : index + 1}</span><span>${escape(isNew ? `New · ${actionLabels[newStep!.action]}` : summary(step))}</span><small>${step.line === undefined ? '' : `Line ${escape(step.line)}`}${isNew ? 'Not saved' : cache ? ' · Unsaved' : ''}</small></button>${current ? `<form data-step-form ${isNew ? 'data-new-step' : ''} data-base="${escape(cache?.base ?? base)}">${supported ? stepFields(form as StepForm, details.code) : `<p class="builder-note">This action is preserved. Edit its caption here, or open YAML for other fields.</p><button type="button" data-yaml>Open this step in YAML</button>${captionField(cache?.values.caption ?? String(step.caption ?? ''))}${errorBox}<div class="builder-apply">${applyButton}</div>`}${isNew ? '<button type="button" class="builder-reload" data-cancel-new>Cancel new step</button><p class="builder-note">This card is not in your YAML yet. Save inserts it here; Cancel drops it.</p>' : `<button type="button" class="builder-reload" data-reload-step ${cache ? '' : 'hidden'}>Discard step edits</button><details class="builder-organize" ${organizeOpen ? 'open' : ''}><summary>Organize step</summary><div class="builder-step-actions"><button type="button" data-move-step="-1" data-base="${escape(base)}" ${newStep || index === 0 ? 'disabled' : ''}>Move up</button><button type="button" data-move-step="1" data-base="${escape(base)}" ${newStep || index === steps.length - 1 ? 'disabled' : ''}>Move down</button><button type="button" data-insert-step ${newStep ? 'disabled' : ''}>Insert after this step</button><button type="button" data-duplicate-step data-base="${escape(base)}" ${newStep || cache ? 'disabled' : ''}>Duplicate step</button></div><p class="builder-note">Duplicate copies the saved step. Save or discard its edits first. Later steps may need repair.</p></details><button type="button" class="builder-delete" data-delete-step data-base="${escape(base)}" title="Undo restores a deleted step. Later steps may need repair.">Delete step</button>`}</form>` : ''}</article>`;
       }).join('')}</div>
       <div class="builder-add" ${editingNew ? 'hidden' : ''}><label ${newStep ? 'hidden' : ''}>New step<select aria-label="New step" id="builder-new-action" ${newStep ? 'disabled' : ''}>${Object.entries(actionLabels).map(([key, label]) => option(key, label, 'highlight')).join('')}</select></label><button class="builder-primary" type="button" data-add>${newStep ? 'Edit new step' : 'Add step'}</button></div>
       <p class="builder-note">Save puts form edits into your browser draft and updates the preview. Discard drops unsaved form edits; Undo reverses saved edits. Teachers choose the outcomes; the displayed code does not run.</p>`;
     container.querySelector('.builder-details')!.addEventListener('toggle', event => { detailsOpen = (event.target as HTMLDetailsElement).open; });
+    container.querySelector('.builder-organize')?.addEventListener('toggle', event => { if ((event.target as Element).isConnected && !(event.target as HTMLDetailsElement).open) organizeOpen = false; });
     container.querySelector('.builder-options')?.addEventListener('toggle', event => { if ((event.target as Element).isConnected) optionsOpen = (event.target as HTMLDetailsElement).open; });
     const caption = container.querySelector<HTMLTextAreaElement>('[data-step-form] [name="caption"]');
     if (!editingNew && caption && steps[selected] && !pending.has(selected) && !formOf(steps[selected])) caption.value = String(steps[selected]?.caption ?? '');
@@ -178,7 +222,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (select.tagName !== 'SELECT' || !select.closest('[data-step-form]')) return;
     const form = select.closest('form')!, values = capture(form);
     if (!('action' in values)) return;
-    if (select.name === 'action') { values.source = 'literal'; values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
+    if (select.name === 'action') { values.source = values.action === 'convert' ? 'badge' : 'literal'; if (values.action === 'input') values.kind = 'Text'; else values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
     if (select.name === 'kind' && values.kind === 'Boolean') values.value = 'true';
     render();
     container.querySelector<HTMLSelectElement>(`[data-step-form] [name="${select.name}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches });
@@ -213,12 +257,12 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (button.hasAttribute('data-pick-code')) {
       if (button.getAttribute('aria-pressed') === 'true') { host.cancelPick(); const message = container.querySelector('[data-code-pick-status]'); if (message) message.textContent = 'Picking cancelled. Your form is unchanged.'; return; }
       const action = button.closest('form')!.querySelector<HTMLSelectElement>('[name="action"]')!.value;
-      host.pick(action === 'badge');
+      host.pick(action === 'badge' || action === 'convert');
       return;
     }
     if (button.hasAttribute('data-yaml')) { host.yaml(); return; }
     if (button.hasAttribute('data-new-card')) { editingNew = true; optionsOpen = false; render(); container.querySelector<HTMLButtonElement>('[data-new-card]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
-    if (button.dataset.step !== undefined) { selected = Number(button.dataset.step); editingNew = false; optionsOpen = false; render(); if (!editingNew) host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
+    if (button.dataset.step !== undefined) { organizeOpen = false; selected = Number(button.dataset.step); editingNew = false; optionsOpen = false; render(); if (!editingNew) host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
     if (button.hasAttribute('data-reload-step')) { pending.delete(selected); render(); container.querySelector<HTMLElement>('[data-step-form] input, [data-step-form] select, [data-step-form] textarea')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); }
     if (button.hasAttribute('data-reload-details')) { detailsPending = undefined; render(); container.querySelector<HTMLInputElement>('[data-details] input')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); }
     if (button.hasAttribute('data-delete-step')) {
@@ -229,6 +273,25 @@ export function createBuilder(container: HTMLElement, host: Host) {
         selected = Math.max(0, Math.min(selected, stepsOf(readDocument(next)).length - 1));
         host.edit(next, stepsOf(readDocument(next)).length ? selected + 1 : 0); render();
         (container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`) ?? container.querySelector<HTMLButtonElement>('[data-add]'))?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected();
+      } catch (error) { showError(button.closest('form')!, error); }
+    }
+    if (button.hasAttribute('data-move-step')) {
+      try {
+        if (newStep) throw new Error('Save or cancel the new card before moving saved steps.');
+        const direction = Number(button.dataset.moveStep) as -1 | 1;
+        const before = host.source(), from = selected, to = from + direction;
+        const next = moveStep(before, from, direction, button.dataset.base!);
+        if (next === before && (pending.has(from) || pending.has(to))) throw new Error('These saved steps are identical. Save one card’s edits before swapping them.');
+        swapPending(from, to); selected = to; organizeOpen = true;
+        if (next !== before) {
+          rememberMove(before, next, from, to);
+          renderedSource = next; // The explicit move already applied this permutation.
+          host.edit(next, selected + 1);
+        } else host.select(selected + 1);
+        render();
+        const same = container.querySelector<HTMLButtonElement>(`[data-move-step="${direction}"]`);
+        (same && !same.disabled ? same : container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`))?.focus({ preventScroll:matchMedia('(min-width:961px)').matches });
+        if (same && !same.disabled) revealControl(same); else revealSelected();
       } catch (error) { showError(button.closest('form')!, error); }
     }
     if (button.hasAttribute('data-duplicate-step')) {
@@ -293,5 +356,5 @@ export function createBuilder(container: HTMLElement, host: Host) {
     render(); revealSelected();
   }
   render();
-  return { followPreview, applyCodeTarget, syncPicking, reset() { pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; render(); }, refresh: render, revealSelected, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
+  return { followPreview, applyCodeTarget, syncPicking, reset() { moves.clear(); renderedSource = host.source(); organizeOpen = false; pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; render(); }, refresh: render, revealSelected, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
 }

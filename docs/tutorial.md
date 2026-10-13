@@ -46,13 +46,27 @@ and value formatting; `title` is optional.
 ### Editor assistance
 
 The **Builder** tab offers introductory step forms: Highlight a line, Show a value,
-Store a value, and Print. Use **New lesson** and save lesson details to start from
+Store a value, Print, Show a prompt, Show entered text, and Convert a value. Use **New lesson** and save lesson details to start from
 blank code. Save each step and inspect the real player at that point.
 Number/Text/Boolean/None controls distinguish values such as `1`, `"1"`, and `True`;
 Number display can explicitly preserve a float such as `5.0`.
 
 Scalar-variable badge sources fill their values from already-authored earlier
 steps. Teachers still supply expression results and captions; no code executes.
+**Show a prompt** writes without a newline; preserve any trailing space you want.
+**Show entered text** is the teacher's scripted response, always text, including
+empty input or digits. Choose **Latest console input** on a badge to fill that
+value from the most recent earlier response. After changing entered text, Save
+the console-source badge again to refresh its read. Variable-source badges also
+refresh from the authored binding on explicit Save.
+
+**Convert a value** changes the latest badge to the typed result you supply.
+Choose Number/Text/Boolean/None, and optionally enter or pick a new result
+expression. Leaving it blank keeps the badge in place. A conversion needs a badge
+on the current line; moving to another code line clears badges. Neither input
+changes nor conversion forms execute code or recompute later steps. Review later
+values and captions when changing an example.
+
 Print text remains explicit, allowing a badge's value inside a longer sentence.
 Badges and printing still require separate steps.
 
@@ -83,13 +97,21 @@ Picking changes only the unsaved form; it preserves the authored value and capti
 Escape or **Cancel picking** stops the picker. Manual line/text/occurrence fields
 remain available for keyboard use. Advanced targets remain editable in YAML.
 
-A saved card's **Organize step** section offers **Insert after this step** and
-**Duplicate step**. Insertion stays outside YAML until Save passes whole-lesson
+A saved card's **Organize step** section offers **Move up**, **Move down**,
+**Insert after this step**, and **Duplicate step**. Insertion stays outside YAML until Save passes whole-lesson
 validation. Cancel drops it. Duplicate copies the saved step rather than pending
 form edits, preserving comments and advanced actions. Both saved operations use
 shared Undo. A duplicated call, allocation, or error may make the sequence invalid;
 repair the preserved draft in YAML or Undo the copy. If steps change while an
 inserted card is pending, cancel it and choose its position again.
+
+Moves use the saved actions while keeping pending form entries with their cards.
+Selection and the preview destination follow the move and Undo/Redo. The first
+card cannot move up; the last cannot move down. Save or cancel an unsaved new card
+before moving saved cards. If two saved cards are identical,
+save their edits before swapping them. Reordering can put a read before its assignment or a
+return before its call: the preview explains the error, and YAML/Undo remain
+available for repair.
 
 Picking highlights the hovered line. Preview stepping, scrubbing and autoplay
 select and reveal the matching saved card without moving keyboard focus. Pending
