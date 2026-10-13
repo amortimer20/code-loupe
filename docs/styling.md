@@ -10,7 +10,7 @@ Code Loupe has three coordinated presets selected with its `theme` attribute:
 
 Syntax highlighting and runtime literals use the same preset. Each also defines
 panel, badge, console, variable-name, error, and control colors. The presets are
-data in `packages/player/src/themes.ts`, shared with the static site. They are
+data in `packages/player/src/themes.ts`, used by the lesson player. They are
 Code Loupe palettes, not ports of Phosphor's six themes or Omarchy theme files.
 
 Square corners apply to all presets and regular Shiki themes. Code, console,
@@ -19,12 +19,21 @@ preferred if the host has installed or loaded it; no web font is bundled yet.
 
 ## Theme selection
 
-The demo site's header picker changes its shell and every player, including a
-playground preview created later. It remembers a valid choice under
-`code-loupe:site-theme` in localStorage, with Midnight as the default. The saved
-shell theme is applied before first paint. Blocked storage still allows changing
-themes for the current page. This preference belongs to the demo site; independent
-embeds select their own theme.
+The demo site's **Appearance** picker offers Light and Dark, independently of
+lesson colors. Light uses white panels on a slate page; Dark uses raised navy
+panels on a darker page. Fields, selected cards, navigation, and tags have distinct
+surfaces; square corners remain. The initial appearance follows the system color
+preference and is remembered under `code-loupe:site-theme` before first paint.
+Previous Paper preferences migrate to Light; Midnight/Terminal migrate to Dark.
+
+The separate **Lesson theme** picker changes every player, including a playground
+preview created later. It remembers the preset under `code-loupe:lesson-theme`,
+with Midnight as the default. Previous site palette choices are preserved as
+lesson preferences. The YAML editor follows site appearance (Paper highlighting
+in Light, Midnight in Dark). Changing site appearance preserves form edits,
+source-editor selection, and the player's current step and theme. Blocked storage
+still allows changing both choices for the current page. Independent embeds
+continue selecting their own theme.
 
 ```html
 <code-loupe src="lesson.yaml" theme="paper"></code-loupe>
@@ -47,11 +56,11 @@ rendered player, arbitrary Shiki themes, or real classroom projectors.
 Browser tests also cover remembered selection, rapid theme/load changes, draft
 preservation, regular Shiki themes, and blocked storage. Reviewed screenshot
 references cover the three presets, nested frames and returns, plus a narrow
-player and the gallery in Midnight. See [Testing](testing.md) for the canonical
+player and the gallery/Builder in both site appearances. See [Testing](testing.md) for the canonical
 Docker environment and how to review intentional visual changes.
 
-The site follows Phosphor's square-pane design, thin borders, coordinated surfaces,
-and monospace labels. Code Loupe does not currently include Phosphor's CRT effects.
+The site uses its own Light/Dark design with monospace headings/code and
+sans-serif forms. Site tokens do not alter the embedded player palettes.
 
 The sample page's four-corner **Enter fullscreen** icon sits at the top right of
 the player card and opens the existing player in a viewport-sized modal.

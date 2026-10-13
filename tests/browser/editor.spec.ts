@@ -88,6 +88,7 @@ test('theme switches preserve editor selection, undo, draft bytes and preview st
   await page.keyboard.press('Control+Home');
   await page.keyboard.press('Control+Shift+ArrowRight');
   await selectTheme(page, 'paper');
+  await page.getByRole('combobox', { name: 'Appearance', exact: true }).selectOption('light');
   await input.focus();
   // The selected word remains selected through a theme change.
   await page.keyboard.insertText('heading');

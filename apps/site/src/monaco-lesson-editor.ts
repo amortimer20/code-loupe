@@ -55,7 +55,7 @@ export function createSourceEditor(source: HTMLTextAreaElement, original: string
       },
     });
   }
-  const syncTheme = () => monaco.editor.setTheme(`loupe-${document.documentElement.dataset.theme ?? 'midnight'}`);
+  const syncTheme = () => monaco.editor.setTheme(`loupe-${document.documentElement.dataset.theme === 'light' ? 'paper' : 'midnight'}`);
   syncTheme();
   const observer = new MutationObserver(syncTheme);
   observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

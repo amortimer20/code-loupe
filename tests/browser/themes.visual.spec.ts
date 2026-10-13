@@ -1,4 +1,6 @@
 import { test, expect, ready, goTo, selectTheme, palettes, corpus } from './helpers';
+import { fileURLToPath } from 'node:url';
+const playerBackdrop = { stylePath: fileURLToPath(new URL('./fixtures/player-backdrop.css', import.meta.url)) };
 
 for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
   test(`${theme}: nested frames and both return destinations`, async ({ page }) => {
@@ -32,6 +34,8 @@ test('two separate lists after appending to the copy', async ({ page }) => {
   await expect(player).toHaveScreenshot('midnight-list-copying.png');
 });
 
+// Fractional element bounds can capture one row of the surrounding page. Keep
+// that backdrop tied to the lesson palette for these player-only comparisons.
 for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
   test(`${theme}: named dictionary fields and an updated score`, async ({ page }) => {
     await page.goto('/samples/python/dictionary-fields/');
@@ -39,7 +43,7 @@ for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
     await selectTheme(page, theme);
     await goTo(player, 4);
     await page.mouse.move(0, 0);
-    await expect(player).toHaveScreenshot(`${theme}-dictionary-fields.png`);
+    await expect(player).toHaveScreenshot(`${theme}-dictionary-fields.png`, playerBackdrop);
   });
 }
 
@@ -87,7 +91,7 @@ for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
       await selectTheme(page, theme);
       await goTo(player, steps);
       await page.mouse.move(0, 0);
-      await expect(player).toHaveScreenshot(`${theme}-${id}.png`);
+      await expect(player).toHaveScreenshot(`${theme}-${id}.png`, playerBackdrop);
     }
   });
 }
@@ -116,12 +120,15 @@ test('gallery shell and narrow nested-call layout', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.sample-card')).toHaveCount(corpus.length);
   await page.mouse.move(0, 0);
-  await expect(page).toHaveScreenshot('midnight-gallery.png', { fullPage: true });
+  for (const appearance of ['light', 'dark']) {
+    await page.locator('#site-appearance').selectOption(appearance);
+    await expect(page).toHaveScreenshot(`${appearance}-gallery.png`, { fullPage: true });
+  }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/samples/python/nested-function-call/');
   const player = await ready(page, 19);
   await goTo(player, 8);
-  await expect(player).toHaveScreenshot('midnight-narrow-nested-locals.png');
+  await expect(player).toHaveScreenshot('midnight-narrow-nested-locals.png', playerBackdrop);
 });
 
 test('focus view on a short laptop', async ({ page }) => {
@@ -144,6 +151,18 @@ for (const theme of Object.keys(palettes) as (keyof typeof palettes)[]) {
     await selectTheme(page, theme);
     await goTo(player, 8);
     await page.mouse.move(0, 0);
-    await expect(player).toHaveScreenshot(`${theme}-list-selection.png`);
+    await expect(player).toHaveScreenshot(`${theme}-list-selection.png`, playerBackdrop);
+  });
+}
+
+for (const appearance of ['light', 'dark']) {
+  test(`${appearance}: builder site surfaces`, async ({ page }) => {
+    await page.setViewportSize({ width:1280, height:600 });
+    await page.goto('/playground/?sample=python/simple-arithmetic');
+    await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
+    await page.locator('#site-appearance').selectOption(appearance);
+    await page.locator('[data-step="1"]').click();
+    await page.mouse.move(0, 0);
+    await expect(page).toHaveScreenshot(`${appearance}-builder.png`);
   });
 }

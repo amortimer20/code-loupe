@@ -527,3 +527,13 @@ forms/new cards and pause autoplay when a form is focused. Use the installed
 highlighter's language catalog for a dropdown, prioritizing common languages and
 preserving imported aliases or unknown names. This is syntax-highlighting support,
 not execution support for each language.
+
+
+## 2026-10-13 — Separate site and lesson themes
+
+Replace the Phosphor-inspired site palettes with Light/Dark appearances and
+stronger separation between page, panels, form controls, and selected steps.
+Keep square corners. Site appearance follows the system initially; its saved
+choice is independent of the Paper/Midnight/Terminal lesson preference. Existing
+preferences migrate, and YAML highlighting follows site appearance. This keeps
+website readability separate from the palette a teacher chooses for code.

@@ -194,15 +194,14 @@ syntax colors; Terminal uses charcoal-green surfaces with green accents. Each
 preset coordinates code, runtime values, panels, badges, console input, errors,
 and controls. Corners are square throughout, and code ligatures are disabled.
 
-The sample site's header picker changes the site and its players together. Its
-choice is remembered in this browser when storage is available; Midnight is the
-site default. Independent embeds keep their own `theme` attribute and do not use
-the site's saved preference. There is no automatic system-theme switching yet.
+The site's **Appearance** picker offers Light/Dark modes with distinct page,
+panel, field, and selected-step surfaces. It initially follows the system preference
+and remembers your choice. The separate **Lesson theme** picker controls player
+palettes, defaults to Midnight, and preserves the current step and draft. The YAML
+editor follows site appearance. Independent embeds keep their own `theme` attribute.
 
-The site's square panes, thin dividers, and typography take their direction from
-[Phosphor](https://github.com/amortimer20/phosphor). The presets are a starting point;
-a host-provided token API, font controls, and lesson-aware resizing remain future
-work. See the [styling notes](docs/styling.md) for the current boundaries.
+Square corners remain, with monospace headings and code and sans-serif forms. A host-provided token API, font controls, and lesson-aware resizing remain
+future work. See the [styling notes](docs/styling.md) for the current boundaries.
 
 ## Lesson format
 

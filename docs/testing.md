@@ -11,7 +11,7 @@ execute the Python displayed in a lesson.
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
 | Type checks and builds | Player and site code, browser tests/configuration, canonical lesson metadata and semantic validation, independent player bundle and static site |
 | Playwright behavior | Gallery filters, all samples' outcomes and downloads, draft restoration/isolation, invalid draft recovery/download, nested frames, both returns, backward stepping, scrubbing, keyboard navigation, autoplay, animations, theme/draft/load races, storage failure, and narrow layouts |
-| Screenshot comparisons | Paper/Midnight/Terminal at nested locals, both return destinations, indexed list selection, and shared-list aliasing; Midnight gallery, narrow nested-call player, and focused player on a short laptop |
+| Screenshot comparisons | Paper/Midnight/Terminal at nested locals, both return destinations, indexed list selection, and shared-list aliasing; Light/Dark gallery and Builder, narrow nested-call player, and focused player on a short laptop |
 
 Behavioral tests run in separate Chromium projects for normal motion and OS
 reduced motion. Each test starts with a fresh browser context and checks for
@@ -160,7 +160,7 @@ the code that changed their appearance. Do not update images to make an unexplai
 failure disappear. When upgrading Playwright, update its exact dependency and
 the CI image together, then regenerate and review references in the new image.
 
-The set contains thirty-eight PNGs, including indexed list selection, aliasing,
+The set contains forty-one PNGs, including indexed list selection, aliasing,
 and dictionary fields in all three presets
 and element update, list print badge, append, removal, separate copies, and a
 false while-loop condition, initializer self binding, and constructor reference
@@ -202,3 +202,17 @@ Hover/following checks verify picker-only line cues, manual preview navigation,
 autoplay card selection/reveal, retained keyboard focus and pending forms/new
 cards. Language checks verify catalog choices and imported aliases; pure ordering
 checks retain unknown imported names. These run with both motion preferences.
+
+
+Site appearance checks cover independent Light/Dark and lesson preferences,
+migration from the old shared palette, system defaults, blocked storage, narrow
+layouts, text contrast, and retained pending forms/source/preview state. YAML
+selection survives a site appearance change. Gallery and short-laptop Builder
+references cover both appearances; player colors and rendering stay independent of site appearance.
+
+Player-only dictionary/list-selection/error/narrow captures set a matching page backdrop during
+capture: fractional element bounds can include one outside pixel row. This keeps
+those comparisons independent of site appearance without altering player pixels
+or existing player reference pixels. Full-page site captures use the actual site
+surfaces. The narrow sample capture was refreshed for the new header geometry;
+other player references remain unchanged.

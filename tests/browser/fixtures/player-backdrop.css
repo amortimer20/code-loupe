@@ -1,0 +1,5 @@
+/* Element screenshots can include one surrounding row at fractional bounds.
+   Match only that page backdrop to the chosen player preset during capture. */
+html[data-lesson-theme="paper"], html[data-lesson-theme="paper"] body { background:#faf7ef !important; }
+html[data-lesson-theme="midnight"], html[data-lesson-theme="midnight"] body { background:#191d2d !important; }
+html[data-lesson-theme="terminal"], html[data-lesson-theme="terminal"] body { background:#101815 !important; }

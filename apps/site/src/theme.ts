@@ -1,20 +1,29 @@
 import { getThemePreset } from 'code-loupe/themes';
 
 const root = document.documentElement;
+const appearance = document.querySelector<HTMLSelectElement>('#site-appearance')!;
 const picker = document.querySelector<HTMLSelectElement>('#site-theme')!;
 
 function syncPlayers() {
   document.querySelectorAll('code-loupe').forEach(player => {
-    player.setAttribute('theme', root.dataset.theme ?? 'midnight');
+    player.setAttribute('theme', root.dataset.lessonTheme ?? 'midnight');
   });
 }
 
-picker.value = root.dataset.theme ?? 'midnight';
+appearance.value = root.dataset.theme ?? 'light';
+appearance.addEventListener('change', () => {
+  if (!['light', 'dark'].includes(appearance.value)) return;
+  root.dataset.theme = appearance.value;
+  try { localStorage.setItem('code-loupe:site-theme', appearance.value); } catch { /* Keep the page usable without storage. */ }
+});
+
+picker.value = root.dataset.lessonTheme ?? 'midnight';
+try { localStorage.setItem('code-loupe:lesson-theme', picker.value); } catch { /* Preserve migrated choices when storage allows it. */ }
 syncPlayers();
 picker.addEventListener('change', () => {
   if (!getThemePreset(picker.value)) return;
-  root.dataset.theme = picker.value;
-  try { localStorage.setItem('code-loupe:site-theme', picker.value); } catch { /* The current page still changes. */ }
+  root.dataset.lessonTheme = picker.value;
+  try { localStorage.setItem('code-loupe:lesson-theme', picker.value); } catch { /* The current page still changes. */ }
   syncPlayers();
 });
 

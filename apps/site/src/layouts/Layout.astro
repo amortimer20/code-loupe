@@ -5,28 +5,23 @@ import { themePresets } from 'code-loupe/themes';
 interface Props { title: string; description: string; wide?: boolean }
 const { title, description, wide = false } = Astro.props;
 const themeIds = themePresets.map(theme => theme.id);
-const themeCss = themePresets.map(({ id, variant, palette: p }) => `
-  :root[data-theme="${id}"] {
-    color-scheme: ${variant};
-    --bg: ${p.bg}; --panel: ${p.panel}; --soft: ${p.raised};
-    --text: ${p.fg}; --muted: ${p.muted}; --border: ${p.border};
-    --accent: ${p.accent}; --on-accent: ${p.onAccent}; --error: ${p.error};
-  }
-`).join('\n');
 ---
 <!doctype html>
-<html lang="en" data-theme="midnight">
+<html lang="en" data-theme="dark" data-lesson-theme="midnight">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <title>{title} · Code Loupe</title>
-    <style is:inline set:html={themeCss}></style>
     <script is:inline define:vars={{ themeIds }}>
       try {
         const saved = localStorage.getItem('code-loupe:site-theme');
-        if (themeIds.includes(saved)) document.documentElement.dataset.theme = saved;
-      } catch { /* Use Midnight when storage is unavailable. */ }
+        const root = document.documentElement;
+        root.dataset.theme = saved === 'light' || saved === 'paper' ? 'light' : saved === 'dark' || themeIds.includes(saved) ? 'dark' : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        const lesson = localStorage.getItem('code-loupe:lesson-theme');
+        if (themeIds.includes(lesson)) root.dataset.lessonTheme = lesson;
+        else if (themeIds.includes(saved)) root.dataset.lessonTheme = saved;
+      } catch { document.documentElement.dataset.theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
     </script>
   </head>
   <body>
@@ -34,13 +29,18 @@ const themeCss = themePresets.map(({ id, variant, palette: p }) => `
     <header class="site-header">
       <a class="brand" href={sitePath('')}>Code Loupe<span>Code, in focus.</span></a>
       <nav aria-label="Main navigation">
-        <a href={sitePath('')}>Sample library</a>
-        <a href={sitePath('playground/')}>Playground</a>
-        <a href={sitePath('docs/')}>Guide</a>
+        <a href={sitePath('')} aria-current={Astro.url.pathname === sitePath('') ? 'page' : undefined}>Sample library</a>
+        <a href={sitePath('playground/')} aria-current={Astro.url.pathname === sitePath('playground/') ? 'page' : undefined}>Playground</a>
+        <a href={sitePath('docs/')} aria-current={Astro.url.pathname === sitePath('docs/') ? 'page' : undefined}>Guide</a>
       </nav>
-      <label class="theme-picker" for="site-theme">Theme
+      <div class="theme-controls">
+      <label class="theme-picker" for="site-appearance">Appearance
+        <select id="site-appearance"><option value="light">Light</option><option value="dark">Dark</option></select>
+      </label>
+      <label class="theme-picker" for="site-theme">Lesson theme
         <select id="site-theme">{themePresets.map(theme => <option value={theme.id} selected={theme.id === 'midnight'}>{theme.label}</option>)}</select>
       </label>
+      </div>
     </header>
     <main id="main" class:list={['site-main', { wide }]}><slot /></main>
     <footer class="site-footer">Step-through code animations for teaching. <a href="https://github.com/amortimer20/code-loupe">Source on GitHub</a> · MIT License</footer>

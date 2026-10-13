@@ -78,16 +78,25 @@ textarea[aria-invalid='true'] { border-color: var(--error); }
   #lesson-editor { height: 24rem; }
 }
 
-/* Give forms stronger boundaries while retaining each theme's palette. */
-#builder-pane { --control-border: color-mix(in srgb, var(--text) 55%, var(--bg)); }
-#builder-pane input, #builder-pane select, #builder-pane textarea { border-color:var(--control-border); background:var(--bg); }
-.builder-details, .builder-card { border-color:color-mix(in srgb, var(--text) 32%, var(--panel)); }
+/* Separate controls, card headers and the editing surface. */
+.editor-panel { background:var(--panel); border:1px solid var(--border); padding:0.75rem; }
+.preview-panel > .panel-heading { background:var(--panel); border:1px solid var(--border); padding:0.65rem 0.75rem; }
+#author-scroll { background:var(--bg); }
+#builder-pane input, #builder-pane select, #builder-pane textarea { border-color:var(--control-border); background:var(--control); }
+.builder-details { border-left:3px solid var(--border); }
+.builder-details summary { background:var(--soft); font-weight:600; }
+.builder-card { border-color:var(--border); }
 .builder-card[data-selected='true'] { border:2px solid var(--accent); }
-.builder-card[data-selected='true'] > .builder-step { background:var(--soft); }
-.builder-card form { border-top-color:var(--control-border); }
+.builder-card[data-selected='true'] > .builder-step { background:var(--selected); }
+.builder-card[data-selected='true'] .builder-number { background:var(--accent); color:var(--on-accent); }
+.builder-number { text-align:center; padding:0.1rem 0.25rem; font-weight:700; }
+.builder-card form { border-top-color:var(--border); }
 .builder-details label, .builder-card label, .builder-add label { font-weight:600; }
 #builder-pane input, #builder-pane select, #builder-pane textarea { font-weight:400; }
 .builder-form-status { color:var(--text); }
+.builder-step:hover, button:not(:disabled):hover { background:var(--soft); }
+.builder-primary:hover, .author-toolbar [aria-selected='true']:hover { background:var(--accent); }
+.builder-delete { color:var(--error); }
 #working-recovery { padding:0.75rem; margin-bottom:1rem; border:1px solid var(--error); background:var(--panel); }
 #working-recovery[hidden] { display:none; }
 #working-recovery p { margin:0 0 0.65rem; font-size:0.85rem; }
@@ -128,3 +137,10 @@ textarea[aria-invalid='true'] { border-color: var(--error); }
 
 .builder-pick { justify-self:start; }
 [data-code-pick-status]:empty { display:none; }
+
+@media (min-width:961px) {
+  .editor-panel { padding:0.5rem; }
+  .site-header:has(+ .site-main .playground-page) { padding-block:0.5rem; }
+  .author-actions .button, .author-actions button, .author-toolbar button { padding:0.35rem 0.6rem; line-height:1.4; }
+  #editor-help, #editor-shortcuts, #editor-status { line-height:1.4; }
+}

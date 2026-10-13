@@ -80,7 +80,7 @@ export async function goTo(player: Locator, step: number) {
 }
 
 export async function selectTheme(page: Page, theme: keyof typeof palettes) {
-  await page.getByRole('combobox', { name: 'Theme', exact: true }).selectOption(theme);
+  await page.getByRole('combobox', { name: 'Lesson theme', exact: true }).selectOption(theme);
   const player = page.locator('code-loupe');
   await expect.poll(() => player.locator('.ca').evaluate(el => (el as HTMLElement).style.getPropertyValue('--ca-bg'))).toBe(palettes[theme]);
   await settle(player);
