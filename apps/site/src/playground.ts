@@ -20,6 +20,18 @@ const preview = document.querySelector<HTMLElement>('#preview')!;
 const status = document.querySelector<HTMLElement>('#preview-status')!;
 const error = document.querySelector<HTMLElement>('#lesson-error')!;
 const player = new CodeLoupe();
+const workspace = document.querySelector<HTMLElement>('.workspace')!;
+const desktopLayout = matchMedia('(min-width:961px)');
+function syncWorkspaceLayout() {
+  player.toggleAttribute('fit', desktopLayout.matches);
+  if (desktopLayout.matches) {
+    const top = workspace.getBoundingClientRect().top + window.scrollY;
+    const height = Math.max(320, (window.visualViewport?.height ?? innerHeight) - top - 16);
+    workspace.style.setProperty('--workspace-height', `${height}px`);
+  } else workspace.style.removeProperty('--workspace-height');
+  assistance?.layout();
+}
+
 
 // Supply inline YAML before connecting so the normal initial load has a source.
 const inline = document.createElement('script');
@@ -73,7 +85,8 @@ function selectMode(next: 'builder' | 'yaml') {
   document.querySelector('#builder-tab')!.setAttribute('aria-selected', String(mode === 'builder'));
   document.querySelector('#yaml-tab')!.setAttribute('aria-selected', String(mode === 'yaml'));
   assistance?.layout();
-  if (mode === 'builder') { builder?.refresh(); destination = builder?.selectedStep() ?? 0; if (previewReady) player.goTo(Math.min(destination, player.total)); }
+  if (mode === 'yaml') document.querySelector('#author-scroll')!.scrollTo({ top:0, behavior:'instant' });
+  if (mode === 'builder') { builder?.refresh(); builder?.revealSelected(); destination = builder?.selectedStep() ?? 0; if (previewReady) player.goTo(Math.min(destination, player.total)); }
 }
 document.querySelector('#builder-tab')!.addEventListener('click', () => selectMode('builder'));
 document.querySelector('#yaml-tab')!.addEventListener('click', () => selectMode('yaml'));
@@ -213,4 +226,11 @@ async function start() {
   syncHistory();
 }
 
+// Observe headings rather than the sized panes, avoiding a resize feedback loop.
+const layoutObserver = new ResizeObserver(syncWorkspaceLayout);
+layoutObserver.observe(document.querySelector('.site-header')!);
+layoutObserver.observe(document.querySelector('.playground-heading')!);
+window.addEventListener('resize', syncWorkspaceLayout);
+window.visualViewport?.addEventListener('resize', syncWorkspaceLayout);
+syncWorkspaceLayout();
 void start();

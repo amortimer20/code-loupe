@@ -4,6 +4,7 @@ import { getSamples, sitePath } from '../lib/samples';
 const samples = await getSamples();
 ---
 <Layout title="Playground" description="Write YAML and preview a Code Loupe lesson as you edit." wide>
+  <div class="playground-page">
   <header class="playground-heading">
     <p class="eyebrow">Make it your own</p>
     <h1>Lesson playground</h1>
@@ -20,6 +21,7 @@ const samples = await getSamples();
         <div role="tablist" aria-label="Authoring view"><button id="builder-tab" type="button" role="tab" aria-controls="builder-pane" aria-selected="true">Builder</button><button id="yaml-tab" type="button" role="tab" aria-controls="source-pane" aria-selected="false">YAML</button></div>
         <div><button id="draft-undo" type="button" disabled>Undo</button><button id="draft-redo" type="button" disabled>Redo</button></div>
       </div>
+      <div id="author-scroll" role="region" aria-label="Lesson editor" tabindex="0">
       <div id="draft-recovery" hidden><p id="draft-recovery-message" role="status"></p><button id="migrate-draft" type="button">Update draft syntax</button></div>
       <div id="working-recovery" hidden><p>Undo recent edits, or restore the last lesson that successfully previewed. Restoring replaces this draft; Undo brings it back.</p><button id="restore-working" type="button" disabled>Restore last working lesson</button></div>
       <div id="builder-pane" role="tabpanel" aria-labelledby="builder-tab"><p>Loading builder…</p></div>
@@ -33,12 +35,14 @@ const samples = await getSamples();
       <ul id="editor-problems" aria-label="Source problems" hidden></ul>
       </div>
       <pre id="lesson-error" role="alert" hidden></pre>
+      </div>
     </section>
     <section class="preview-panel" aria-labelledby="preview-heading">
       <div class="panel-heading"><h2 id="preview-heading">Live preview</h2><span id="preview-status" role="status">Loading lesson…</span></div>
       <div id="preview" aria-busy="true"></div>
       <p class="preview-help">Click the player to use ← / →, Home / End, and Space. Use its animations toggle to preview with reduced motion.</p>
     </section>
+  </div>
   </div>
 </Layout>
 <script>import '../playground';</script>

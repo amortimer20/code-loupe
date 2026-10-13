@@ -498,3 +498,12 @@ undoable source edit. Invalid candidates leave the shared YAML and working previ
 unchanged. Allow one unfinished card, with explicit Cancel; it survives view
 switching but is not exported or persisted. Move number display to optional
 settings and show occurrence only for repeated targets or existing overrides.
+
+
+## 2026-10-13 — Keep the authoring preview in view
+
+Use a viewport-bounded desktop workspace with an independently scrolling editor
+and the existing player's fit layout. Reveal selected and new card headers with
+minimal scrolling; respect reduced motion and keep tabs/history outside the pane.
+Compact the playground heading. Narrow screens retain the existing stacked flow;
+an Edit/Preview switch remains separate future work.

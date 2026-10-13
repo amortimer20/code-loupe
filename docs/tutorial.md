@@ -72,6 +72,11 @@ survive switching views but are not persisted across reloads or exported.
 Number display lives under **Optional settings**. Occurrence appears for repeated
 expression text or an existing explicit occurrence; hidden settings are preserved.
 
+On desktop, the editor scrolls independently beside a bounded preview. Selecting
+or adding a card reveals its header and first fields without moving the page.
+Tabs and Undo/Redo remain above the editor. Card scrolling respects reduced motion;
+narrow screens keep the stacked layout and ordinary page scrolling.
+
 The playground highlights YAML and supplies schema completion, hover descriptions,
 and source errors. Press Ctrl+Space for suggestions. Select a problem below the
 editor to jump to its location. Ctrl+M toggles whether Tab moves out of the editor;

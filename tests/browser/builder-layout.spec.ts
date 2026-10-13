@@ -1,0 +1,74 @@
+import { test, expect, ready, goTo } from './helpers';
+import type { CodeLoupe } from '../../packages/player/src/code-loupe';
+
+test('short laptop panes keep the preview steady while selecting, editing and adding cards', async ({ page }) => {
+  await page.setViewportSize({ width:1280, height:600 });
+  await page.goto('/playground/?sample=python/nested-function-call');
+  await expect(page.locator('.builder-card')).toHaveCount(19);
+  const player = await ready(page, 19), scroller = page.locator('#author-scroll');
+  await expect(player).toHaveAttribute('fit', '');
+  const before = await player.boundingBox();
+  expect(before!.y + before!.height).toBeLessThanOrEqual(600);
+  const source = await page.locator('#lesson-source').inputValue();
+  await page.locator('[data-step="16"]').click();
+  await expect.poll(() => scroller.evaluate(el => el.scrollTop)).toBeGreaterThan(100);
+  await expect.poll(async () => {
+    const pane = await scroller.boundingBox(), header = await page.locator('[data-step="16"]').boundingBox();
+    return header!.y >= pane!.y && header!.y + header!.height <= pane!.y + pane!.height;
+  }).toBe(true);
+  expect(await player.boundingBox()).toEqual(before);
+  expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(17);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+  const controls = await player.locator('.controls').boundingBox();
+  expect(controls!.y + controls!.height).toBeLessThanOrEqual(600);
+  await page.locator('[data-step-form]').getByLabel('Caption', { exact:true }).fill('Inspect this moment.');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 19 steps');
+  expect(await player.boundingBox()).toEqual(before);
+  await page.locator('#builder-new-action').selectOption('highlight');
+  await page.getByRole('button', { name:'Add step', exact:true }).click();
+  await expect(page.locator('[data-new-step]')).toBeVisible();
+  await expect.poll(async () => {
+    const pane = await scroller.boundingBox(), input = await page.locator('[data-new-step] [name="action"]').boundingBox();
+    return input!.y >= pane!.y && input!.y + input!.height <= pane!.y + pane!.height;
+  }).toBe(true);
+  expect(await player.boundingBox()).toEqual(before);
+  expect(await page.evaluate(() => scrollY)).toBe(0);
+  await page.getByRole('button', { name:'Cancel new step', exact:true }).click();
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(source);
+});
+
+test('YAML, keyboard scrolling and resizing preserve the draft and playback state', async ({ page }) => {
+  await page.setViewportSize({ width:1280, height:600 });
+  await page.goto('/playground/?sample=python/nested-function-call');
+  await expect(page.locator('.builder-card')).toHaveCount(19);
+  const player = await ready(page, 19), source = await page.locator('#lesson-source').inputValue();
+  await goTo(player, 17);
+  await page.locator('#author-scroll').focus();
+  await page.keyboard.press('PageDown');
+  await expect.poll(() => page.locator('#author-scroll').evaluate(el => el.scrollTop)).toBeGreaterThan(0);
+  await page.getByRole('tab', { name:'YAML', exact:true }).click();
+  await expect(page.locator('#lesson-editor')).toHaveAttribute('data-ready', 'true');
+  await expect.poll(() => page.locator('#author-scroll').evaluate(el => el.scrollTop)).toBe(0);
+  const editor = await page.locator('#lesson-editor').boundingBox();
+  expect(editor!.height).toBeGreaterThanOrEqual(190);
+  expect(editor!.width).toBeGreaterThan(300);
+  await page.setViewportSize({ width:1440, height:800 });
+  await expect(player).toHaveAttribute('fit', '');
+  expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(17);
+  await page.setViewportSize({ width:390, height:844 });
+  await expect(player).not.toHaveAttribute('fit');
+  await expect.poll(() => page.locator('#author-scroll').evaluate(el => getComputedStyle(el).overflowY)).toBe('visible');
+  await expect(page.locator('#lesson-source')).toHaveValue(source);
+  expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(17);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  const left = await page.locator('.editor-panel').boundingBox(), right = await page.locator('.preview-panel').boundingBox();
+  expect(right!.y).toBeGreaterThan(left!.y);
+  await page.setViewportSize({ width:1280, height:600 });
+  await expect(player).toHaveAttribute('fit', '');
+  const box = await player.boundingBox();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(600);
+  await expect(page.locator('#lesson-source')).toHaveValue(source);
+  expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(17);
+});

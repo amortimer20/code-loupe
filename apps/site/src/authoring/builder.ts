@@ -17,6 +17,17 @@ export function createBuilder(container: HTMLElement, host: Host) {
   let detailsPending: { base: string; title: string; language: string; code: string } | undefined;
   let detailsOpen = false;
 
+  function revealSelected() {
+    const scroller = container.closest<HTMLElement>('#author-scroll');
+    const card = container.querySelector<HTMLElement>('.builder-card[data-selected="true"]');
+    if (!scroller || !card || !matchMedia('(min-width:961px)').matches) return;
+    const pane = scroller.getBoundingClientRect(), box = card.getBoundingClientRect();
+    const firstFields = Math.min(box.height, 160, scroller.clientHeight - 16);
+    if (box.top >= pane.top + 8 && box.top + firstFields <= pane.bottom - 8) return;
+    scroller.scrollTo({ top:scroller.scrollTop + box.top - pane.top - 8,
+      behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }
+
   function summary(step: Record<string, unknown>) {
     const form = formOf(step);
     if (!form) return `Advanced · ${Object.keys(step).filter(key => !['line', 'caption'].includes(key)).join(', ') || 'YAML'}`;
@@ -146,7 +157,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (select.name === 'action') { values.source = 'literal'; values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
     if (select.name === 'kind' && values.kind === 'Boolean') values.value = 'true';
     render();
-    container.querySelector<HTMLSelectElement>(`[data-step-form] [name="${select.name}"]`)?.focus();
+    container.querySelector<HTMLSelectElement>(`[data-step-form] [name="${select.name}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches });
   });
   container.addEventListener('submit', event => {
     event.preventDefault(); const form = event.target as HTMLFormElement;
@@ -168,15 +179,15 @@ export function createBuilder(container: HTMLElement, host: Host) {
         pending.delete(selected); host.edit(next, selected + 1);
       }
       render();
-      container.querySelector<HTMLButtonElement>(form.hasAttribute('data-details') ? '[data-details] button[type="submit"]' : '[data-step-form] button[type="submit"]')?.focus();
+      container.querySelector<HTMLButtonElement>(form.hasAttribute('data-details') ? '[data-details] button[type="submit"]' : '[data-step-form] button[type="submit"]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches });
     } catch (error) { showError(form, error); }
   });
   container.addEventListener('click', event => {
     const button = (event.target as Element).closest('button'); if (!button) return;
     if (button.hasAttribute('data-yaml')) { host.yaml(); return; }
-    if (button.dataset.step !== undefined) { selected = Number(button.dataset.step); editingNew = !!newStep && selected === stepsOf(readDocument(host.source())).length; optionsOpen = false; render(); if (!editingNew) host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus(); }
-    if (button.hasAttribute('data-reload-step')) { pending.delete(selected); render(); container.querySelector<HTMLElement>('[data-step-form] input, [data-step-form] select, [data-step-form] textarea')?.focus(); }
-    if (button.hasAttribute('data-reload-details')) { detailsPending = undefined; render(); container.querySelector<HTMLInputElement>('[data-details] input')?.focus(); }
+    if (button.dataset.step !== undefined) { selected = Number(button.dataset.step); editingNew = !!newStep && selected === stepsOf(readDocument(host.source())).length; optionsOpen = false; render(); if (!editingNew) host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
+    if (button.hasAttribute('data-reload-step')) { pending.delete(selected); render(); container.querySelector<HTMLElement>('[data-step-form] input, [data-step-form] select, [data-step-form] textarea')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); }
+    if (button.hasAttribute('data-reload-details')) { detailsPending = undefined; render(); container.querySelector<HTMLInputElement>('[data-details] input')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); }
     if (button.hasAttribute('data-delete-step')) {
       try {
         const next = deleteStep(host.source(), selected, button.dataset.base!);
@@ -184,14 +195,14 @@ export function createBuilder(container: HTMLElement, host: Host) {
         pending.clear(); shifted.forEach(([index, value]) => pending.set(index, value));
         selected = Math.max(0, Math.min(selected, stepsOf(readDocument(next)).length - 1));
         host.edit(next, stepsOf(readDocument(next)).length ? selected + 1 : 0); render();
-        (container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`) ?? container.querySelector<HTMLButtonElement>('[data-add]'))?.focus();
+        (container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`) ?? container.querySelector<HTMLButtonElement>('[data-add]'))?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected();
       } catch (error) { showError(button.closest('form')!, error); }
     }
     if (button.hasAttribute('data-cancel-new')) {
       newStep = undefined; editingNew = false; optionsOpen = false;
       selected = Math.max(0, newPreviewStep - 1); render();
       host.select(newPreviewStep);
-      container.querySelector<HTMLButtonElement>('[data-add]')?.focus();
+      container.querySelector<HTMLButtonElement>('[data-add]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches });
     }
     if (button.hasAttribute('data-add')) {
       if (!newStep) {
@@ -201,9 +212,9 @@ export function createBuilder(container: HTMLElement, host: Host) {
         try { newStep.line = String(prefixSnapshot(host.source(), count).line || 1); } catch { /* Validation on Save will explain earlier errors. */ }
       }
       editingNew = true; optionsOpen = false; render();
-      container.querySelector<HTMLSelectElement>('[data-new-step] [name="action"]')?.focus();
+      container.querySelector<HTMLSelectElement>('[data-new-step] [name="action"]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected();
     }
   });
   render();
-  return { reset() { pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; render(); }, refresh: render, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
+  return { reset() { pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; render(); }, refresh: render, revealSelected, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
 }

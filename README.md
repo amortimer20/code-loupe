@@ -62,6 +62,11 @@ survive switching views but are not persisted across reloads or exported.
 Number display lives under **Optional settings**. Occurrence appears for repeated
 expression text or an existing explicit occurrence; hidden settings are preserved.
 
+On desktop, the editor scrolls independently beside a bounded preview. Selecting
+or adding a card reveals its header and first fields without moving the page.
+Tabs and Undo/Redo remain above the editor. Card scrolling respects reduced motion;
+narrow screens keep the stacked layout and ordinary page scrolling.
+
 Saved drafts from before the address-format change may show a migration error.
 Choose **Update draft syntax** to convert their old location mappings while keeping
 the authored code, values, and captions. The update shares Undo/Redo with other

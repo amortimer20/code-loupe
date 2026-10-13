@@ -99,3 +99,29 @@ textarea[aria-invalid='true'] { border-color: var(--error); }
 .builder-delete { justify-self:start; padding:0.3rem 0.5rem; color:var(--muted); }
 
 .builder-add[hidden], .builder-add label[hidden] { display:none; }
+
+/* Desktop authoring keeps both panes in view; narrow screens retain page scrolling. */
+@media (min-width:961px) {
+  .site-main:has(.playground-page) { padding-block:1rem; }
+  .site-header:has(+ .site-main .playground-page) { padding-block:0.75rem; }
+  .playground-heading { display:grid; grid-template-columns:auto minmax(0,1fr); gap:0.25rem 1rem; align-items:baseline; margin-bottom:0.75rem; }
+  .playground-heading .eyebrow { display:none; }
+  .playground-heading h1 { margin:0; font-size:1.5rem; }
+  .playground-heading .lede { margin:0; font-size:0.85rem; max-width:none; }
+  #draft-context { grid-column:1 / -1; margin:0; font-size:0.8rem; }
+  .workspace { height:var(--workspace-height, calc(100dvh - 13rem)); min-height:320px; align-items:stretch; }
+  .editor-panel, .preview-panel { display:flex; flex-direction:column; min-height:0; }
+  .author-toolbar { margin:0.5rem 0; flex-shrink:0; }
+  .panel-heading { flex-shrink:0; }
+  #author-scroll { flex:1; min-height:0; overflow:auto; overscroll-behavior:contain; scrollbar-gutter:stable; padding:4px 6px 4px 4px; border-top:1px solid var(--border); }
+  #source-pane { display:flex; flex-direction:column; height:100%; min-height:0; }
+  #editor-heading { margin:0 0 0.5rem; font-size:1rem; }
+  #editor-help { min-height:0; margin:0 0 0.5rem; }
+  #lesson-editor { flex:1; height:auto; min-height:12rem; }
+  #lesson-source { flex:1; min-height:12rem; resize:none; }
+  #editor-shortcuts, #editor-status { margin:0.3rem 0; }
+  #editor-problems { margin:0.3rem 0; }
+  #preview { flex:1; min-height:0; }
+  #preview code-loupe { height:100%; }
+  .preview-help { flex-shrink:0; font-size:0.75rem; margin:0.4rem 0 0; }
+}
