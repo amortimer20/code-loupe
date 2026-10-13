@@ -46,6 +46,7 @@ export async function canonical(id: string) {
 }
 
 export async function fillLessonSource(page: Page, yaml: string) {
+  await page.getByRole('tab', { name: 'YAML', exact: true }).click();
   await expect(page.locator('#lesson-editor')).toHaveAttribute('data-ready', 'true');
   const input = page.locator('#lesson-editor textarea.inputarea');
   await input.focus();

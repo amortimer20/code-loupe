@@ -1,0 +1,168 @@
+import { addStep, deleteStep, actionLabels, editCaption, editDetails, editStep, formOf, prefixSnapshot, readDocument, scalarBindings, stepsOf, type Action, type StepForm } from './lesson-document';
+
+interface Host { source(): string; edit(source: string, step: number): void; select(step: number): void; yaml(): void }
+const escape = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
+const option = (value: string, label: string, selected: string) => `<option value="${escape(value)}" ${value === selected ? 'selected' : ''}>${escape(label)}</option>`;
+const field = (name: string, label: string, value: string, type = 'text') => `<label>${label}<input name="${name}" type="${type}" aria-label="${label}" ${type === 'number' ? 'step="any"' : ''} value="${escape(value)}"></label>`;
+const captionField = (value: string) => `<label>Caption<textarea aria-label="Caption" name="caption" rows="3">${escape(value)}</textarea></label>`;
+const errorBox = '<p class="builder-field-error" role="alert" hidden></p>';
+const applyButton = '<button class="builder-primary" type="submit">Save step</button><span class="builder-form-status" role="status"></span>';
+interface Pending { base: string; values: StepForm | { caption: string } }
+
+export function createBuilder(container: HTMLElement, host: Host) {
+  let selected = 0;
+  const pending = new Map<number, Pending>();
+  let detailsPending: { base: string; title: string; language: string; code: string } | undefined;
+  let detailsOpen = false;
+
+  function summary(step: Record<string, unknown>) {
+    const form = formOf(step);
+    if (!form) return `Advanced · ${Object.keys(step).filter(key => !['line', 'caption'].includes(key)).join(', ') || 'YAML'}`;
+    if (form.action === 'badge') return form.source === 'literal' ? `Show ${form.kind === 'Text' ? JSON.stringify(form.value) : form.kind === 'None' ? 'None' : form.value}` : `Read ${form.source}`;
+    if (form.action === 'assign') return `Store a value in ${form.name || 'a variable'}`;
+    if (form.action === 'print') return form.source === 'badge' ? 'Print the latest badge' : `Print ${JSON.stringify(form.value)}`;
+    return form.line ? `Highlight line ${form.line}` : 'Explain the current moment';
+  }
+
+  function valueFields(form: StepForm) {
+    const kind = `<label>Value type<select aria-label="Value type" name="kind">${['Number', 'Text', 'Boolean', 'None'].map(value => option(value, value, form.kind)).join('')}</select></label>`;
+    const value = form.kind === 'None' ? '<label>Value<input value="None" disabled></label>'
+      : form.kind === 'Boolean' ? `<label>Value<select aria-label="Value" name="value">${option('true', 'True', form.value)}${option('false', 'False', form.value)}</select></label>`
+      : field('value', 'Value', form.value); // Text input preserves incomplete numeric entries.
+    const numberType = form.kind === 'Number' ? `<label>Number display<select aria-label="Number display" name="numericType">${option('auto', 'Automatic', form.numericType)}${option('int', 'Integer', form.numericType)}${option('float', 'Float (e.g. 5.0)', form.numericType)}</select></label>` : '';
+    return `<div class="builder-fields">${kind}${value}${numberType}</div>`;
+  }
+
+  function stepFields(form: StepForm, code: string) {
+    let context: ReturnType<typeof prefixSnapshot> | undefined, contextError = '';
+    try { context = prefixSnapshot(host.source(), selected); } catch (error) { contextError = (error as Error).message; }
+    const lines = code.replace(/\n+$/, '').split('\n');
+    const choices = lines.map((text, index) => option(String(index + 1), `${index + 1} · ${text.trim()}`, form.line));
+    if (form.line && !choices.some((_choice, index) => String(index + 1) === form.line)) choices.push(option(form.line, `${form.line} · check this line`, form.line));
+    let html = `<div class="builder-fields"><label>Step action<select aria-label="Step action" name="action">${Object.entries(actionLabels).map(([key, label]) => option(key, label, form.action)).join('')}</select></label><label>Code line<select aria-label="Code line" name="line">${option('', 'Keep current line', form.line)}${choices.join('')}</select></label></div>`;
+    if (form.action === 'badge') {
+      const vars = context ? scalarBindings(context) : [];
+      if (form.source !== 'literal' && !vars.some(variable => variable.name === form.source)) html += '<p class="builder-note">This source needs a valid earlier step. Its current value cannot be filled yet.</p>';
+      html += `<div class="builder-fields">${field('over', 'Expression text', form.over)}${field('nth', 'Occurrence', form.nth)}<label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${vars.map(variable => option(variable.name, `Variable: ${variable.name}`, form.source)).join('')}${form.source !== 'literal' && !vars.some(variable => variable.name === form.source) ? option(form.source, `Variable: ${form.source}`, form.source) : ''}</select></label></div>`;
+      html += form.source === 'literal' ? valueFields(form) : '<p class="builder-note">Saving fills the value from the authored state before this step. It does not execute the code.</p>';
+    }
+    if (form.action === 'assign') {
+      html += `<div class="builder-fields">${field('name', 'Variable name', form.name)}<label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${option('badge', 'Latest badge', form.source)}</select></label></div>`;
+      if (form.source === 'literal') html += valueFields(form);
+    }
+    if (form.action === 'print') {
+      html += `<label>Output source<select aria-label="Output source" name="source">${option('literal', 'Enter output text', form.source)}${option('badge', 'Latest badge', form.source)}</select></label>`;
+      html += `<label>Output text<textarea aria-label="Output text" name="value" rows="2">${escape(form.value)}</textarea></label>`;
+    }
+    if (form.source === 'badge') {
+      const changedLine = form.line && Number(form.line) !== context?.line;
+      const badge = changedLine ? undefined : context?.badges.at(-1);
+      const value = badge && typeof badge.value !== 'object' ? JSON.stringify(badge.value) : badge?.value === null ? 'None' : badge ? `a ${badge.type} value` : 'none on this line';
+      html += `<p class="builder-note">Latest badge: ${escape(value)}. Printing must use a separate step from creating a badge.</p>`;
+    }
+    if (contextError) html += `<p class="builder-note">Earlier state needs repair: ${escape(contextError)}</p>`;
+    return html + captionField(form.caption) + errorBox + `<div class="builder-apply">${applyButton}</div>`;
+  }
+
+  function render() {
+    let doc: ReturnType<typeof readDocument>;
+    try { doc = readDocument(host.source()); }
+    catch (error) {
+      container.innerHTML = `<p role="alert">${escape((error as Error).message)}</p><button type="button" data-yaml>Open YAML</button>`;
+      return;
+    }
+    const steps = stepsOf(doc);
+    selected = Math.min(Math.max(0, selected), steps.length - 1);
+    const details = { title: String(doc.get('title') ?? ''), language: String(doc.get('language') ?? ''), code: String(doc.get('code') ?? '') };
+    const detailsBase = JSON.stringify(details), shown = detailsPending ?? details;
+    const staleDetails = detailsPending && detailsPending.base !== detailsBase;
+    container.innerHTML = `<details class="builder-details" ${detailsOpen ? 'open' : ''}><summary>Lesson details · ${escape(details.language)}</summary><form data-details><label>Title<input name="title" value="${escape(shown.title)}"></label><label>Language<input name="language" value="${escape(shown.language)}"></label><label>Displayed code<textarea aria-label="Displayed code" name="code" rows="5" spellcheck="false" class="builder-code">${escape(shown.code)}</textarea></label>${errorBox}<div class="builder-apply"><button type="submit">Save lesson details</button><button type="button" data-reload-details ${detailsPending ? '' : 'hidden'}>Discard details edits</button><span class="builder-form-status" role="status">${staleDetails ? 'YAML changed; discard details edits before saving.' : detailsPending ? 'Unsaved form edits' : ''}</span></div></form></details>
+      <div class="builder-heading"><h3>Teaching steps</h3><span>${steps.length} steps</span></div>
+      <div class="builder-cards">${steps.map((step, index) => {
+        const base = JSON.stringify(step), cache = pending.get(index), form = cache?.values ?? formOf(step), supported = form && 'action' in form;
+        const current = index === selected;
+        return `<article class="builder-card" data-selected="${current}"><button type="button" class="builder-step" data-step="${index}" aria-expanded="${current}"><span class="builder-number">${index + 1}</span><span>${escape(summary(step))}</span><small>${step.line === undefined ? '' : `Line ${escape(step.line)}`}${cache ? ' · Unsaved' : ''}</small></button>${current ? `<form data-step-form data-base="${escape(cache?.base ?? base)}">${supported ? stepFields(form as StepForm, details.code) : `<p class="builder-note">This action is preserved. Edit its caption here, or open YAML for other fields.</p><button type="button" data-yaml>Open this step in YAML</button>${captionField(cache?.values.caption ?? String(step.caption ?? ''))}${errorBox}<div class="builder-apply">${applyButton}</div>`}<button type="button" class="builder-reload" data-reload-step ${cache ? '' : 'hidden'}>Discard step edits</button><button type="button" data-delete-step data-base="${escape(base)}">Delete step</button><p class="builder-note">Deleting may leave later steps needing repair. Undo restores the removed step.</p></form>` : ''}</article>`;
+      }).join('')}</div>
+      <div class="builder-add"><label>New step<select aria-label="New step" id="builder-new-action">${Object.entries(actionLabels).map(([key, label]) => option(key, label, 'highlight')).join('')}</select></label><button class="builder-primary" type="button" data-add>Add step</button></div>
+      <p class="builder-note">Save puts form edits into your browser draft and updates the preview. Discard drops unsaved form edits; Undo reverses saved edits. Teachers choose the outcomes; the displayed code does not run.</p>`;
+    container.querySelector('details')!.addEventListener('toggle', event => { detailsOpen = (event.target as HTMLDetailsElement).open; });
+    const caption = container.querySelector<HTMLTextAreaElement>('[data-step-form] [name="caption"]');
+    if (caption && !pending.has(selected) && !formOf(steps[selected])) caption.value = String(steps[selected]?.caption ?? '');
+  }
+
+  function capture(form: HTMLFormElement) {
+    const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+    const existing = pending.get(selected)?.values ?? formOf(stepsOf(readDocument(host.source()))[selected]);
+    const values = existing && 'action' in existing ? { ...existing, ...data } as StepForm : { caption: data.caption ?? '' };
+    pending.set(selected, { base: form.dataset.base!, values });
+    return values;
+  }
+  function showError(form: HTMLFormElement, error: unknown) {
+    const box = form.querySelector<HTMLElement>('.builder-field-error')!;
+    box.hidden = false; box.textContent = (error as Error).message;
+  }
+  container.addEventListener('input', event => {
+    const input = event.target as HTMLInputElement;
+    const form = input.closest('form'); if (!form) return;
+    if (form.hasAttribute('data-details')) {
+      const values = Object.fromEntries(new FormData(form)) as { title: string; language: string; code: string };
+      const doc = readDocument(host.source());
+      detailsPending = { base: detailsPending?.base ?? JSON.stringify({ title: String(doc.get('title') ?? ''), language: String(doc.get('language') ?? ''), code: String(doc.get('code') ?? '') }), ...values };
+      form.querySelector<HTMLElement>('[data-reload-details]')!.hidden = false;
+    } else { capture(form); form.querySelector<HTMLElement>('[data-reload-step]')!.hidden = false; }
+    form.querySelector<HTMLElement>('.builder-form-status')!.textContent = 'Unsaved form edits';
+  });
+  container.addEventListener('change', event => {
+    const select = event.target as HTMLSelectElement;
+    if (select.tagName !== 'SELECT' || !select.closest('[data-step-form]')) return;
+    const form = select.closest('form')!, values = capture(form);
+    if (!('action' in values)) return;
+    if (select.name === 'action') { values.source = 'literal'; values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
+    if (select.name === 'kind' && values.kind === 'Boolean') values.value = 'true';
+    render();
+    container.querySelector<HTMLSelectElement>(`[data-step-form] [name="${select.name}"]`)?.focus();
+  });
+  container.addEventListener('submit', event => {
+    event.preventDefault(); const form = event.target as HTMLFormElement;
+    try {
+      if (form.hasAttribute('data-details')) {
+        const doc = readDocument(host.source());
+        const current = JSON.stringify({ title: String(doc.get('title') ?? ''), language: String(doc.get('language') ?? ''), code: String(doc.get('code') ?? '') });
+        if (detailsPending && detailsPending.base !== current) throw new Error('Details changed in YAML. Discard details edits before saving.');
+        const values = Object.fromEntries(new FormData(form)) as { title: string; language: string; code: string };
+        const next = editDetails(host.source(), values); detailsPending = undefined;
+        host.edit(next, Math.max(0, selected + 1));
+      } else {
+        const values = capture(form), next = 'action' in values ? editStep(host.source(), selected, values, form.dataset.base!) : editCaption(host.source(), selected, values.caption, form.dataset.base!);
+        pending.delete(selected); host.edit(next, selected + 1);
+      }
+      render();
+      container.querySelector<HTMLButtonElement>(form.hasAttribute('data-details') ? '[data-details] button[type="submit"]' : '[data-step-form] button[type="submit"]')?.focus();
+    } catch (error) { showError(form, error); }
+  });
+  container.addEventListener('click', event => {
+    const button = (event.target as Element).closest('button'); if (!button) return;
+    if (button.hasAttribute('data-yaml')) { host.yaml(); return; }
+    if (button.dataset.step !== undefined) { selected = Number(button.dataset.step); render(); host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus(); }
+    if (button.hasAttribute('data-reload-step')) { pending.delete(selected); render(); container.querySelector<HTMLElement>('[data-step-form] input, [data-step-form] select, [data-step-form] textarea')?.focus(); }
+    if (button.hasAttribute('data-reload-details')) { detailsPending = undefined; render(); container.querySelector<HTMLInputElement>('[data-details] input')?.focus(); }
+    if (button.hasAttribute('data-delete-step')) {
+      try {
+        const next = deleteStep(host.source(), selected, button.dataset.base!);
+        const shifted = [...pending.entries()].filter(([index]) => index !== selected).map(([index, value]) => [index > selected ? index - 1 : index, value] as const);
+        pending.clear(); shifted.forEach(([index, value]) => pending.set(index, value));
+        selected = Math.max(0, Math.min(selected, stepsOf(readDocument(next)).length - 1));
+        host.edit(next, stepsOf(readDocument(next)).length ? selected + 1 : 0); render();
+        (container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`) ?? container.querySelector<HTMLButtonElement>('[data-add]'))?.focus();
+      } catch (error) { showError(button.closest('form')!, error); }
+    }
+    if (button.hasAttribute('data-add')) {
+      const next = addStep(host.source(), (container.querySelector<HTMLSelectElement>('#builder-new-action')!.value as Action));
+      selected = stepsOf(readDocument(next)).length - 1;
+      host.edit(next, selected + 1); render();
+      container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus();
+    }
+  });
+  render();
+  return { reset() { pending.clear(); detailsPending = undefined; selected = 0; render(); }, refresh: render, selectedStep: () => Math.max(0, selected + 1) };
+}

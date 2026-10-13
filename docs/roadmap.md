@@ -216,6 +216,8 @@ through a shared "where is this value on screen?" lookup.
 6. [ ] **Small GUI builder:** introductory action forms, code-target selection,
        keyboard step organization, and shared preview/undo with the source editor.
        Use the agreed Step cards layout: expandable cards beside the live preview.
+       Initial lesson details/action forms, caption editing, new drafts, and shared
+       undo/redo are implemented. Code selection and richer step organization remain next.
        Follow [the implementation plan](authoring-plan.md); advanced content is preserved
        while its dedicated forms remain future work.
 

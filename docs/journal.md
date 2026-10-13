@@ -456,3 +456,36 @@ the naming-value and simple-arithmetic lessons. The mockup is a design reference
 implementation must use the real player and preserve advanced YAML. Code selection
 and richer step organization remain the following slice. The builder is not yet
 implemented.
+
+## 2026-10-13 — First builder forms share the source document
+
+Implement Step cards with lesson details, introductory scalar actions, captions,
+and a separate new-lesson draft. Edit YAML nodes directly so the builder preserves
+advanced actions and comments; viewing alone never serializes the draft. Both
+views use the source editor's undo history. Keep state/rendering unchanged and
+preview selected cards through the real player.
+
+Apply details/step commits a form transaction. Incomplete entries survive view
+switching; a form changed underneath by YAML needs an explicit reload. Only applied
+changes persist across reloads or downloads. Anchors, aliases, and unsupported
+constructs remain source-editable. Code selection and step reordering are still
+the following slice, not implemented here.
+
+## 2026-10-13 — Recover saved drafts with removed address syntax
+
+Older browser drafts are restored verbatim and can fail the current address rules.
+Offer an explicit, undoable Update draft syntax action in the playground. Convert
+only the removed location mappings; preserve code, values, captions, and comments.
+Refuse ambiguous/unsafe conversions and keep the original source available. The
+player's strict format and migration errors remain unchanged; this is draft recovery,
+not support for old aliases in lesson playback.
+
+
+## 2026-10-13 — Recoverable builder edits
+
+Use Save and Discard labels for form transactions, reserving Undo for changes
+already in the draft. Step deletion uses that same undo history. Keep a separate
+last successfully previewed source in browser storage so a malformed saved draft
+can recover after reload without silently replacing it. Restoring is undoable.
+Strengthen form boundaries and selected-card contrast using the existing palettes.
+Drag reordering remains deferred; authored dependencies need clear feedback first.

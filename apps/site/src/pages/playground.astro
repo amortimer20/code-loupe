@@ -7,21 +7,31 @@ const samples = await getSamples();
   <header class="playground-heading">
     <p class="eyebrow">Make it your own</p>
     <h1>Lesson playground</h1>
-    <p class="lede">Edit a YAML lesson and step through its preview. Values and input are authored by you.</p>
+    <p class="lede">Build an explanation one teaching step at a time, or edit its YAML. Values and input are authored by you.</p>
     <p id="draft-context">Your draft is separate from the published samples. <a href={sitePath('docs/')}>Authoring guide →</a></p>
   </header>
   <div class="workspace" data-samples={JSON.stringify(samples.map(({entry}) => ({ id: entry.id, title: entry.data.title, source: sitePath(`lessons/${entry.id}.yaml`) })))}>
-    <section class="editor-panel" aria-labelledby="editor-heading">
+    <section class="editor-panel" aria-labelledby="author-heading">
       <div class="panel-heading">
-        <h2 id="editor-heading"><label for="lesson-source">Lesson YAML</label></h2>
-        <button id="download" type="button" disabled>Download YAML</button>
+        <h2 id="author-heading">Author lesson</h2>
+        <div class="author-actions"><a class="button" href={sitePath('playground/?new=1')}>New lesson</a><button id="download" type="button" disabled>Download YAML</button></div>
       </div>
+      <div class="author-toolbar">
+        <div role="tablist" aria-label="Authoring view"><button id="builder-tab" type="button" role="tab" aria-controls="builder-pane" aria-selected="true">Builder</button><button id="yaml-tab" type="button" role="tab" aria-controls="source-pane" aria-selected="false">YAML</button></div>
+        <div><button id="draft-undo" type="button" disabled>Undo</button><button id="draft-redo" type="button" disabled>Redo</button></div>
+      </div>
+      <div id="draft-recovery" hidden><p id="draft-recovery-message" role="status"></p><button id="migrate-draft" type="button">Update draft syntax</button></div>
+      <div id="working-recovery" hidden><p>Undo recent edits, or restore the last lesson that successfully previewed. Restoring replaces this draft; Undo brings it back.</p><button id="restore-working" type="button" disabled>Restore last working lesson</button></div>
+      <div id="builder-pane" role="tabpanel" aria-labelledby="builder-tab"><p>Loading builder…</p></div>
+      <div id="source-pane" role="tabpanel" aria-labelledby="yaml-tab" hidden>
+      <h3 id="editor-heading"><label for="lesson-source">Lesson YAML</label></h3>
       <p id="editor-help">Preview updates after you stop typing and restarts at Step 0. Your draft is saved in this browser when storage is available.</p>
       <textarea id="lesson-source" wrap="off" spellcheck="false" autocapitalize="off" autocomplete="off" aria-describedby="editor-help lesson-error" disabled></textarea>
       <div id="lesson-editor" hidden></div>
       <p id="editor-shortcuts" hidden>Ctrl+Space: suggestions. Ctrl+M: let Tab leave the editor. Escape: close suggestions.</p>
       <p id="editor-status" role="status">Loading source editor…</p>
       <ul id="editor-problems" aria-label="Source problems" hidden></ul>
+      </div>
       <pre id="lesson-error" role="alert" hidden></pre>
     </section>
     <section class="preview-panel" aria-labelledby="preview-heading">

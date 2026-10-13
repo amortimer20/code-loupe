@@ -17,7 +17,7 @@
     "build:site": "npm run build --workspace @code-loupe/site",
     "build:playground": "npm run build:site",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspace code-loupe",
+    "test": "npm run test --workspaces --if-present",
     "typecheck:browser": "tsc --project tests/browser/tsconfig.json --noEmit",
     "test:browser": "npm run build && npm run test:browser:built",
     "test:browser:built": "playwright test",

@@ -39,6 +39,8 @@ This is an npm workspace monorepo:
   `error-panel.ts` annotations. They end execution while preserving prior state;
   they are distinct from invalid-YAML load failures.
 - `apps/site/`: Astro static gallery, sample pages, authoring guide, and playground.
+  `src/authoring/` contains pure YAML-document edits and the Step cards builder.
+  Preserve the raw draft, advanced actions, comments, and shared source undo history.
   Import the browser player only in client scripts; its entry depends on DOM globals.
   Build-time validation uses `code-loupe/lesson` and `code-loupe/state` instead.
 - `lessons/<language>/<slug>/`: each sample's canonical `lesson.yaml` and `index.md`
@@ -55,7 +57,7 @@ Run commands at the repository root:
 - `npm install`: install and link both workspaces.
 - `npm run dev`: run the Astro sample site and playground at localhost:5173.
 - `npm run typecheck`: check the player and Astro site.
-- `npm test`: run snapshot, scope, call/return, and theme checks with Node and tsx.
+- `npm test`: run player snapshot/scope/theme checks and site document-editing checks with Node and tsx.
 - `npm run typecheck:browser`: check the browser suite and Playwright configuration.
 - `npm run test:e2e`: build both outputs and run behavioral browser checks.
 - `npm run verify`: unit tests, browser types, full build/type checks, and all browser/visual checks.

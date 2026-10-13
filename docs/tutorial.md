@@ -17,7 +17,8 @@ npm install
 npm run dev
 ```
 
-Open `/playground/` at the local URL Astro prints. Replace the editor contents
+Open `/playground/` at the local URL Astro prints and choose the **YAML** tab.
+Replace the editor contents
 with this complete lesson:
 
 ```yaml
@@ -43,6 +44,26 @@ that block, not to lines in the YAML file. `language` chooses syntax highlightin
 and value formatting; `title` is optional.
 
 ### Editor assistance
+
+The **Builder** tab offers introductory step forms: Highlight a line, Show a value,
+Store a value, and Print. Use **New lesson** and save lesson details to start from
+blank code. Save each step and inspect the real player at that point.
+Number/Text/Boolean/None controls distinguish values such as `1`, `"1"`, and `True`;
+Number display can explicitly preserve a float such as `5.0`.
+
+Scalar-variable badge sources fill their values from already-authored earlier
+steps. Teachers still supply expression results and captions; no code executes.
+Print text remains explicit, allowing a badge's value inside a longer sentence.
+Badges and printing still require separate steps.
+
+Builder and YAML share undo/redo. Advanced actions remain available through YAML
+and their captions can be edited in Builder. Unsaved form entries remain visible
+when switching views, but only saved edits are saved/downloaded. Discard stale form edits if its step changed in YAML. Syntax errors and documents using anchors/aliases
+stay available in YAML. Use **Delete step** to remove a card; Undo restores it.
+If a draft stops previewing, **Restore last working lesson** explicitly recovers
+the last successful preview (or the starting lesson when no checkpoint exists).
+Working copies persist across reloads when storage is available, and restoring
+can itself be undone. Nothing replaces a broken draft automatically.
 
 The playground highlights YAML and supplies schema completion, hover descriptions,
 and source errors. Press Ctrl+Space for suggestions. Select a problem below the

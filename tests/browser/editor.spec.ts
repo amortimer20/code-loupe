@@ -115,6 +115,7 @@ test('plain editor remains usable when the enhanced editor cannot load', async (
   await page.route('**/monaco-lesson-editor*.js', route => route.abort());
   await page.goto('/playground/?sample=python/hello-world');
   await expect(page.locator('#editor-status')).toContainText('Source assistance could not load');
+  await page.getByRole('tab', { name: 'YAML', exact: true }).click();
   const fallback = page.locator('#lesson-source');
   await expect(fallback).toBeVisible();
   await fallback.fill(simple);

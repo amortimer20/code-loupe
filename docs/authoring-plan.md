@@ -78,6 +78,14 @@ Acceptance:
 
 ## Slice 2: add a small builder
 
+The first implementation provides lesson details, introductory action forms,
+step cards, new lessons, and a shared source/undo history. Save lesson details/step
+commits one form transaction and updates the real preview. Pending entries survive
+view switching; stale forms require an explicit reload rather than overwriting YAML.
+Pending entries are not persisted across page reloads. Advanced captions are
+editable while their actions remain source-editable. Read-only preservation is
+used for documents with anchors, aliases, or unsupported tags/keys.
+
 Agreed first-screen layout (2026-10-13): **Step cards**, as reviewed in the
 interactive mockup.
 
@@ -213,3 +221,13 @@ content is paused. Choose subsequent action forms from observed authoring needs.
   highlighting/indentation, with the current repository linked from its README.
 - [YAML document API](https://eemeli.org/yaml/#documents):
   document/node editing and comments.
+
+
+### Current polish slice
+
+Step deletion is undoable. Save/Discard labels distinguish pending form entries
+from the shared draft history. Invalid YAML offers an explicit last-working
+restore, persisted separately from the draft. Forms gain stronger control borders
+and selected-card separation. Reordering stays deferred; later steps may depend
+on earlier steps, including after deletion. Next, test these controls during real
+lesson editing before expanding actions or adding drag handles.

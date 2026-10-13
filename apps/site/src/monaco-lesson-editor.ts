@@ -63,7 +63,10 @@ export function createSourceEditor(source: HTMLTextAreaElement, original: string
   const model = monaco.editor.createModel(original, 'yaml', monaco.Uri.parse('file:///draft/lesson.yaml'));
   model.updateOptions({ tabSize: 2, insertSpaces: true });
   const initialVersion = model.getAlternativeVersionId();
-  const getValue = () => model.getAlternativeVersionId() === initialVersion ? original : model.getValue();
+  const exactText = new Map([[initialVersion, original]]);
+  const getValue = () => exactText.get(model.getAlternativeVersionId()) ?? model.getValue();
+  let replacing = false;
+  let redoCount = 0;
   mount.hidden = false;
   const editor = monaco.editor.create(mount, {
     model, automaticLayout: true, ariaLabel: 'Lesson YAML',
@@ -89,7 +92,9 @@ export function createSourceEditor(source: HTMLTextAreaElement, original: string
   const sourceObserver = new MutationObserver(syncSourceState);
   sourceObserver.observe(source, { attributes: true, attributeFilter: ['disabled', 'aria-invalid'] });
   syncSourceState();
-  const change = model.onDidChangeContent(() => {
+  const change = model.onDidChangeContent(event => {
+    if (replacing) return;
+    redoCount = event.isUndoing ? redoCount + 1 : event.isRedoing ? Math.max(0, redoCount - 1) : 0;
     source.value = getValue();
     source.dispatchEvent(new Event('input', { bubbles: true }));
   });
@@ -137,5 +142,32 @@ export function createSourceEditor(source: HTMLTextAreaElement, original: string
     observer.disconnect(); sourceObserver.disconnect(); change.dispose(); markers.dispose();
     editor.dispose(); model.dispose(); yaml.dispose();
   });
-  return { getValue, setRuntimeError };
+  return {
+    getValue, setRuntimeError,
+    replace(text: string) {
+      if (text === getValue()) return;
+      replacing = true;
+      redoCount = 0;
+      try {
+        editor.pushUndoStop();
+        editor.executeEdits('builder', [{ range: model.getFullModelRange(), text }]);
+        editor.pushUndoStop();
+        exactText.set(model.getAlternativeVersionId(), text);
+      } finally { replacing = false; }
+      source.value = getValue();
+      source.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+    undo: () => editor.trigger('builder', 'undo', null), redo: () => editor.trigger('builder', 'redo', null),
+    canUndo: () => model.getAlternativeVersionId() !== initialVersion, canRedo: () => redoCount > 0,
+    focus: () => editor.focus(), layout: () => editor.layout(),
+    focusStep(step: number) {
+      const counter = new LineCounter(), doc = parseDocument(getValue(), { lineCounter: counter });
+      const steps = doc.get('steps', true), node = isSeq(steps) ? steps.items[step - 1] : undefined;
+      if (isNode(node) && node.range) {
+        const pos = counter.linePos(node.range[0]);
+        editor.setPosition({ lineNumber: pos.line, column: pos.col }); editor.revealLineInCenter(pos.line);
+      }
+      editor.focus();
+    },
+  };
 }

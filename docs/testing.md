@@ -69,6 +69,15 @@ exit, theme selection preservation, exact CRLF downloads, narrow screens, and th
 plain-editor fallback when its enhancement cannot load. Canonical draft tests edit
 through the visible editor and verify saved/restored text for every sample.
 
+Site document tests run through `npm test` alongside the player suite. They cover
+exact no-edit corpus round trips, preserved advanced fields/comments/code/type tags,
+typed scalar values, prefix-state reads, stale/unsafe edits, and lesson creation.
+Builder browser checks create the arithmetic and naming-value lessons through
+forms using the real player, then verify export/restore, shared undo/redo, theme
+preservation, incomplete/stale forms, advanced captions, invalid source, fallback
+editing, and narrow layouts with full and reduced motion. Form edits are applied
+transactions, and source edits use the same history.
+
 Monaco is pinned to 0.52.2 because the current `monaco-yaml` worker manager uses
 the pre-0.53 worker API. Keep the shared version override when updating dependencies
 until completion/hover/diagnostics work on a newer release. Vite replaces Monaco's

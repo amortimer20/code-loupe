@@ -19,7 +19,7 @@ npm run build        # player library + static Astro site
 npm run build:player # packages/player/dist/code-loupe.js and accompanying assets
 npm run build:site   # apps/site/dist/ — deploy this folder to a static host
 npm run typecheck    # check both workspaces
-npm test             # snapshot and call-frame tests
+npm test             # player state and site document-editing tests
 npm run test:e2e      # build + behavioral Chromium checks (full and reduced motion)
 npm run test:docker   # complete pipeline, including visual comparisons, in Docker
 ```
@@ -27,10 +27,39 @@ npm run test:docker   # complete pipeline, including visual comparisons, in Dock
 The home page is a searchable sample library. Each lesson has a player, teaching
 notes, a YAML download, and an **Edit in playground** link. Open
 [the playground](http://localhost:5173/playground/) to author a lesson locally.
-Edits restart the preview at Step 0 after a short pause; errors appear below the
-editor and in the player. Drafts are saved in browser storage when available,
+Builder opens with expandable step cards beside the live player. Use **Lesson
+details** for title, language, and code, then add a line highlight, value badge,
+assignment, or print step. Choose Number, Text, Boolean, or None explicitly.
+**Save step** saves a form edit and previews that step's completed state; unsaved
+entries stay in the form while switching views, but are not saved across reloads.
+**New lesson** has a separate browser draft from the samples.
+
+The **YAML** tab edits the same draft. Source edits restart the preview at Step 0
+after a short pause; errors appear below the editor and in the player. Undo/Redo
+share one history between both views. Advanced actions retain their YAML and have
+editable captions; anchors, aliases, and unsupported tags stay in the source editor.
+Drafts are saved in browser storage when available,
 with separate drafts for each sample. Download preserves the exact YAML, even
-for incomplete lessons. There is no account or backend.
+for incomplete lessons. Switching views without edits preserves the original text;
+saving forms can adjust YAML formatting while preserving untouched fields and
+comments. If a pending form's step changes in YAML, discard its form edits before saving.
+There is no account or backend.
+
+In the playground, **Save step** and **Save lesson details** put form edits into
+this browser's draft. **Discard step edits** and **Discard details edits** drop
+unsaved form entries; **Undo** reverses edits already saved. **Delete step** is
+undoable. Deleting a step can leave later steps needing repair if they use its value.
+If YAML becomes invalid, **Restore last working lesson** recovers the most recent
+successful preview, including after reloading when browser storage is available.
+Restore is itself undoable. Older drafts without a checkpoint can recover the
+starting sample (or the blank new lesson); that fallback is not your earlier edits.
+Download YAML to keep a copy outside this browser.
+
+Saved drafts from before the address-format change may show a migration error.
+Choose **Update draft syntax** to convert their old location mappings while keeping
+the authored code, values, and captions. The update shares Undo/Redo with other
+edits. It never runs automatically; unsafe or ambiguous drafts remain available
+in YAML for repair. The player still rejects the removed syntax.
 
 On a sample page, the four-corner **Enter fullscreen** icon at the top right of
 the player fills the viewport. It preserves your step; click the **Exit fullscreen**
