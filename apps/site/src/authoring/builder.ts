@@ -1,6 +1,10 @@
 import { appendStepForm, newStepForm, deleteStep, actionLabels, editCaption, editDetails, editStep, formOf, prefixSnapshot, readDocument, scalarBindings, stepsOf, type Action, type StepForm } from './lesson-document';
 
-interface Host { source(): string; edit(source: string, step: number): void; select(step: number): void; yaml(): void }
+import { languageChoices, type LanguageChoice } from './languages';
+import { findNth } from 'code-loupe/state';
+import type { CodeTarget } from './code-target';
+
+interface Host { source(): string; edit(source: string, step: number): void; select(step: number): void; yaml(): void; pick(expressions: boolean): void; cancelPick(): void; canPick(): boolean; languages: readonly LanguageChoice[] }
 const escape = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]!));
 const option = (value: string, label: string, selected: string) => `<option value="${escape(value)}" ${value === selected ? 'selected' : ''}>${escape(label)}</option>`;
 const field = (name: string, label: string, value: string, type = 'text') => `<label>${label}<input name="${name}" type="${type}" aria-label="${label}" ${type === 'number' ? 'step="any"' : ''} value="${escape(value)}"></label>`;
@@ -47,7 +51,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
 
   function occurrenceNeeded(form: StepForm, code: string, currentLine: number) {
     const line = code.split('\n')[Number(form.line || currentLine) - 1] ?? '';
-    return form.nth !== '1' || (!!form.over && line.split(form.over).length > 2);
+    return form.nth !== '1' || (!!form.over && findNth(line, form.over, 2) >= 0);
   }
 
   function syncOccurrence(form: HTMLFormElement, values: StepForm) {
@@ -66,6 +70,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
     const choices = lines.map((text, index) => option(String(index + 1), `${index + 1} · ${text.trim()}`, form.line));
     if (form.line && !choices.some((_choice, index) => String(index + 1) === form.line)) choices.push(option(form.line, `${form.line} · check this line`, form.line));
     let html = `<div class="builder-fields"><label>Step action<select aria-label="Step action" name="action">${Object.entries(actionLabels).map(([key, label]) => option(key, label, form.action)).join('')}</select></label><label>Code line<select aria-label="Code line" name="line">${option('', 'Keep current line', form.line)}${choices.join('')}</select></label></div>`;
+    html += `<button type="button" class="builder-pick" data-pick-code aria-pressed="false" ${host.canPick() ? '' : 'disabled'}>Pick from preview</button><p class="builder-note" data-code-pick-status role="status"></p>`;
     if (form.action === 'badge') {
       const vars = context ? scalarBindings(context) : [];
       if (form.source !== 'literal' && !vars.some(variable => variable.name === form.source)) html += '<p class="builder-note">This source needs a valid earlier step. Its current value cannot be filled yet.</p>';
@@ -94,6 +99,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
   }
 
   function render() {
+    host.cancelPick();
     let doc: ReturnType<typeof readDocument>;
     try { doc = readDocument(host.source()); }
     catch (error) {
@@ -106,7 +112,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
     const details = { title: String(doc.get('title') ?? ''), language: String(doc.get('language') ?? ''), code: String(doc.get('code') ?? '') };
     const detailsBase = JSON.stringify(details), shown = detailsPending ?? details;
     const staleDetails = detailsPending && detailsPending.base !== detailsBase;
-    container.innerHTML = `<details class="builder-details" ${detailsOpen ? 'open' : ''}><summary>Lesson details · ${escape(details.language)}</summary><form data-details><label>Title<input name="title" value="${escape(shown.title)}"></label><label>Language<input name="language" value="${escape(shown.language)}"></label><label>Displayed code<textarea aria-label="Displayed code" name="code" rows="5" spellcheck="false" class="builder-code">${escape(shown.code)}</textarea></label>${errorBox}<div class="builder-apply"><button type="submit">Save lesson details</button><button type="button" data-reload-details ${detailsPending ? '' : 'hidden'}>Discard details edits</button><span class="builder-form-status" role="status">${staleDetails ? 'YAML changed; discard details edits before saving.' : detailsPending ? 'Unsaved form edits' : ''}</span></div></form></details>
+    container.innerHTML = `<details class="builder-details" ${detailsOpen ? 'open' : ''}><summary>Lesson details · ${escape(details.language)}</summary><form data-details><label>Title<input name="title" value="${escape(shown.title)}"></label><label>Language<select name="language" aria-label="Language">${languageChoices(host.languages, shown.language).map(choice => option(choice.id, choice.name, shown.language)).join('')}</select></label><p class="builder-note">Language controls syntax highlighting and value formatting. You still author the steps.</p><label>Displayed code<textarea aria-label="Displayed code" name="code" rows="5" spellcheck="false" class="builder-code">${escape(shown.code)}</textarea></label>${errorBox}<div class="builder-apply"><button type="submit">Save lesson details</button><button type="button" data-reload-details ${detailsPending ? '' : 'hidden'}>Discard details edits</button><span class="builder-form-status" role="status">${staleDetails ? 'YAML changed; discard details edits before saving.' : detailsPending ? 'Unsaved form edits' : ''}</span></div></form></details>
       <div class="builder-heading"><h3>Teaching steps</h3><span>${steps.length} saved steps${newStep ? " · 1 new" : ""}</span></div>
       <div class="builder-cards">${cards.map((step, index) => {
         const isNew = !!newStep && index === steps.length;
@@ -184,6 +190,12 @@ export function createBuilder(container: HTMLElement, host: Host) {
   });
   container.addEventListener('click', event => {
     const button = (event.target as Element).closest('button'); if (!button) return;
+    if (button.hasAttribute('data-pick-code')) {
+      if (button.getAttribute('aria-pressed') === 'true') { host.cancelPick(); const message = container.querySelector('[data-code-pick-status]'); if (message) message.textContent = 'Picking cancelled. Your form is unchanged.'; return; }
+      const action = button.closest('form')!.querySelector<HTMLSelectElement>('[name="action"]')!.value;
+      host.pick(action === 'badge');
+      return;
+    }
     if (button.hasAttribute('data-yaml')) { host.yaml(); return; }
     if (button.dataset.step !== undefined) { selected = Number(button.dataset.step); editingNew = !!newStep && selected === stepsOf(readDocument(host.source())).length; optionsOpen = false; render(); if (!editingNew) host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
     if (button.hasAttribute('data-reload-step')) { pending.delete(selected); render(); container.querySelector<HTMLElement>('[data-step-form] input, [data-step-form] select, [data-step-form] textarea')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); }
@@ -215,6 +227,37 @@ export function createBuilder(container: HTMLElement, host: Host) {
       container.querySelector<HTMLSelectElement>('[data-new-step] [name="action"]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected();
     }
   });
+  function applyCodeTarget(target: CodeTarget) {
+    const form = container.querySelector<HTMLFormElement>('[data-step-form]');
+    if (!form) throw new Error('Select an editable step first.');
+    const values = capture(form);
+    if (!('action' in values)) throw new Error('Use YAML to change the target of this advanced step.');
+    values.line = String(target.line);
+    if (target.over !== undefined) { values.over = target.over; values.nth = String(target.nth); }
+    render(); revealSelected();
+    container.querySelector<HTMLButtonElement>('[data-pick-code]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches });
+    container.querySelector<HTMLElement>('.builder-form-status')!.textContent = 'Unsaved form edits';
+  }
+  function syncPicking(on = false) {
+    const button = container.querySelector<HTMLButtonElement>('[data-pick-code]');
+    if (!button) return;
+    button.disabled = !on && !host.canPick();
+    button.setAttribute('aria-pressed', String(on));
+    button.textContent = on ? 'Cancel picking' : 'Pick from preview';
+  }
+  function followPreview(step: number, preserveNew = false) {
+    if (preserveNew && editingNew) return;
+    // Playback reveals cards without replacing a form while someone is typing.
+    const active = document.activeElement;
+    if (active instanceof Element && container.contains(active) && active.closest('form')) return;
+    let count: number;
+    try { count = stepsOf(readDocument(host.source())).length; } catch { return; }
+    if (!count) return;
+    const target = Math.max(0, Math.min(count - 1, step - 1));
+    if (!editingNew && selected === target) return;
+    selected = target; editingNew = false; optionsOpen = false;
+    render(); revealSelected();
+  }
   render();
-  return { reset() { pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; render(); }, refresh: render, revealSelected, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
+  return { followPreview, applyCodeTarget, syncPicking, reset() { pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; render(); }, refresh: render, revealSelected, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
 }

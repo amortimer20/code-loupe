@@ -507,3 +507,23 @@ and the existing player's fit layout. Reveal selected and new card headers with
 minimal scrolling; respect reduced motion and keep tabs/history outside the pane.
 Compact the playground heading. Narrow screens retain the existing stacked flow;
 an Edit/Preview switch remains separate future work.
+
+
+## 2026-10-13 — Pick code into a form
+
+Use an explicit preview-picking mode so ordinary viewing does not change forms.
+Click a line or drag a single-line badge expression; derive occurrence from the
+selected offsets using the player's matching rules. Keep the value and caption
+teacher-authored, and leave picking as an unsaved edit. Manual controls remain the
+keyboard alternative; advanced targets stay in YAML. The preview adapter lives
+in the site, leaving snapshot generation and student players unchanged.
+
+
+## 2026-10-13 — Picker cues and preview following
+
+Highlight hovered code only during explicit picking. Follow preview step indices
+in the Builder without moving keyboard focus or writing the draft; keep pending
+forms/new cards and pause autoplay when a form is focused. Use the installed
+highlighter's language catalog for a dropdown, prioritizing common languages and
+preserving imported aliases or unknown names. This is syntax-highlighting support,
+not execution support for each language.

@@ -235,3 +235,9 @@ lesson editing before expanding actions or adding drag handles.
 New step cards now remain outside the shared YAML until validated Save. Only one
 new card is open at a time; Cancel drops it. Optional number-display settings and
 conditional occurrence fields shorten the forms without discarding authored values.
+
+
+Explicit preview picking now fills supported forms' code line and, for badges,
+single-line expression text and occurrence. It is an unsaved form edit and keeps
+values/captions intact. Manual controls remain available. Step duplication,
+insertion and keyboard reordering remain separate work; no dragging is added.

@@ -1,4 +1,5 @@
 ---
+import { bundledLanguagesInfo } from 'shiki/langs';
 import Layout from '../layouts/Layout.astro';
 import { getSamples, sitePath } from '../lib/samples';
 const samples = await getSamples();
@@ -11,7 +12,7 @@ const samples = await getSamples();
     <p class="lede">Build an explanation one teaching step at a time, or edit its YAML. Values and input are authored by you.</p>
     <p id="draft-context">Your draft is separate from the published samples. <a href={sitePath('docs/')}>Authoring guide →</a></p>
   </header>
-  <div class="workspace" data-samples={JSON.stringify(samples.map(({entry}) => ({ id: entry.id, title: entry.data.title, source: sitePath(`lessons/${entry.id}.yaml`) })))}>
+  <div class="workspace" data-languages={JSON.stringify([{ id: 'text', name: 'Plain text', aliases: ['txt', 'plaintext'] }, ...bundledLanguagesInfo.map(({ id, name, aliases }) => ({ id, name, aliases }))])} data-samples={JSON.stringify(samples.map(({entry}) => ({ id: entry.id, title: entry.data.title, source: sitePath(`lessons/${entry.id}.yaml`) })))}>
     <section class="editor-panel" aria-labelledby="author-heading">
       <div class="panel-heading">
         <h2 id="author-heading">Author lesson</h2>

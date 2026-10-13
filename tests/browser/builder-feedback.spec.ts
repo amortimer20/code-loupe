@@ -1,0 +1,81 @@
+import { test, expect, fillLessonSource, ready, goTo } from './helpers';
+import type { CodeLoupe } from '../../packages/player/src/code-loupe';
+
+test('picking highlights the hovered code line only while active', async ({ page }) => {
+  await page.goto('/playground/?sample=python/simple-arithmetic');
+  await expect(page.locator('[data-step-form]')).toBeVisible();
+  const line = page.locator('code-loupe .code-host .line').first();
+  await line.hover();
+  const before = await line.evaluate(el => getComputedStyle(el).boxShadow);
+  await page.getByRole('button', { name:'Pick from preview', exact:true }).click();
+  await line.hover();
+  await expect.poll(() => line.evaluate(el => getComputedStyle(el).boxShadow)).not.toBe(before);
+  await page.keyboard.press('Escape');
+  await expect.poll(() => line.evaluate(el => getComputedStyle(el).boxShadow)).toBe(before);
+});
+
+test('preview navigation and autoplay reveal matching cards without stealing focus or losing pending entries', async ({ page }) => {
+  await page.setViewportSize({ width:1280, height:600 });
+  await page.goto('/playground/?sample=python/nested-function-call');
+  await expect(page.locator('.builder-card')).toHaveCount(19);
+  const player = await ready(page, 19), original = await page.locator('#lesson-source').inputValue();
+  await page.locator('[data-step-form]').getByLabel('Caption', { exact:true }).fill('Keep this pending caption.');
+  await player.locator('[data-act="next"]').click();
+  await goTo(player, 17);
+  await expect(page.locator('[data-step="16"]')).toHaveAttribute('aria-expanded','true');
+  expect(await page.evaluate(() => document.activeElement?.tagName)).toBe('CODE-LOUPE');
+  await expect.poll(async () => {
+    const header = await page.locator('[data-step="16"]').boundingBox(), pane = await page.locator('#author-scroll').boundingBox();
+    return header!.y >= pane!.y && header!.y + header!.height <= pane!.y + pane!.height;
+  }).toBe(true);
+  await goTo(player, 1);
+  await expect(page.locator('[data-step-form]').getByLabel('Caption', { exact:true })).toHaveValue('Keep this pending caption.');
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await page.locator('#builder-new-action').selectOption('badge');
+  await page.getByRole('button', { name:'Add step', exact:true }).click();
+  await page.locator('[data-new-step]').getByLabel('Caption', { exact:true }).fill('A new pending card.');
+  await player.locator('[data-act="next"]').click();
+  await expect(page.locator('[data-step="1"]')).toHaveAttribute('aria-expanded','true');
+  await page.getByRole('button', { name:'Edit new step', exact:true }).click();
+  await expect(page.locator('[data-new-step]').getByLabel('Caption', { exact:true })).toHaveValue('A new pending card.');
+  await page.getByRole('button', { name:'Cancel new step', exact:true }).click();
+  await fillLessonSource(page, 'language: python\ncode: |\n  print(1)\n  print(2)\n  print(3)\nsteps:\n  - { line: 1, print: "1" }\n  - { line: 2, print: "2" }\n  - { line: 3, print: "3" }\n');
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
+  await page.getByRole('tab', { name:'Builder', exact:true }).click();
+  await player.evaluate(el => { (el as CodeLoupe).setAttribute('motion','reduced'); (el as CodeLoupe).speed = 2; });
+  await player.locator('[data-act="play"]').click();
+  await expect(page.locator('[data-step="2"]')).toHaveAttribute('aria-expanded','true');
+  await expect.poll(() => player.evaluate(el => (el as CodeLoupe).step)).toBe(3);
+  await expect(page.locator('[data-step-form]').getByLabel('Output text')).toHaveValue('3');
+  await expect(player.locator('[data-act="play"]')).toHaveAttribute('aria-label','Play');
+  await goTo(player, 0);
+  await player.locator('[data-act="play"]').click();
+  await expect(player.locator('[data-act="play"]')).toHaveAttribute('aria-label','Pause');
+  const caption = page.locator('[data-step-form]').getByLabel('Caption', { exact:true });
+  await caption.focus();
+  await expect(player.locator('[data-act="play"]')).toHaveAttribute('aria-label','Play');
+  await expect(caption).toBeFocused();
+});
+
+test('language dropdown exposes highlighter choices and preserves imported aliases', async ({ page }) => {
+  await page.goto('/playground/?new=1');
+  await expect(page.locator('.builder-details')).toBeVisible();
+  await page.locator('.builder-details summary').click();
+  const language = page.locator('[data-details]').getByLabel('Language', { exact:true });
+  await expect(language).toHaveValue('python');
+  await expect(language.locator('option[value="rust"]')).toHaveCount(1);
+  await expect(language.locator('option[value="javascript"]')).toHaveCount(1);
+  await expect(language.locator('option[value="text"]')).toHaveCount(1);
+  await language.selectOption('javascript');
+  await page.getByRole('button', { name:'Save lesson details', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 0 steps');
+  await expect(page.locator('#lesson-source')).toHaveValue(/language: javascript/);
+  await fillLessonSource(page, 'language: py\ncode: |\n  print("hi")\nsteps: []\n');
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 0 steps');
+  await page.getByRole('tab', { name:'Builder', exact:true }).click();
+  if (!(await page.locator('.builder-details').evaluate(el => (el as HTMLDetailsElement).open))) await page.locator('.builder-details summary').click();
+  await expect(language).toHaveValue('py');
+  await page.locator('[data-details]').getByLabel('Title', { exact:true }).fill('Alias preserved');
+  await page.getByRole('button', { name:'Save lesson details', exact:true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(/language: py/);
+});

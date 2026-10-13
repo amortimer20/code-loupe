@@ -125,3 +125,6 @@ textarea[aria-invalid='true'] { border-color: var(--error); }
   #preview code-loupe { height:100%; }
   .preview-help { flex-shrink:0; font-size:0.75rem; margin:0.4rem 0 0; }
 }
+
+.builder-pick { justify-self:start; }
+[data-code-pick-status]:empty { display:none; }

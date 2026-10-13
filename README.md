@@ -67,6 +67,18 @@ or adding a card reveals its header and first fields without moving the page.
 Tabs and Undo/Redo remain above the editor. Card scrolling respects reduced motion;
 narrow screens keep the stacked layout and ordinary page scrolling.
 
+Use **Pick from preview** in a supported step to click a code line. For **Show a
+value**, drag across an expression within one line to fill its text and occurrence.
+Picking changes only the unsaved form; it preserves the authored value and caption.
+Escape or **Cancel picking** stops the picker. Manual line/text/occurrence fields
+remain available for keyboard use. Advanced targets remain editable in YAML.
+
+Picking highlights the hovered line. Preview stepping, scrubbing and autoplay
+select and reveal the matching saved card without moving keyboard focus. Pending
+edits and new cards are kept; focusing a form pauses autoplay. Lesson details
+uses a language dropdown from the installed syntax-highlighting catalog, with
+common languages first and imported aliases preserved until explicitly changed.
+
 Saved drafts from before the address-format change may show a migration error.
 Choose **Update draft syntax** to convert their old location mappings while keeping
 the authored code, values, and captions. The update shares Undo/Redo with other

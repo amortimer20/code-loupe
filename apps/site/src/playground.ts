@@ -1,11 +1,14 @@
 import { CodeLoupe } from 'code-loupe';
 import './playground.css';
 import { enhanceSourceEditor } from './lesson-source-editor';
+import type { LanguageChoice } from './authoring/languages';
+import { createCodePicker } from './authoring/code-picker';
 import { createBuilder } from './authoring/builder';
-import { newLesson } from './authoring/lesson-document';
+import { newLesson, readDocument } from './authoring/lesson-document';
 import { migrateDraft } from './authoring/draft-migration';
 
 interface SampleOption { id: string; title: string; source: string }
+const languages: LanguageChoice[] = JSON.parse(document.querySelector<HTMLElement>('.workspace')!.dataset.languages!);
 const samples: SampleOption[] = JSON.parse(document.querySelector<HTMLElement>('.workspace')!.dataset.samples!);
 const requested = new URLSearchParams(location.search).get('sample');
 const startingNew = new URLSearchParams(location.search).has('new');
@@ -42,6 +45,7 @@ let lastError = '';
 let draftText = '';
 let assistance: Awaited<ReturnType<typeof enhanceSourceEditor>> | undefined;
 let builder: ReturnType<typeof createBuilder> | undefined;
+let picker: ReturnType<typeof createCodePicker> | undefined;
 let mode: 'builder' | 'yaml' = 'builder';
 let destination: number | null = null;
 let previewReady = false;
@@ -79,6 +83,7 @@ restoreWorking.addEventListener('click', () => {
 });
 function syncHistory() { undo.disabled = !assistance?.canUndo(); redo.disabled = !assistance?.canRedo(); }
 function selectMode(next: 'builder' | 'yaml') {
+  picker?.cancel();
   mode = next;
   document.querySelector<HTMLElement>('#builder-pane')!.hidden = mode !== 'builder';
   document.querySelector<HTMLElement>('#source-pane')!.hidden = mode !== 'yaml';
@@ -86,12 +91,23 @@ function selectMode(next: 'builder' | 'yaml') {
   document.querySelector('#yaml-tab')!.setAttribute('aria-selected', String(mode === 'yaml'));
   assistance?.layout();
   if (mode === 'yaml') document.querySelector('#author-scroll')!.scrollTo({ top:0, behavior:'instant' });
-  if (mode === 'builder') { builder?.refresh(); builder?.revealSelected(); destination = builder?.selectedStep() ?? 0; if (previewReady) player.goTo(Math.min(destination, player.total)); }
+  if (mode === 'builder') { builder?.refresh(); if (previewReady) { destination = player.step; builder?.followPreview(player.step, true); } builder?.revealSelected(); }
 }
 document.querySelector('#builder-tab')!.addEventListener('click', () => selectMode('builder'));
 document.querySelector('#yaml-tab')!.addEventListener('click', () => selectMode('yaml'));
 undo.addEventListener('click', () => assistance?.undo());
 redo.addEventListener('click', () => assistance?.redo());
+
+player.addEventListener('stepchange', () => {
+  if (mode !== 'builder' || !previewReady) return;
+  destination = player.step;
+  builder?.followPreview(player.step);
+});
+const builderPane = document.querySelector<HTMLElement>('#builder-pane')!;
+builderPane.addEventListener('focusin', event => {
+  if ((event.target as Element).closest('form')) player.pause();
+});
+
 
 player.addEventListener('lessonerror', (event) => {
   lastError = (event as CustomEvent<{ message: string }>).detail.message;
@@ -112,7 +128,9 @@ async function updatePreview(currentRevision: number) {
   const loaded = await player.loadLesson(previewSource);
   if (currentRevision !== revision) return;
   previewReady = loaded;
+  builder?.syncPicking();
   if (loaded && destination !== null) player.goTo(Math.min(destination, player.total));
+  if (loaded && mode === 'builder') builder?.followPreview(player.step);
   preview.style.visibility = '';
   preview.setAttribute('aria-busy', 'false');
   status.textContent = loaded ? `Ready · ${player.total} steps` : 'Check your lesson';
@@ -134,6 +152,7 @@ async function updatePreview(currentRevision: number) {
 
 editor.addEventListener('input', () => {
   draftText = assistance?.getValue() ?? editor.value;
+  previewReady = false;
   builder?.refresh();
   destination = mode === 'builder' ? builder?.selectedStep() ?? 0 : null;
   previewReady = false;
@@ -217,10 +236,20 @@ async function start() {
   syncWorkingRecovery(!previewReady);
   assistance.setRuntimeError(lastError);
   builder = createBuilder(document.querySelector<HTMLElement>('#builder-pane')!, {
+    languages,
     source: () => draftText,
     edit(source, step) { destination = step; assistance!.replace(source); },
     select(step) { destination = step; if (previewReady) player.goTo(Math.min(step, player.total)); },
     yaml() { selectMode('yaml'); assistance!.focusStep(builder?.selectedStep() ?? 1); },
+    canPick: () => mode === 'builder' && previewReady,
+    cancelPick: () => picker?.cancel(),
+    pick(expressions) { if (mode === 'builder' && previewReady) { player.pause(); picker?.start(expressions); } },
+  });
+  picker = createCodePicker(player, {
+    code: () => String(readDocument(draftText).get('code') ?? ''),
+    choose: target => builder!.applyCodeTarget(target),
+    message(text) { const message = document.querySelector('[data-code-pick-status]'); if (message) message.textContent = text; },
+    active: on => builder?.syncPicking(on),
   });
   selectMode(mode);
   syncHistory();

@@ -189,3 +189,16 @@ This is an initial Chromium suite, not a cross-browser certification. Firefox,
 WebKit, a full screen-reader/accessibility audit, real projector checks, and
 very large or deep lessons remain future coverage. Screenshot comparisons check
 still states; animation behavior is covered separately by functional tests.
+
+
+Preview-picking checks use real mouse drags across syntax-highlighted text spans,
+including reversed selections and repeated expressions. They cover explicit
+activation/cancellation, cross-line rejection, preserved pending values/captions,
+advanced-action preservation, and saved target edits through shared undo. Pure
+offset tests include overlapping matches, Unicode prefixes, trimming and invalid
+selections. These run alongside the desktop pane and resize checks.
+
+Hover/following checks verify picker-only line cues, manual preview navigation,
+autoplay card selection/reveal, retained keyboard focus and pending forms/new
+cards. Language checks verify catalog choices and imported aliases; pure ordering
+checks retain unknown imported names. These run with both motion preferences.
