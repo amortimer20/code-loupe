@@ -28,7 +28,7 @@ test('authors the complete numeric-input lesson with forms, preserving string in
   await form(page).getByLabel('Entered text', { exact:true }).fill('30');
   await save(page, 2);
   await add(page, 'badge');
-  await form(page).getByLabel('Expression text', { exact:true }).fill('input("Enter your age: ")');
+  await form(page).getByLabel('Code to highlight', { exact:true }).fill('input("Enter your age: ")');
   await form(page).getByLabel('Value source', { exact:true }).selectOption('console');
   await expect(form(page)).toContainText('Latest entered text: "30"');
   await save(page, 3);
@@ -40,7 +40,7 @@ test('authors the complete numeric-input lesson with forms, preserving string in
   await save(page, 4);
   await add(page, 'badge');
   await form(page).getByLabel('Code line', { exact:true }).selectOption('2');
-  await form(page).getByLabel('Expression text', { exact:true }).fill('text');
+  await form(page).getByLabel('Code to highlight', { exact:true }).fill('text');
   await form(page).getByLabel('Value source', { exact:true }).selectOption('text');
   await save(page, 5);
   await add(page, 'convert');
@@ -54,7 +54,7 @@ test('authors the complete numeric-input lesson with forms, preserving string in
   await save(page, 7);
   await add(page, 'badge');
   await form(page).getByLabel('Code line', { exact:true }).selectOption('3');
-  await form(page).getByLabel('Expression text', { exact:true }).fill('100 - age');
+  await form(page).getByLabel('Code to highlight', { exact:true }).fill('100 - age');
   await form(page).getByLabel('Value', { exact:true }).fill('70');
   await save(page, 8);
   await add(page, 'print');

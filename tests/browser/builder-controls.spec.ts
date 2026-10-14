@@ -1,6 +1,31 @@
 import { test, expect, ready, goTo } from './helpers';
 import type { CodeLoupe } from '../../packages/player/src/code-loupe';
 
+test('grouped step picker remains keyboard usable across categories without editing the draft', async ({ page }) => {
+  await page.goto('/playground/?new=1');
+  await ready(page, 0);
+  const original = await page.locator('#lesson-source').inputValue();
+  const picker = page.getByLabel('New step', { exact:true });
+  await expect(picker).toBeVisible();
+  expect(await picker.locator('optgroup').evaluateAll(groups => groups.map(group => group.getAttribute('label'))))
+    .toEqual(['Explanation', 'Values and variables', 'Console', 'Lists']);
+  await expect(picker).toHaveValue('highlight');
+  await picker.focus();
+  for (let i = 0; i < 4; i++) await page.keyboard.press('ArrowDown');
+  await expect(picker).toHaveValue('write');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name:'Add step', exact:true })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('[data-new-card]')).toContainText('Show a prompt');
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await page.getByRole('button', { name:'Cancel new step', exact:true }).click();
+  await picker.selectOption('remove');
+  await page.getByRole('button', { name:'Add step', exact:true }).click();
+  await expect(page.locator('[data-new-card]')).toContainText('Remove a list element');
+  await expect(page.getByLabel('List element', { exact:true })).toBeVisible();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+});
+
 test('step headers collapse without changing selection or losing pending edits, and overview follows playback', async ({ page }) => {
   await page.goto('/playground/?sample=python/simple-arithmetic');
   const player = await ready(page, 3), original = await page.locator('#lesson-source').inputValue();

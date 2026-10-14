@@ -73,11 +73,11 @@ test('dragging the second expression fills the occurrence, preserves authored va
   await form(page).getByLabel('Caption', { exact:true }).fill('Read the second x.');
   await form(page).getByRole('button', { name:'Pick from preview' }).click();
   await drag(page, 2, 6, 11);
-  await expect(form(page).getByLabel('Expression text')).toHaveValue('x + x');
+  await expect(form(page).getByLabel('Code to highlight')).toHaveValue('x + x');
   await expect(form(page).getByLabel('Occurrence')).toHaveValue('1');
   await form(page).getByRole('button', { name:'Pick from preview' }).click();
   await drag(page, 2, 10, 11, true);
-  await expect(form(page).getByLabel('Expression text')).toHaveValue('x');
+  await expect(form(page).getByLabel('Code to highlight')).toHaveValue('x');
   await expect(form(page).getByLabel('Occurrence')).toHaveValue('2');
   await expect(form(page).getByLabel('Value', { exact:true })).toHaveValue('5');
   await expect(form(page).getByLabel('Caption', { exact:true })).toHaveValue('Read the second x.');
@@ -98,12 +98,12 @@ test('cross-line picks are rejected and view changes cancel picking without chan
   await page.mouse.move(first.x + 1, first.y); await page.mouse.down();
   await page.mouse.move(last.x + last.width - 1, last.y, { steps:8 }); await page.mouse.up();
   await expect(form(page).locator('[data-code-pick-status]')).toContainText('one code line');
-  await expect(form(page).getByLabel('Expression text')).toHaveValue('');
+  await expect(form(page).getByLabel('Code to highlight')).toHaveValue('');
   await expect(page.locator('#lesson-source')).toHaveValue(source);
   await page.getByRole('tab', { name:'YAML', exact:true }).click();
   await expect(page.locator('code-loupe')).not.toHaveAttribute('data-code-picking');
   await page.getByRole('tab', { name:'Builder', exact:true }).click();
-  await expect(form(page).getByLabel('Expression text')).toHaveValue('');
+  await expect(form(page).getByLabel('Code to highlight')).toHaveValue('');
 });
 
 test('advanced steps keep their targets in YAML', async ({ page }) => {
@@ -124,7 +124,7 @@ test('manual occurrence controls recognize overlapping matches like the picker a
   await page.getByRole('tab', { name:'Builder', exact:true }).click();
   await page.locator('#builder-new-action').selectOption('badge');
   await page.getByRole('button', { name:'Add step', exact:true }).click();
-  await form(page).getByLabel('Expression text').fill('aa');
+  await form(page).getByLabel('Code to highlight').fill('aa');
   await expect(form(page).getByLabel('Occurrence')).toBeVisible();
   await form(page).getByLabel('Occurrence').fill('2');
   await form(page).getByLabel('Value type').selectOption('Text');

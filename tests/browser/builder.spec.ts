@@ -57,7 +57,7 @@ test('builds an arithmetic explanation from a blank lesson with the real preview
   await form(page).getByLabel('Caption', { exact: true }).fill('Evaluate the addition first.');
   await apply(page, 1);
   await add(page, 'badge');
-  await form(page).getByLabel('Expression text').fill('2 + 3');
+  await form(page).getByLabel('Code to highlight').fill('2 + 3');
   await form(page).getByLabel('Value', { exact: true }).fill('5');
   await form(page).getByLabel('Caption', { exact: true }).fill('The result is 5.');
   await apply(page, 2);
@@ -94,7 +94,7 @@ test('builds naming-value with scalar assignment and a source read filled from e
   await apply(page, 1);
   await add(page, 'badge');
   await form(page).getByLabel('Code line').selectOption('2');
-  await form(page).getByLabel('Expression text').fill('score');
+  await form(page).getByLabel('Code to highlight').fill('score');
   await form(page).getByLabel('Value source').selectOption('score');
   await apply(page, 2);
   await add(page, 'print');
@@ -311,19 +311,19 @@ test('a new card preserves the working preview and source until one successful s
   await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
   expect(await player.evaluate(el => (el as CodeLoupe).step)).toBe(step);
   await expect(page.getByRole('button', { name: 'Undo', exact: true })).toBeDisabled();
-  await form(page).getByLabel('Expression text').fill('missing');
+  await form(page).getByLabel('Code to highlight').fill('missing');
   await form(page).getByRole('button', { name: 'Save step' }).click();
   await expect(form(page).locator('.builder-field-error')).toBeVisible();
   await expect(page.locator('#lesson-source')).toHaveValue(original);
   await expect(page.locator('#lesson-error')).toBeHidden();
   await page.getByRole('tab', { name: 'YAML', exact: true }).click();
   await page.getByRole('tab', { name: 'Builder', exact: true }).click();
-  await expect(form(page).getByLabel('Expression text')).toHaveValue('missing');
+  await expect(form(page).getByLabel('Code to highlight')).toHaveValue('missing');
   await expect(page.locator('.builder-card')).toHaveCount(4);
   await page.locator('[data-step="0"]').click();
   await page.getByRole('button', { name: 'Edit new step', exact: true }).click();
   await expect(page.locator('.builder-card')).toHaveCount(4);
-  await form(page).getByLabel('Expression text').fill('2 + 3');
+  await form(page).getByLabel('Code to highlight').fill('2 + 3');
   await form(page).getByLabel('Value', { exact: true }).fill('5');
   await apply(page, 4);
   await page.getByRole('button', { name: 'Undo', exact: true }).click();
@@ -340,7 +340,7 @@ test('optional controls stay compact, reveal repeated expressions, and retain au
   await add(page, 'badge');
   await expect(form(page).getByLabel('Occurrence')).toBeHidden();
   await expect(form(page).getByLabel('Number display')).toBeHidden();
-  await form(page).getByLabel('Expression text').fill('x');
+  await form(page).getByLabel('Code to highlight').fill('x');
   await expect(form(page).getByLabel('Occurrence')).toBeVisible();
   await form(page).getByLabel('Occurrence').fill('2');
   await form(page).locator('.builder-options summary').click();
@@ -354,7 +354,7 @@ test('optional controls stay compact, reveal repeated expressions, and retain au
   await apply(page, 1);
   expect(parse(await page.locator('#lesson-source').inputValue()).steps[0].badge).toMatchObject({ nth: 2, type: 'float' });
   await form(page).getByLabel('Occurrence').fill('1');
-  await form(page).getByLabel('Expression text').fill('x + x');
+  await form(page).getByLabel('Code to highlight').fill('x + x');
   await expect(form(page).getByLabel('Occurrence')).toBeHidden();
   await apply(page, 1);
   await expect(form(page).getByLabel('Occurrence')).toBeHidden();
