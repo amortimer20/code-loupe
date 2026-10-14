@@ -127,7 +127,7 @@ test('identical authored fields follow comment-bearing nodes, while unchanged YA
   await fillLessonSource(page, identical);
   await expect(page.locator('#preview-status')).toHaveText('Ready · 2 steps');
   await page.getByRole('tab', { name:'Builder', exact:true }).click();
-  await page.locator('[data-step="0"]').click();
+  if (await page.locator('[data-step="0"]').getAttribute('aria-expanded') !== 'true') await page.locator('[data-step="0"]').click();
   await page.locator('.builder-organize summary').click();
   await page.getByRole('button', { name:'Move down', exact:true }).click();
   await expect(page.locator('[data-step-form] .builder-field-error')).toContainText('identical');

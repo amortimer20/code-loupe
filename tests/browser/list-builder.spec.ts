@@ -1,0 +1,90 @@
+import { test, expect, ready, goTo, canonical } from './helpers';
+import { parseLesson } from '../../packages/player/src/lesson';
+
+const form = '[data-step-form]';
+
+test('list forms edit canonical updates, sources and selections through shared Undo', async ({ page }) => {
+  await page.goto('/playground/?sample=python/list-update');
+  const player = await ready(page, 6), original = await canonical('list-update');
+  await expect(page.locator(form).getByLabel('Value type', { exact:true })).toHaveValue('List');
+  await expect(page.locator(form).getByLabel('Item 1 value', { exact:true })).toHaveValue('4');
+  await page.locator('[data-step="1"]').click();
+  await expect(page.getByLabel('List selection', { exact:true })).toHaveValue('numbers[1]');
+  await page.locator('[data-step="2"]').click();
+  await expect(page.getByLabel('List element', { exact:true })).toHaveValue('numbers[1]');
+  await page.getByLabel('Value source', { exact:true }).selectOption('literal');
+  await page.getByLabel('Value', { exact:true }).fill('9');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Check your lesson');
+  await page.locator('[data-step="4"]').click();
+  await expect(page.getByLabel('Value source', { exact:true })).toHaveValue('numbers');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  // The following print still contains 10: teachers repair it explicitly.
+  await expect(page.locator('#preview-status')).toHaveText('Check your lesson');
+  await page.locator('[data-step="5"]').click();
+  await page.getByLabel('Output text', { exact:true }).fill('[2, 9, 6]');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 6 steps');
+  await goTo(player, 3);
+  await expect(player.locator('.heap-object')).toContainText('9');
+  await goTo(player, 1);
+  await expect(player.locator('.heap-object')).toContainText('4');
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  await expect(page.locator('#lesson-source')).toHaveValue(original);
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 6 steps');
+  await page.locator('[data-step="3"]').click();
+  await expect(page.getByLabel('List element', { exact:true })).toHaveValue('');
+});
+
+test('typed list rows retain invalid drafts, allow removal and empty lists in a narrow fallback editor', async ({ page }) => {
+  await page.route('**/monaco-lesson-editor*.js', route => route.abort());
+  await page.setViewportSize({ width:390, height:844 });
+  await page.goto('/playground/?new=1');
+  await page.getByRole('tab', { name:'YAML', exact:true }).click();
+  await page.locator('#lesson-source').fill('language: python\ncode: |\n  numbers = []\nsteps: []\n');
+  await ready(page, 0);
+  await page.getByRole('tab', { name:'Builder', exact:true }).click();
+  await page.locator('#builder-new-action').selectOption('assign');
+  await page.getByRole('button', { name:'Add step', exact:true }).click();
+  await page.getByLabel('Variable name', { exact:true }).fill('numbers');
+  await page.getByLabel('Value type', { exact:true }).selectOption('List');
+  await page.getByRole('button', { name:'Add list item', exact:true }).click();
+  await page.getByLabel('Item 0 value', { exact:true }).fill('oops');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator(form).locator('.builder-field-error')).toContainText('finite number');
+  await page.getByRole('tab', { name:'YAML', exact:true }).click();
+  await page.getByRole('tab', { name:'Builder', exact:true }).click();
+  await expect(page.getByLabel('Item 0 value', { exact:true })).toHaveValue('oops');
+  await page.getByLabel('Item 0 type', { exact:true }).selectOption('Text');
+  await page.getByRole('button', { name:'Add list item', exact:true }).click();
+  await page.getByLabel('Item 1 type', { exact:true }).selectOption('Boolean');
+  await page.getByRole('button', { name:'Add list item', exact:true }).click();
+  await page.getByLabel('Item 2 type', { exact:true }).selectOption('None');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 1 steps');
+  expect(parseLesson(await page.locator('#lesson-source').inputValue()).steps[0].assign!.value).toEqual(['oops', true, null]);
+  for (let count = 3; count > 0; count--) await page.getByRole('button', { name:`Remove item ${count - 1}`, exact:true }).click();
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 1 steps');
+  expect(parseLesson(await page.locator('#lesson-source').inputValue()).steps[0].assign!.value).toEqual([]);
+  await page.getByRole('button', { name:'Undo', exact:true }).click();
+  expect(parseLesson(await page.locator('#lesson-source').inputValue()).steps[0].assign!.value).toEqual(['oops', true, null]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test('list element reads fill source values and preserve combined selection on Save', async ({ page }) => {
+  await page.goto('/playground/?sample=python/list-iteration');
+  await ready(page, 17);
+  await page.locator('[data-step="2"]').click();
+  await expect(page.getByLabel('Value source', { exact:true })).toHaveValue('numbers[0]');
+  await expect(page.getByLabel('List selection', { exact:true })).toHaveValue('numbers[0]');
+  await page.getByLabel('Caption', { exact:true }).fill('Read the first element.');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 17 steps');
+  const step = parseLesson(await page.locator('#lesson-source').inputValue()).steps[2];
+  expect(step.select).toBe('numbers[0]');
+  expect(step.badge!.value).toBe(2);
+  expect(step.badge!.from).toBe('numbers[0]');
+});

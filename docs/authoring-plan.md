@@ -135,7 +135,7 @@ snapshot; make clear that this reads lesson state, rather than executing code.
 Create simple new steps with one primary action plus optional line/caption.
 Imported multi-action steps retain their combinations and order. Present advanced
 actions or unsupported fields as preserved cards with a YAML-edit option; do not
-silently drop them or simplify them into a supported form. Support for collections,
+silently drop them or simplify them into a supported form. Support for the remaining collection actions,
 calls, and errors in builder forms comes after the introductory trial. Input and
 scalar conversion forms now cover the numeric-input example.
 
@@ -255,3 +255,13 @@ badge with optional preview target picking. Numeric-input can be built through
 forms with the same snapshots as its canonical lesson. Results remain authored;
 changing code/input does not recompute later steps. Multi-action or unsupported
 fields stay in YAML. Next, review this workflow before expanding collection forms.
+
+
+### Implemented list slice
+
+Flat-list literals use typed rows in badge/assignment forms. Existing whole-list
+and indexed-element sources fill values on explicit Save. Selection can be a
+standalone action or accompany a badge; updates accept scalar literals or the
+latest badge. Both introductory list lessons are form-editable, with raw YAML,
+comments, pending edits and shared Undo retained. Append/removal, scope mappings,
+and dictionary/instance forms remain future slices.

@@ -34,6 +34,15 @@ assignment, or print step. Choose Number, Text, Boolean, or None explicitly.
 entries stay in the form while switching views, but are not saved across reloads.
 **New lesson** has a separate browser draft from the samples.
 
+Builder supports flat lists through typed item rows in **Store a value** and
+**Show a value**. Add or remove rows and choose each item's Number, Text, Boolean,
+or None type; an empty list is valid. Badge sources include existing whole lists
+and indexed elements, filled from the authored state on Save. **Select a list
+element** highlights or clears a cell; badges can also set selection in the same
+step. **Update a list element** uses a scalar result or the latest badge.
+The list-iteration and list-update samples are editable through these forms.
+Append/removal, scoped addresses, dictionaries, and calls remain available in YAML.
+
 Builder also supports **Show a prompt** (output without a newline), **Show entered
 text**, and **Convert a value**. A badge's **Latest console input** source fills a
 text value from the most recent authored response, including empty input. Conversion
@@ -55,7 +64,7 @@ comments. If a pending form's step changes in YAML, discard its form edits befor
 There is no account or backend.
 
 In the playground, **Save step** and **Save lesson details** put form edits into
-this browser's draft. **Discard step edits** and **Discard details edits** drop
+this browser's draft. **Discard edits** and **Discard details edits** drop
 unsaved form entries; **Undo** reverses edits already saved. **Delete step** is
 undoable. Deleting a step can leave later steps needing repair if they use its value.
 If YAML becomes invalid, **Restore last working lesson** recovers the most recent

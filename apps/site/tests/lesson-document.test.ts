@@ -77,10 +77,10 @@ test('unsafe documents, advanced actions, and stale forms cannot be silently sim
   const step = stepsOf(readDocument(fixture))[0], form = formOf(step)!;
   const changed = edit(fixture, 0, { value: '2' });
   assert.throws(() => editStep(changed, 0, form, JSON.stringify(step)), /changed in YAML/);
-  assert.equal(formOf({ assign: { var: 'x', value: [1] } }), null);
+  assert.equal(formOf({ assign: { var: 'x', value: [[1]] } }), null);
   assert.equal(formOf({ assign: { var: 'x', from: 'badge', value: 9 } }), null);
   assert.equal(formOf({ badge: { over: 'x', value: 1 }, assign: { var: 'x', from: 'badge' } }), null);
-  assert.equal(formOf({ badge: { over: 'x', value: 1, from: 'numbers[0]' } }), null);
+  assert.equal(formOf({ badge: { over: 'x', value: 1, from: 'numbers[0][1]' } }), null);
 });
 
 test('a blank lesson can become a complete arithmetic explanation through form edits', () => {
@@ -249,4 +249,69 @@ test('prompt and entered-text edits preserve whitespace, quotes and attached com
   assert.match(next, /# response/); assert.match(next, /# prompt/);
   const output = edit(next, 0, { value: 'Age please: ' });
   assert.equal(buildSnapshots(parseLesson(output))[1].console[0].text, 'Age please: ');
+});
+
+
+test('basic list lessons can be rebuilt from forms with identical snapshots', () => {
+  for (const name of ['list-iteration', 'list-update']) {
+    const canonical = sample(name), doc = readDocument(canonical);
+    let source = editDetails(newLesson, { title: String(doc.get('title')), language: 'python', code: String(doc.get('code')) });
+    for (const step of stepsOf(doc)) {
+      const form = formOf(step); assert.ok(form, JSON.stringify(step));
+      source = appendStepForm(source, form);
+    }
+    assert.deepEqual(buildSnapshots(parseLesson(source)), buildSnapshots(parseLesson(canonical)));
+  }
+});
+
+test('list rows preserve scalar types, empty lists, comments and invalid pending numbers', () => {
+  const source = 'language: python\ncode: |\n  numbers = [1, "1", True, None]\nsteps:\n  - line: 1\n    assign:\n      var: numbers\n      value:\n        - 1 # keep item comment\n        - "1"\n        - true\n        - null\n';
+  const form = formOf(stepsOf(readDocument(source))[0])!;
+  assert.equal(form.kind, 'List');
+  assert.equal(editStep(source, 0, form, JSON.stringify(parse(source).steps[0])), source);
+  const next = edit(source, 0, { items: [{ ...form.items![0], value:'2' }, ...form.items!.slice(1)] });
+  assert.deepEqual(parse(next).steps[0].assign.value, [2, '1', true, null]);
+  assert.match(next, /# keep item comment/);
+  const removed = edit(source, 0, { items:form.items!.slice(1) });
+  assert.deepEqual(parse(removed).steps[0].assign.value, ['1', true, null]);
+  assert.doesNotMatch(removed, /# keep item comment/);
+  assert.throws(() => edit(source, 0, { items:[{ kind:'Number', value:'oops' }] }), /finite number/);
+  assert.deepEqual(parse(edit(source, 0, { items:[] })).steps[0].assign.value, []);
+  assert.equal(formOf({ badge:{ over:'x', value:[[1]] } }), null);
+  assert.equal(formOf({ update:{ target:'numbers[0]', value:[1] } }), null);
+  assert.equal(formOf({ update:{ target:'numbers[0]', value:1, scope:'global' } }), null);
+});
+
+test('list source reads refresh contents and updates preserve identity through backward snapshots', () => {
+  let source = 'language: python\ncode: |\n  numbers[0]\nsteps:\n  - line: 1\n    assign: { var: numbers, value: [1, 2] }\n';
+  source = appendStepForm(source, { ...newStepForm('badge'), source:'numbers[0]', over:'numbers[0]' });
+  assert.equal(parse(source).steps[1].badge.value, 1);
+  source = appendStepForm(source, { ...newStepForm('update'), name:'numbers[1]', value:'8' });
+  source = appendStepForm(source, { ...newStepForm('badge'), source:'numbers', over:'numbers' });
+  assert.deepEqual(parse(source).steps[3].badge.value, [1, 8]);
+  const changed = edit(source, 2, { value:'9' });
+  const step = stepsOf(readDocument(changed))[3];
+  const refreshed = editStep(changed, 3, formOf(step)!, JSON.stringify(step));
+  const snapshots = buildSnapshots(parseLesson(refreshed));
+  assert.deepEqual(snapshots[1].heap[0], { id:'list-1', value:[1, 2], type:'list' });
+  assert.deepEqual(snapshots.at(-1)!.heap[0], { id:'list-1', value:[1, 9], type:'list' });
+  assert.throws(() => appendStepForm(source, { ...newStepForm('badge'), source:'numbers[9]', over:'numbers' }), /not available/);
+  const combined = stepsOf(readDocument(sample('list-iteration')))[2];
+  const onlyBadge = editStep(sample('list-iteration'), 2, { ...formOf(combined)!, selection:'', caption:'Read.' }, JSON.stringify(combined));
+  assert.equal(parse(onlyBadge).steps[2].select, undefined);
+  const highlighted = editStep(sample('list-iteration'), 2, { ...formOf(combined)!, action:'highlight' }, JSON.stringify(combined));
+  assert.equal(parse(highlighted).steps[2].badge, undefined);
+  assert.equal(parse(highlighted).steps[2].select, undefined);
+});
+
+
+test('whole-list source badges bind the same object through builder forms', () => {
+  let source = 'language: python\ncode: |\n  numbers\nsteps:\n  - line: 1\n    assign: { var: numbers, value: [1, 2] }\n';
+  source = appendStepForm(source, { ...newStepForm('badge'), source:'numbers', over:'numbers' });
+  source = appendStepForm(source, { ...newStepForm('assign'), name:'other', source:'badge' });
+  source = appendStepForm(source, { ...newStepForm('update'), name:'other[0]', value:'9' });
+  const last = buildSnapshots(parseLesson(source)).at(-1)!;
+  assert.deepEqual(last.vars.map(variable => variable.value), [{ ref:'list-1' }, { ref:'list-1' }]);
+  assert.equal(last.heap.length, 1);
+  assert.deepEqual(last.heap[0], { id:'list-1', value:[9, 2], type:'list' });
 });

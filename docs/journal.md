@@ -570,3 +570,25 @@ when empty or digit-looking. Conversion changes an existing badge; teachers choo
 the result and review subsequent values. No displayed code executes, and no YAML
 format or player state/rendering changes are needed. Unsupported fields and
 multi-action steps remain source-editable.
+
+
+## 2026-10-13 — Introductory list forms
+
+Builder now edits flat-list literals through typed item rows, reads whole lists
+and indexed elements from authored state, and supports list-element selection
+and updates. Selection alongside a badge is supported because the introductory
+list lessons teach the highlighted cell and value together. The player and YAML
+format are unchanged; teachers still control results and repair dependent steps.
+Append/removal, scoped addresses, dictionary/instance forms, and nested lists
+remain outside this slice.
+
+
+## 2026-10-13 — Builder controls and overview
+
+Step headers now toggle their forms independently of selection. A collapsed
+header overview stays collapsed during preview navigation, while pending form
+edits remain intact. The preview picker is a labelled circle-and-dot button
+attached to Code line, and Delete step uses the site's danger color. These are
+builder presentation changes; the authored format and player state are unchanged.
+Save and Discard edits now share an action row with Delete step aligned right,
+reducing vertical form space.

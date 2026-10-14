@@ -38,7 +38,7 @@ test('inserted cards remain unsaved, cancel cleanly and save at the chosen bound
   await page.getByRole('button', { name:'Undo', exact:true }).click();
   await expect(page.locator('#lesson-source')).toHaveValue(original);
   await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');
-  await page.locator('[data-step="2"]').click();
+  if (await page.locator('[data-step="2"]').getAttribute('aria-expanded') !== 'true') await page.locator('[data-step="2"]').click();
   await expect(page.getByLabel('Caption', { exact:true })).toHaveValue('Pending last caption');
 });
 
@@ -49,7 +49,7 @@ test('duplication copies saved advanced YAML and reports invalid transitions wit
   await page.getByLabel('Caption', { exact:true }).fill('Pending caption');
   await organize(page);
   await expect(page.getByRole('button', { name:'Duplicate step', exact:true })).toBeDisabled();
-  await page.getByRole('button', { name:'Discard step edits', exact:true }).click();
+  await page.getByRole('button', { name:'Discard edits', exact:true }).click();
   await organize(page);
   await page.getByRole('button', { name:'Duplicate step', exact:true }).click();
   await expect(page.locator('#preview-status')).toHaveText('Ready · 3 steps');

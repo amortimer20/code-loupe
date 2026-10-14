@@ -154,7 +154,7 @@ test('incomplete form values survive view switching and stale forms cannot overw
   await form(page).getByRole('button', { name: 'Save step', exact: true }).click();
   await expect(form(page).locator('[role="alert"]')).toContainText('changed in YAML');
   await expect(page.locator('#lesson-source')).toHaveValue(different);
-  await form(page).getByRole('button', { name: 'Discard step edits', exact: true }).click();
+  await form(page).getByRole('button', { name: 'Discard edits', exact: true }).click();
   await expect(form(page).getByLabel('Value', { exact: true })).toHaveValue('7');
 });
 
@@ -216,7 +216,7 @@ test('cancels an unsaved step and restores a saved deletion with Undo', async ({
   await apply(page, 1);
   const saved = await page.locator('#lesson-source').inputValue();
   await form(page).getByLabel('Caption', { exact: true }).fill('Do not save this.');
-  await form(page).getByRole('button', { name: 'Discard step edits' }).click();
+  await form(page).getByRole('button', { name: 'Discard edits' }).click();
   await expect(form(page).getByLabel('Caption', { exact: true })).toHaveValue('A saved step.');
   await form(page).getByRole('button', { name: 'Delete step' }).click();
   await expect(page.locator('.builder-card')).toHaveCount(0);

@@ -1,4 +1,4 @@
-import { insertStepForm, duplicateStep, moveStep, newStepForm, deleteStep, actionLabels, editCaption, editDetails, editStep, formOf, prefixSnapshot, readDocument, scalarBindings, latestConsoleInput, stepsOf, type Action, type StepForm } from './lesson-document';
+import { insertStepForm, duplicateStep, moveStep, newStepForm, deleteStep, actionLabels, editCaption, editDetails, editStep, formOf, prefixSnapshot, readDocument, badgeSources, latestConsoleInput, stepsOf, type Action, type StepForm } from './lesson-document';
 
 import { languageChoices, type LanguageChoice } from './languages';
 import { findNth } from 'code-loupe/state';
@@ -10,11 +10,17 @@ const option = (value: string, label: string, selected: string) => `<option valu
 const field = (name: string, label: string, value: string, type = 'text') => `<label>${label}<input name="${name}" type="${type}" aria-label="${label}" ${type === 'number' ? 'step="any"' : ''} value="${escape(value)}"></label>`;
 const captionField = (value: string) => `<label>Caption<textarea aria-label="Caption" name="caption" rows="3">${escape(value)}</textarea></label>`;
 const errorBox = '<p class="builder-field-error" role="alert" hidden></p>';
-const applyButton = '<button class="builder-primary" type="submit">Save step</button><span class="builder-form-status" role="status"></span>';
+function stepActions(isNew: boolean, dirty: boolean, base: string) {
+  const secondary = isNew
+    ? '<button type="button" data-cancel-new>Cancel new step</button>'
+    : `<button type="button" data-reload-step ${dirty ? '' : 'hidden'}>Discard edits</button>`;
+  const deletion = isNew ? '' : `<button type="button" class="builder-delete" data-delete-step data-base="${escape(base)}" title="Undo restores a deleted step. Later steps may need repair.">Delete step</button>`;
+  return `<div class="builder-action-row"><div class="builder-save-actions"><button class="builder-primary" type="submit">Save step</button>${secondary}</div>${deletion}</div><span class="builder-form-status" role="status"></span>`;
+}
 interface Pending { base: string; values: StepForm | { caption: string } }
 
 export function createBuilder(container: HTMLElement, host: Host) {
-  let selected = 0;
+  let selected = 0, expanded = true;
   let newStep: StepForm | undefined;
   let newPosition = 0, newStepsBase: string | undefined;
   let editingNew = false, newPreviewStep = 0, optionsOpen = false;
@@ -62,7 +68,9 @@ export function createBuilder(container: HTMLElement, host: Host) {
   function summary(step: Record<string, unknown>) {
     const form = formOf(step);
     if (!form) return `Advanced · ${Object.keys(step).filter(key => !['line', 'caption'].includes(key)).join(', ') || 'YAML'}`;
-    if (form.action === 'badge') return form.source === 'literal' ? `Show ${form.kind === 'Text' ? JSON.stringify(form.value) : form.kind === 'None' ? 'None' : form.value}` : `Read ${form.source}`;
+    if (form.action === 'badge') return form.source === 'literal' ? `Show ${form.kind === 'Text' ? JSON.stringify(form.value) : form.kind === 'None' ? 'None' : form.kind === 'List' ? JSON.stringify((step.badge as { value: unknown }).value) : form.value}` : `Read ${form.source}`;
+    if (form.action === 'update') return `Update ${form.name || 'a list element'}`;
+    if (form.action === 'select') return form.name ? `Select ${form.name}` : 'Clear list selection';
     if (form.action === 'input') return `Enter ${JSON.stringify(form.value)}`;
     if (form.action === 'write') return `Prompt ${JSON.stringify(form.value)}`;
     if (form.action === 'convert') return `Convert to ${form.kind === 'Text' ? JSON.stringify(form.value) : form.kind === 'None' ? 'None' : form.value}`;
@@ -72,8 +80,9 @@ export function createBuilder(container: HTMLElement, host: Host) {
   }
 
   function valueFields(form: StepForm) {
-    const kind = `<label>Value type<select aria-label="Value type" name="kind">${['Number', 'Text', 'Boolean', 'None'].map(value => option(value, value, form.kind)).join('')}</select></label>`;
-    const value = form.kind === 'None' ? '<label>Value<input value="None" disabled></label>'
+    const kind = `<label>Value type<select aria-label="Value type" name="kind">${(form.action === 'badge' || form.action === 'assign' ? ['Number', 'Text', 'Boolean', 'None', 'List'] : ['Number', 'Text', 'Boolean', 'None']).map(value => option(value, value, form.kind)).join('')}</select></label>`;
+    if (form.kind === 'List') return `${kind}<div class="builder-list-items">${(form.items ?? []).map((item, index) => `<div class="builder-fields"><label>Item ${index} type<select name="item-kind-${index}" aria-label="Item ${index} type">${['Number', 'Text', 'Boolean', 'None'].map(type => option(type, type, item.kind)).join('')}</select></label>${item.kind === 'None' ? '<span>None</span>' : item.kind === 'Boolean' ? `<label>Item ${index} value<select name="item-value-${index}" aria-label="Item ${index} value">${option('true', 'True', item.value)}${option('false', 'False', item.value)}</select></label>` : field(`item-value-${index}`, `Item ${index} value`, item.value)}<button type="button" data-remove-item="${index}">Remove item ${index}</button></div>`).join('')}<button type="button" data-add-item>Add list item</button><p class="builder-note">Items are numbered from 0. Empty lists are allowed; nested lists are not supported.</p></div>`;
+    const value = form.kind === 'None'  ? '<label>Value<input value="None" disabled></label>'
       : form.kind === 'Boolean' ? `<label>Value<select aria-label="Value" name="value">${option('true', 'True', form.value)}${option('false', 'False', form.value)}</select></label>`
       : field('value', 'Value', form.value); // Text input preserves incomplete numeric entries.
     return `<div class="builder-fields">${kind}${value}</div>`;
@@ -99,18 +108,26 @@ export function createBuilder(container: HTMLElement, host: Host) {
     const lines = code.replace(/\n+$/, '').split('\n');
     const choices = lines.map((text, index) => option(String(index + 1), `${index + 1} · ${text.trim()}`, form.line));
     if (form.line && !choices.some((_choice, index) => String(index + 1) === form.line)) choices.push(option(form.line, `${form.line} · check this line`, form.line));
-    let html = `<div class="builder-fields"><label>Step action<select aria-label="Step action" name="action">${Object.entries(actionLabels).map(([key, label]) => option(key, label, form.action)).join('')}</select></label><label>Code line<select aria-label="Code line" name="line">${option('', 'Keep current line', form.line)}${choices.join('')}</select></label></div>`;
-    html += `<button type="button" class="builder-pick" data-pick-code aria-pressed="false" ${host.canPick() ? '' : 'disabled'}>Pick from preview</button><p class="builder-note" data-code-pick-status role="status"></p>`;
+    let html = `<div class="builder-fields"><label>Step action<select aria-label="Step action" name="action">${Object.entries(actionLabels).map(([key, label]) => option(key, label, form.action)).join('')}</select></label><div class="builder-line-field"><label for="builder-code-line">Code line</label><div class="builder-code-target" role="group" aria-label="Line targeting"><select id="builder-code-line" aria-label="Code line" name="line">${option('', 'Keep current line', form.line)}${choices.join('')}</select><button type="button" class="builder-pick" data-pick-code aria-label="Pick from preview" title="Pick from preview" aria-pressed="false" ${host.canPick() ? '' : 'disabled'}><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></button></div></div></div>`;
+    html += `<p class="builder-note" data-code-pick-status role="status"></p>`;
     if (form.action === 'badge') {
-      const vars = context ? scalarBindings(context) : [];
+      const vars = context ? badgeSources(context) : [];
       if (form.source !== 'literal' && form.source !== 'console' && !vars.some(variable => variable.name === form.source)) html += '<p class="builder-note">This source needs a valid earlier step. Its current value cannot be filled yet.</p>';
       html += `<div class="builder-fields">${field('over', 'Expression text', form.over)}<div data-occurrence ${occurrenceNeeded(form, code, context?.line ?? 0) ? '' : 'hidden'}>${field('nth', 'Occurrence', form.nth)}</div><label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${option('console', 'Latest console input', form.source)}${vars.map(variable => option(variable.name, `Variable: ${variable.name}`, form.source)).join('')}${form.source !== 'literal' && form.source !== 'console' && !vars.some(variable => variable.name === form.source) ? option(form.source, `Variable: ${form.source}`, form.source) : ''}</select></label></div>`;
       html += form.source === 'literal' ? valueFields(form) : form.source === 'console'
         ? `<p class="builder-note">${context && latestConsoleInput(context) !== undefined ? `Latest entered text: ${escape(JSON.stringify(latestConsoleInput(context)))}` : 'No earlier entered text is available.'} Saving fills a text value from that authored input.</p>`
         : '<p class="builder-note">Saving fills the value from the authored state before this step. It does not execute the code.</p>';
     }
-    if (form.action === 'assign') {
-      html += `<div class="builder-fields">${field('name', 'Variable name', form.name)}<label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${option('badge', 'Latest badge', form.source)}</select></label></div>`;
+    if (form.action === 'badge') {
+      const elements = context ? badgeSources(context).filter(item => item.name.endsWith(']')) : [];
+      if (elements.length || form.selection || context?.selection) html += `<label>List selection<select aria-label="List selection" name="selection">${option('', 'Keep current selection', form.selection ?? '')}${option('clear', 'Clear selection', form.selection ?? '')}${elements.map(item => option(item.name, item.name, form.selection ?? '')).join('')}${form.selection && form.selection !== 'clear' && !elements.some(item => item.name === form.selection) ? option(form.selection, `${form.selection} · unavailable`, form.selection) : ''}</select></label>`;
+    }
+    if (form.action === 'select' || form.action === 'update') {
+      const elements = context ? badgeSources(context).filter(item => item.name.endsWith(']')) : [];
+      html += `<label>List element<select aria-label="List element" name="name">${option('', form.action === 'select' ? 'Clear selection' : 'Choose an element', form.name)}${elements.map(item => option(item.name, item.name, form.name)).join('')}${form.name && !elements.some(item => item.name === form.name) ? option(form.name, `${form.name} · unavailable`, form.name) : ''}</select></label>`;
+    }
+    if (form.action === 'assign' || form.action === 'update') {
+      html += `<div class="builder-fields">${form.action === 'assign' ? field('name', 'Variable name', form.name) : ''}<label>Value source<select aria-label="Value source" name="source">${option('literal', 'Enter a value', form.source)}${option('badge', 'Latest badge', form.source)}</select></label></div>`;
       if (form.source === 'literal') html += valueFields(form);
     }
     if (['print', 'write'].includes(form.action)) {
@@ -132,7 +149,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (['badge', 'assign', 'convert'].includes(form.action) && (form.source === 'literal' || form.action === 'convert') && form.kind === 'Number') {
       html += `<details class="builder-options" ${optionsOpen || form.numericType !== 'auto' ? 'open' : ''}><summary>Optional settings</summary><label>Number display<select aria-label="Number display" name="numericType">${option('auto', 'Automatic', form.numericType)}${option('int', 'Integer', form.numericType)}${option('float', 'Float (e.g. 5.0)', form.numericType)}</select></label></details>`;
     }
-    return html + captionField(form.caption) + errorBox + `<div class="builder-apply">${applyButton}</div>`;
+    return html + captionField(form.caption) + errorBox;
   }
 
   function render() {
@@ -178,7 +195,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
         const index = newStep && position > newPosition ? position - 1 : position;
         const base = JSON.stringify(step), cache = isNew ? undefined : pending.get(index), form = isNew ? newStep : cache?.values ?? formOf(step), supported = form && 'action' in form;
         const current = isNew ? editingNew : !editingNew && index === selected;
-        return `<article class="builder-card" data-selected="${current}"><button type="button" class="builder-step" ${isNew ? 'data-new-card' : `data-step="${index}"`} aria-expanded="${current}"><span class="builder-number">${isNew ? '+' : index + 1}</span><span>${escape(isNew ? `New · ${actionLabels[newStep!.action]}` : summary(step))}</span><small>${step.line === undefined ? '' : `Line ${escape(step.line)}`}${isNew ? 'Not saved' : cache ? ' · Unsaved' : ''}</small></button>${current ? `<form data-step-form ${isNew ? 'data-new-step' : ''} data-base="${escape(cache?.base ?? base)}">${supported ? stepFields(form as StepForm, details.code) : `<p class="builder-note">This action is preserved. Edit its caption here, or open YAML for other fields.</p><button type="button" data-yaml>Open this step in YAML</button>${captionField(cache?.values.caption ?? String(step.caption ?? ''))}${errorBox}<div class="builder-apply">${applyButton}</div>`}${isNew ? '<button type="button" class="builder-reload" data-cancel-new>Cancel new step</button><p class="builder-note">This card is not in your YAML yet. Save inserts it here; Cancel drops it.</p>' : `<button type="button" class="builder-reload" data-reload-step ${cache ? '' : 'hidden'}>Discard step edits</button><details class="builder-organize" ${organizeOpen ? 'open' : ''}><summary>Organize step</summary><div class="builder-step-actions"><button type="button" data-move-step="-1" data-base="${escape(base)}" ${newStep || index === 0 ? 'disabled' : ''}>Move up</button><button type="button" data-move-step="1" data-base="${escape(base)}" ${newStep || index === steps.length - 1 ? 'disabled' : ''}>Move down</button><button type="button" data-insert-step ${newStep ? 'disabled' : ''}>Insert after this step</button><button type="button" data-duplicate-step data-base="${escape(base)}" ${newStep || cache ? 'disabled' : ''}>Duplicate step</button></div><p class="builder-note">Duplicate copies the saved step. Save or discard its edits first. Later steps may need repair.</p></details><button type="button" class="builder-delete" data-delete-step data-base="${escape(base)}" title="Undo restores a deleted step. Later steps may need repair.">Delete step</button>`}</form>` : ''}</article>`;
+        return `<article class="builder-card" data-selected="${current}"><button type="button" class="builder-step" ${isNew ? 'data-new-card' : `data-step="${index}"`} aria-current="${current ? 'step' : 'false'}" aria-expanded="${current && expanded}" aria-controls="builder-step-panel-${position}"><span class="builder-number">${isNew ? '+' : index + 1}</span><span>${escape(isNew ? `New · ${actionLabels[newStep!.action]}` : summary(step))}</span><small>${step.line === undefined ? '' : `Line ${escape(step.line)}`}${isNew ? 'Not saved' : cache ? ' · Unsaved' : ''}</small><svg class="builder-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></button><div id="builder-step-panel-${position}" ${current && expanded ? '' : 'hidden'}>${current && expanded ? `<form data-step-form ${isNew ? 'data-new-step' : ''} data-base="${escape(cache?.base ?? base)}">${supported ? stepFields(form as StepForm, details.code) : `<p class="builder-note">This action is preserved. Edit its caption here, or open YAML for other fields.</p><button type="button" data-yaml>Open this step in YAML</button>${captionField(cache?.values.caption ?? String(step.caption ?? ''))}${errorBox}`}${stepActions(isNew, !!cache, base)}${isNew ? '<p class="builder-note">This card is not in your YAML yet. Save inserts it here; Cancel drops it.</p>' : `<details class="builder-organize" ${organizeOpen ? 'open' : ''}><summary>Organize step</summary><div class="builder-step-actions"><button type="button" data-move-step="-1" data-base="${escape(base)}" ${newStep || index === 0 ? 'disabled' : ''}>Move up</button><button type="button" data-move-step="1" data-base="${escape(base)}" ${newStep || index === steps.length - 1 ? 'disabled' : ''}>Move down</button><button type="button" data-insert-step ${newStep ? 'disabled' : ''}>Insert after this step</button><button type="button" data-duplicate-step data-base="${escape(base)}" ${newStep || cache ? 'disabled' : ''}>Duplicate step</button></div><p class="builder-note">Duplicate copies the saved step. Save or discard its edits first. Later steps may need repair.</p></details>`}</form>` : ''}</div></article>`;
       }).join('')}</div>
       <div class="builder-add" ${editingNew ? 'hidden' : ''}><label ${newStep ? 'hidden' : ''}>New step<select aria-label="New step" id="builder-new-action" ${newStep ? 'disabled' : ''}>${Object.entries(actionLabels).map(([key, label]) => option(key, label, 'highlight')).join('')}</select></label><button class="builder-primary" type="button" data-add>${newStep ? 'Edit new step' : 'Add step'}</button></div>
       <p class="builder-note">Save puts form edits into your browser draft and updates the preview. Discard drops unsaved form edits; Undo reverses saved edits. Teachers choose the outcomes; the displayed code does not run.</p>`;
@@ -189,11 +206,17 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (!editingNew && caption && steps[selected] && !pending.has(selected) && !formOf(steps[selected])) caption.value = String(steps[selected]?.caption ?? '');
   }
 
+  function captureItems(values: StepForm, data: Record<string, string>) {
+    if (values.kind !== 'List') return;
+    values.items = (values.items ?? []).map((item, index) => ({ ...item, kind: (data[`item-kind-${index}`] ?? item.kind) as typeof item.kind, value: data[`item-value-${index}`] ?? item.value }));
+  }
   function capture(form: HTMLFormElement): StepForm | { caption: string } {
     const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
-    if (form.hasAttribute('data-new-step')) { newStep = { ...newStep!, ...data }; return newStep; }
+    const fields = Object.fromEntries(Object.entries(data).filter(([key]) => !key.startsWith('item-')));
+    if (form.hasAttribute('data-new-step')) { newStep = { ...newStep!, ...fields }; captureItems(newStep, data); return newStep; }
     const existing = pending.get(selected)?.values ?? formOf(stepsOf(readDocument(host.source()))[selected]);
-    const values = existing && 'action' in existing ? { ...existing, ...data } as StepForm : { caption: data.caption ?? '' };
+    const values = existing && 'action' in existing ? { ...existing, ...fields } as StepForm : { caption: data.caption ?? '' };
+    if ('action' in values) captureItems(values, data);
     pending.set(selected, { base: form.dataset.base!, values });
     return values;
   }
@@ -222,7 +245,9 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (select.tagName !== 'SELECT' || !select.closest('[data-step-form]')) return;
     const form = select.closest('form')!, values = capture(form);
     if (!('action' in values)) return;
-    if (select.name === 'action') { values.source = values.action === 'convert' ? 'badge' : 'literal'; if (values.action === 'input') values.kind = 'Text'; else values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
+    if (select.name === 'action') { values.source = values.action === 'convert' ? 'badge' : 'literal'; if (values.action === 'input') values.kind = 'Text'; else if (values.kind === 'List' && !['assign', 'badge'].includes(values.action)) values.kind = 'Number'; else values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
+    if (select.name.startsWith('item-kind-')) { const item = values.items?.[Number(select.name.slice(10))]; if (item?.kind === 'Boolean') item.value = 'true'; }
+    if (select.name === 'kind' && values.kind === 'List') values.items ??= [];
     if (select.name === 'kind' && values.kind === 'Boolean') values.value = 'true';
     render();
     container.querySelector<HTMLSelectElement>(`[data-step-form] [name="${select.name}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches });
@@ -254,6 +279,19 @@ export function createBuilder(container: HTMLElement, host: Host) {
   });
   container.addEventListener('click', event => {
     const button = (event.target as Element).closest('button'); if (!button) return;
+    if (button.hasAttribute('data-add-item') || button.hasAttribute('data-remove-item')) {
+      const values = capture(button.closest('form')!);
+      if ('action' in values) {
+        values.items ??= [];
+        if (button.hasAttribute('data-add-item')) values.items.push({ kind: 'Number', value: '0' });
+        else values.items.splice(Number(button.dataset.removeItem), 1);
+        render();
+        const add = container.querySelector<HTMLButtonElement>('[data-add-item]');
+        add?.focus({ preventScroll: matchMedia('(min-width:961px)').matches });
+        if (add) revealControl(add);
+      }
+      return;
+    }
     if (button.hasAttribute('data-pick-code')) {
       if (button.getAttribute('aria-pressed') === 'true') { host.cancelPick(); const message = container.querySelector('[data-code-pick-status]'); if (message) message.textContent = 'Picking cancelled. Your form is unchanged.'; return; }
       const action = button.closest('form')!.querySelector<HTMLSelectElement>('[name="action"]')!.value;
@@ -261,8 +299,8 @@ export function createBuilder(container: HTMLElement, host: Host) {
       return;
     }
     if (button.hasAttribute('data-yaml')) { host.yaml(); return; }
-    if (button.hasAttribute('data-new-card')) { editingNew = true; optionsOpen = false; render(); container.querySelector<HTMLButtonElement>('[data-new-card]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
-    if (button.dataset.step !== undefined) { organizeOpen = false; selected = Number(button.dataset.step); editingNew = false; optionsOpen = false; render(); if (!editingNew) host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
+    if (button.hasAttribute('data-new-card')) { expanded = editingNew ? !expanded : true; editingNew = true; optionsOpen = false; render(); container.querySelector<HTMLButtonElement>('[data-new-card]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
+    if (button.dataset.step !== undefined) { const same = !editingNew && selected === Number(button.dataset.step); expanded = same ? !expanded : true; organizeOpen = false; selected = Number(button.dataset.step); editingNew = false; optionsOpen = false; render(); if (!same) host.select(selected + 1); container.querySelector<HTMLButtonElement>(`[data-step="${selected}"]`)?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected(); }
     if (button.hasAttribute('data-reload-step')) { pending.delete(selected); render(); container.querySelector<HTMLElement>('[data-step-form] input, [data-step-form] select, [data-step-form] textarea')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); }
     if (button.hasAttribute('data-reload-details')) { detailsPending = undefined; render(); container.querySelector<HTMLInputElement>('[data-details] input')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); }
     if (button.hasAttribute('data-delete-step')) {
@@ -320,7 +358,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
         newStep = newStepForm(button.hasAttribute('data-insert-step') ? 'highlight' : container.querySelector<HTMLSelectElement>('#builder-new-action')!.value as Action);
         try { newStep.line = String(prefixSnapshot(host.source(), newPosition).line || 1); } catch { /* Validation on Save will explain earlier errors. */ }
       }
-      editingNew = true; optionsOpen = false; render();
+      editingNew = true; expanded = true; optionsOpen = false; render();
       container.querySelector<HTMLSelectElement>('[data-new-step] [name="action"]')?.focus({ preventScroll:matchMedia('(min-width:961px)').matches }); revealSelected();
     }
   });
@@ -340,7 +378,8 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (!button) return;
     button.disabled = !on && !host.canPick();
     button.setAttribute('aria-pressed', String(on));
-    button.textContent = on ? 'Cancel picking' : 'Pick from preview';
+    const label = on ? 'Cancel picking' : 'Pick from preview';
+    button.setAttribute('aria-label', label); button.title = on ? `${label} (Escape)` : label;
   }
   function followPreview(step: number, preserveNew = false) {
     if (preserveNew && editingNew) return;
@@ -356,5 +395,5 @@ export function createBuilder(container: HTMLElement, host: Host) {
     render(); revealSelected();
   }
   render();
-  return { followPreview, applyCodeTarget, syncPicking, reset() { moves.clear(); renderedSource = host.source(); organizeOpen = false; pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; render(); }, refresh: render, revealSelected, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
+  return { followPreview, applyCodeTarget, syncPicking, reset() { moves.clear(); renderedSource = host.source(); organizeOpen = false; pending.clear(); newStep = undefined; editingNew = false; optionsOpen = false; detailsPending = undefined; selected = 0; expanded = true; render(); }, refresh: render, revealSelected, selectedStep: () => Math.max(0, editingNew ? newPreviewStep : selected + 1) };
 }

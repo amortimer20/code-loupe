@@ -245,3 +245,23 @@ Browser tests author all nine steps, exercise conversion expression picking,
 pending invalid values/view switching, shared Undo/Redo and restoration, plus
 canonical input forms in the narrow plain-editor fallback. Both motion modes run.
 No player, lesson-file, or screenshot-reference change is expected from these forms.
+
+
+List-builder checks rebuild list-iteration and list-update with identical
+snapshots, preserve exact no-edit corpus drafts and list-item comments, distinguish
+scalar item types, cover empty lists and source refreshes, and guard unsupported
+nested/scoped forms. Browser cases run with both motion preferences and exercise
+canonical selections/updates, backward playback, dependent output repair, shared
+Undo, invalid pending rows and narrow plain-editor fallback. No screenshot
+reference changes are expected.
+
+
+Builder-control checks cover header collapse/reopening with keyboard and pointer,
+pending edits and list rows, selected headers during collapsed preview following,
+view switching, the grouped icon picker's accessible label and cancellation,
+narrow layout, and danger styling/undo in both site appearances. The Light/Dark
+Builder references intentionally change for the grouped picker and danger button.
+
+
+Action-row checks verify Save/Discard/Delete alignment at desktop and narrow
+widths, pending-edit discard, deletion undo, and shared controls on advanced cards.

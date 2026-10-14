@@ -46,7 +46,7 @@ and value formatting; `title` is optional.
 ### Editor assistance
 
 The **Builder** tab offers introductory step forms: Highlight a line, Show a value,
-Store a value, Print, Show a prompt, Show entered text, and Convert a value. Use **New lesson** and save lesson details to start from
+Store a value, Print, Show a prompt, Show entered text, Convert a value, Select a list element, and Update a list element. Use **New lesson** and save lesson details to start from
 blank code. Save each step and inspect the real player at that point.
 Number/Text/Boolean/None controls distinguish values such as `1`, `"1"`, and `True`;
 Number display can explicitly preserve a float such as `5.0`.
@@ -67,13 +67,32 @@ on the current line; moving to another code line clears badges. Neither input
 changes nor conversion forms execute code or recompute later steps. Review later
 values and captions when changing an example.
 
+Choose **List** in Store a value or Show a value to edit typed item rows. Use
+**Add list item** and **Remove item**; numbering starts at 0. Each item can be a
+Number, Text, Boolean, or None. Empty lists work; nested lists are unsupported.
+Storing a list allocates an object automatically. A badge can read a whole list
+or an indexed element from **Value source**; Save fills its current authored
+contents. Binding a whole-list badge shares the object.
+
+**Select a list element** highlights an existing cell or clears selection. Show a
+value also has **List selection**, allowing a highlight alongside a badge.
+**Update a list element** accepts a scalar literal or the latest badge. Later
+source badges and printed text may need explicit repair after a mutation changes.
+Append/removal and global-scope mappings remain in YAML for now.
+
 Print text remains explicit, allowing a badge's value inside a longer sentence.
 Badges and printing still require separate steps.
 
 Builder and YAML share undo/redo. Advanced actions remain available through YAML
 and their captions can be edited in Builder. Unsaved form entries remain visible
 when switching views, but only saved edits are saved/downloaded. Discard stale form edits if its step changed in YAML. Syntax errors and documents using anchors/aliases
-stay available in YAML. Use **Delete step** to remove a card; Undo restores it.
+stay available in YAML. Click the selected step header to collapse or reopen its form without losing edits.
+The selected header stays highlighted; preview navigation preserves a collapsed
+overview. Clicking another header opens that step. The circle-and-dot picker beside
+**Code line** selects a line or expression from the preview; Escape cancels picking.
+**Save step** and **Discard edits** sit together; the red **Delete step** button
+sits at the right of the same action row. Discard drops pending form edits;
+Delete removes the saved card, and Undo restores it.
 If a draft stops previewing, **Restore last working lesson** explicitly recovers
 the last successful preview (or the starting lesson when no checkpoint exists).
 Working copies persist across reloads when storage is available, and restoring
