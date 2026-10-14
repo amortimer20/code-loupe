@@ -165,3 +165,12 @@ textarea[aria-invalid='true'] { border-color: var(--error); }
   .builder-action-row button { padding:0.4rem 0.45rem; }
   .builder-action-row, .builder-save-actions { gap:0.35rem; }
 }
+
+
+#pending-edits { margin:0.4rem 0; color:var(--text); }
+#lesson-problem { border:1px solid var(--error); padding:0.5rem; margin:0.5rem 0; }
+#lesson-problem[hidden], #pending-edits[hidden] { display:none; }
+#lesson-problem #lesson-error { border:0; padding:0; margin:0 0 0.5rem; max-height:7rem; overflow:auto; font-size:0.8rem; }
+.builder-card[data-invalid='true'] { border-color:var(--error); }
+.builder-step [data-problem-marker] { color:var(--error); font-weight:600; }
+.builder-step [data-problem-marker][hidden] { display:none; }

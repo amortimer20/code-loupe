@@ -592,3 +592,23 @@ attached to Code line, and Delete step uses the site's danger color. These are
 builder presentation changes; the authored format and player state are unchanged.
 Save and Discard edits now share an action row with Delete step aligned right,
 reducing vertical form space.
+
+
+## 2026-10-13 — List length forms
+
+Builder now supports appending a scalar literal or the latest badge to an
+existing list, and removing an indexed element. All four basic list lessons
+can be edited through forms. Removal follows Python del: later indices shift
+and it produces no result badge. Values remain authored and the player model
+is unchanged. Scoped mappings and broader action combinations remain in YAML.
+
+
+## 2026-10-13 — Builder repair and pending-edit guidance
+
+Usability work now prioritizes repairing authored lessons: a visible error
+banner opens the marked failing step or YAML without discarding pending forms.
+A count and native leave warning protect real pending edits; unchanged/reverted
+controls do not warn. Pending forms remain separate from the saved YAML draft,
+so confirming departure discards them. Saved summaries and authored source-value
+previews make the overview and action-specific help clearer. No lesson format
+or player behavior changes, and no code execution is introduced.

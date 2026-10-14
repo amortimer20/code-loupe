@@ -4,7 +4,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { parse } from 'yaml';
 import { parseLesson } from 'code-loupe/lesson';
 import { buildSnapshots } from 'code-loupe/state';
-import { insertStepForm, duplicateStep, moveStep, addStep, appendStepForm, newStepForm, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, latestConsoleInput, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
+import { insertStepForm, duplicateStep, moveStep, addStep, appendStepForm, newStepForm, deleteStep, editCaption, editDetails, editStep, formOf, newLesson, prefixSnapshot, latestConsoleInput, listBindings, readDocument, scalarBindings, stepsOf, type StepForm } from '../src/authoring/lesson-document';
 
 const corpus = new URL('../../../lessons/python/', import.meta.url);
 const sample = (name: string) => readFileSync(new URL(`${name}/lesson.yaml`, corpus), 'utf8');
@@ -314,4 +314,61 @@ test('whole-list source badges bind the same object through builder forms', () =
   assert.deepEqual(last.vars.map(variable => variable.value), [{ ref:'list-1' }, { ref:'list-1' }]);
   assert.equal(last.heap.length, 1);
   assert.deepEqual(last.heap[0], { id:'list-1', value:[9, 2], type:'list' });
+});
+
+
+test('append and removal lessons rebuild through forms with identical snapshots', () => {
+  for (const name of ['list-append', 'list-removal']) {
+    const canonical = sample(name), doc = readDocument(canonical);
+    let source = editDetails(newLesson, { title:String(doc.get('title')), language:'python', code:String(doc.get('code')) });
+    for (const step of stepsOf(doc)) {
+      const form = formOf(step); assert.ok(form, JSON.stringify(step));
+      source = appendStepForm(source, form);
+    }
+    assert.deepEqual(buildSnapshots(parseLesson(source)), buildSnapshots(parseLesson(canonical)));
+  }
+});
+
+test('append forms accept typed scalars and empty lists, with stable identity and backward state', () => {
+  for (const [kind, value, expected] of [['Number','2',2], ['Text','2','2'], ['Boolean','false',false], ['None','',null]] as const) {
+    const base = 'language: python\ncode: |\n  numbers.append(2)\nsteps:\n  - line: 1\n    assign: { var: numbers, value: [] }\n';
+    const next = appendStepForm(base, { ...newStepForm('append'), name:'numbers', kind, value });
+    const snapshots = buildSnapshots(parseLesson(next));
+    assert.deepEqual(snapshots[1].heap[0], { id:'list-1', value:[], type:'list' });
+    assert.deepEqual(snapshots.at(-1)!.heap[0], { id:'list-1', value:[expected], type:'list' });
+    assert.equal(parse(next).steps[1].append.type, undefined);
+  }
+  const base = 'language: python\ncode: |\n  console\nsteps:\n  - line: 1\n    assign: { var: console, value: [] }\n';
+  assert.deepEqual(listBindings(prefixSnapshot(base, 1)).map(variable => variable.name), ['console']);
+  const added = appendStepForm(base, { ...newStepForm('append'), name:'console', value:'3' });
+  const read = appendStepForm(added, { ...newStepForm('badge'), source:'console[0]', over:'console' });
+  assert.equal(parse(read).steps[2].badge.value, 3);
+  const removed = appendStepForm(added, { ...newStepForm('remove'), name:'console[0]' });
+  assert.deepEqual(buildSnapshots(parseLesson(removed)).at(-1)!.heap[0], { id:'list-1', value:[], type:'list' });
+});
+
+test('removal shifts cells and restores selections; literal removal edits preserve comments', () => {
+  const base = 'language: python\ncode: |\n  del numbers[0]\nsteps:\n  - line: 1\n    assign: { var: numbers, value: [1, 2, 3] }\n  - select: "numbers[2]"\n';
+  const next = appendStepForm(base, { ...newStepForm('remove'), name:'numbers[0]' });
+  const snapshots = buildSnapshots(parseLesson(next));
+  assert.equal(snapshots.at(-1)!.selection!.index, 1);
+  assert.equal(snapshots[2].selection!.index, 2);
+  assert.deepEqual(snapshots[2].heap[0], { id:'list-1', value:[1, 2, 3], type:'list' });
+  assert.deepEqual(snapshots.at(-1)!.heap[0], { id:'list-1', value:[2, 3], type:'list' });
+  const commented = next.replace('remove: numbers[0]', 'remove: "numbers[0]" # keep deletion note');
+  const changed = edit(commented, 2, { name:'numbers[1]' });
+  assert.match(changed, /# keep deletion note/);
+  assert.equal(parse(changed).steps[2].remove, 'numbers[1]');
+});
+
+test('append and removal reject invalid candidates and retain unsupported YAML forms', () => {
+  const base = 'language: python\ncode: |\n  numbers.append(2)\nsteps:\n  - line: 1\n    assign: { var: numbers, value: [] }\n';
+  assert.throws(() => appendStepForm(base, { ...newStepForm('append'), name:'numbers', source:'badge' }), /there is no badge/);
+  assert.throws(() => appendStepForm(base, { ...newStepForm('append'), name:'numbers[0]' }), /Choose a list/);
+  assert.throws(() => appendStepForm(base, { ...newStepForm('append'), name:'numbers', value:'oops' }), /finite number/);
+  assert.throws(() => appendStepForm(base, { ...newStepForm('remove'), name:'' }), /element to remove/);
+  assert.throws(() => appendStepForm(base, { ...newStepForm('remove'), name:'numbers[0]' }), /outside.*length 0/);
+  for (const step of [{ append:{ target:'numbers', value:[1] } }, { append:{ target:'numbers', value:1, scope:'global' } }, { append:{ target:'numbers[0]', value:1 } }, { remove:{ target:'numbers[0]', scope:'global' } }, { remove:'numbers[-1]' }, { remove:'numbers["key"]' }]) {
+    assert.equal(formOf(step), null);
+  }
 });

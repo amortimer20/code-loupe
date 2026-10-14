@@ -1,0 +1,88 @@
+import { test, expect, ready, canonical, fillLessonSource } from './helpers';
+
+const caption = (page: import('@playwright/test').Page) => page.getByLabel('Caption', { exact:true });
+
+test('semantic errors mark the affected card and jump from YAML without losing pending edits', async ({ page }) => {
+  await page.setViewportSize({ width:1280, height:600 });
+  await page.goto('/playground/?sample=python/list-update');
+  await ready(page, 6);
+  await caption(page).fill('Keep this pending caption.');
+  const original = await canonical('list-update'), broken = original.replace('value: [2, 10, 6]', 'value: [2, 99, 6]');
+  await fillLessonSource(page, broken);
+  await expect(page.locator('#lesson-problem')).toBeVisible();
+  await expect(page.locator('#go-to-problem')).toHaveText('Go to step 5');
+  await expect(page.locator('[data-step="4"]')).toHaveAttribute('aria-describedby', 'lesson-error');
+  await page.getByRole('button', { name:'Go to step 5', exact:true }).click();
+  await expect(page.getByRole('tab', { name:'Builder', exact:true })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('[data-step="4"]')).toBeFocused();
+  await expect(page.locator('[data-step="4"] [data-problem-marker]')).toBeVisible();
+  await expect(page.locator('[data-step="4"]')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#pending-edits')).toContainText('1 unsaved form');
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#preview-status')).toHaveText('Ready · 6 steps');
+  await expect(page.locator('#lesson-problem')).toBeHidden();
+  await expect(page.locator('[data-step="4"] [data-problem-marker]')).toBeHidden();
+  await page.locator('[data-step="0"]').click();
+  await expect(caption(page)).toHaveValue('Keep this pending caption.');
+  await page.getByRole('button', { name:'Discard edits', exact:true }).click();
+  await expect(page.locator('#pending-edits')).toBeHidden();
+  await fillLessonSource(page, 'steps: [\n');
+  await expect(page.locator('#lesson-problem')).toBeVisible();
+  await expect(page.locator('#go-to-problem')).toHaveText('Open YAML');
+  await page.getByRole('button', { name:'Open YAML', exact:true }).first().click();
+  await expect(page.getByRole('tab', { name:'YAML', exact:true })).toHaveAttribute('aria-selected', 'true');
+});
+
+test('pending count tracks real form changes, new cards and details, and warns on leaving', async ({ page }) => {
+  await page.goto('/playground/?sample=python/simple-arithmetic');
+  await ready(page, 3);
+  const originalCaption = await caption(page).inputValue();
+  const clean = () => page.evaluate(() => window.dispatchEvent(new Event('beforeunload', { cancelable:true })));
+  await caption(page).click();
+  await caption(page).fill('Temporary');
+  await expect(page.locator('#pending-edits')).toContainText('1 unsaved form');
+  expect(await clean()).toBe(false);
+  await caption(page).fill(originalCaption);
+  await expect(page.locator('#pending-edits')).toBeHidden();
+  expect(await clean()).toBe(true);
+  await caption(page).fill('Keep my work');
+  let dialogs = 0;
+  page.on('dialog', async dialog => { dialogs++; expect(dialog.type()).toBe('beforeunload'); await dialog.dismiss(); });
+  await page.getByRole('link', { name:'Guide', exact:true }).click();
+  await expect(page).toHaveURL(/playground/);
+  expect(dialogs).toBe(1);
+  await expect(caption(page)).toHaveValue('Keep my work');
+  await page.locator('.builder-details summary').click();
+  await page.getByLabel('Title', { exact:true }).fill('Pending title');
+  await expect(page.locator('#pending-edits')).toContainText('2 unsaved forms');
+  await page.getByRole('button', { name:'Discard details edits', exact:true }).click();
+  await page.getByRole('button', { name:'Save step', exact:true }).click();
+  await expect(page.locator('#pending-edits')).toBeHidden();
+  expect(await clean()).toBe(true);
+  await page.getByRole('button', { name:'Add step', exact:true }).click();
+  await expect(page.locator('#pending-edits')).toContainText('1 unsaved form');
+  await page.getByRole('button', { name:'Cancel new step', exact:true }).click();
+  await expect(page.locator('#pending-edits')).toBeHidden();
+  await page.getByRole('link', { name:'Guide', exact:true }).click();
+  await expect(page).toHaveURL(/docs/);
+  expect(dialogs).toBe(1);
+});
+
+test('saved summaries and source previews show actual typed values and action-specific help', async ({ page }) => {
+  await page.setViewportSize({ width:390, height:844 });
+  await page.goto('/playground/?sample=python/list-append');
+  await ready(page, 6);
+  await expect(page.locator('[data-step="0"]')).toContainText('Store [2, 4] in numbers');
+  await expect(page.locator('[data-step="2"]')).toContainText('Append latest badge to numbers');
+  await page.locator('[data-step="2"]').click();
+  await expect(page.getByLabel('List', { exact:true }).locator('option:checked')).toHaveText('numbers = [2, 4]');
+  await expect(page.locator('[data-step-form]')).toContainText('Latest badge: 6. Adds this value');
+  await expect(page.locator('[data-step-form]')).not.toContainText('Printing must');
+  await page.locator('[data-step="4"]').click();
+  await expect(page.getByLabel('Value source', { exact:true }).locator('option:checked')).toHaveText('Variable: numbers = [2, 4, 6]');
+  await expect(page.locator('[data-step-form]')).toContainText('Current value: [2, 4, 6]');
+  await page.locator('[data-step="5"]').click();
+  await expect(page.locator('[data-step-form]')).toContainText('Latest badge: [2, 4, 6]');
+  await expect(page.locator('[data-step-form]')).toContainText('Output text must contain');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});

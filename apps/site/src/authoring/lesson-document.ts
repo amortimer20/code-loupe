@@ -2,14 +2,14 @@ import { isAlias, isMap, isNode, isScalar, isSeq, parseDocument, stringify, visi
 import { parseLesson, type ScalarValue, type Value } from 'code-loupe/lesson';
 import { buildSnapshots, type Snapshot } from 'code-loupe/state';
 
-export type Action = 'highlight' | 'badge' | 'assign' | 'print' | 'write' | 'input' | 'convert' | 'update' | 'select';
+export type Action = 'highlight' | 'badge' | 'assign' | 'print' | 'write' | 'input' | 'convert' | 'update' | 'select' | 'append' | 'remove';
 export type ValueKind = 'Number' | 'Text' | 'Boolean' | 'None' | 'List';
 export interface ListItemForm { kind: Exclude<ValueKind, 'List'>; value: string; originalIndex?: number }
 export interface StepForm {
   action: Action; line: string; caption: string; over: string; nth: string;
   source: string; name: string; kind: ValueKind; value: string; numericType: string; items?: ListItemForm[]; selection?: string;
 }
-export const actionLabels: Record<Action, string> = { highlight: 'Highlight a line', badge: 'Show a value', assign: 'Store a value', print: 'Print', write: 'Show a prompt', input: 'Show entered text', convert: 'Convert a value', update: 'Update a list element', select: 'Select a list element' };
+export const actionLabels: Record<Action, string> = { highlight: 'Highlight a line', badge: 'Show a value', assign: 'Store a value', print: 'Print', write: 'Show a prompt', input: 'Show entered text', convert: 'Convert a value', update: 'Update a list element', select: 'Select a list element', append: 'Append an item', remove: 'Remove a list element' };
 export const newLesson = 'title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: []\n';
 export const record = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value);
 const scalar = (value: unknown): value is ScalarValue => value === null || ['string', 'number', 'boolean'].includes(typeof value);
@@ -42,7 +42,7 @@ export function formOf(step: Record<string, unknown>): StepForm | null {
   const combinedSelection = 'badge' in step && 'select' in step;
   if (combinedSelection && step.select !== null && !listAddress(step.select)) return null;
   const actions = Object.keys(step).filter(key => key !== 'line' && key !== 'caption' && !(combinedSelection && key === 'select'));
-  if (actions.length > 1 || (actions.length && !['badge', 'assign', 'print', 'write', 'input', 'convert', 'update', 'select'].includes(actions[0]))) return null;
+  if (actions.length > 1 || (actions.length && !['badge', 'assign', 'print', 'write', 'input', 'convert', 'update', 'select', 'append', 'remove'].includes(actions[0]))) return null;
   const action = (actions[0] ?? 'highlight') as Action;
   const spec = step[action];
   if (action === 'badge' && (!record(spec) || !knownKeys(spec, ['over', 'value', 'type', 'nth', 'from']) || !(scalar(spec.value) || list(spec.value))
@@ -50,6 +50,8 @@ export function formOf(step: Record<string, unknown>): StepForm | null {
   if (action === 'badge' && record(spec) && spec.from === 'console' && typeof spec.value !== 'string') return null;
   if (action === 'convert' && (!record(spec) || !knownKeys(spec, ['over', 'value', 'type', 'nth']) || !scalar(spec.value) || (spec.over !== undefined && (typeof spec.over !== 'string' || !spec.over.length)) || (spec.over === undefined && spec.nth !== undefined))) return null;
   if (action === 'select' && spec !== null && !listAddress(spec)) return null;
+  if (action === 'remove' && !listAddress(spec)) return null;
+  if (action === 'append' && (!record(spec) || !knownKeys(spec, ['target', 'value', 'from']) || typeof spec.target !== 'string' || !/^[A-Za-z_]\w*$/.test(spec.target) || (spec.from === 'badge' ? 'value' in spec : spec.from !== undefined || !scalar(spec.value)))) return null;
   if (action === 'update' && (!record(spec) || !knownKeys(spec, ['target', 'value', 'from']) || !listAddress(spec.target) || (spec.from === 'badge' ? 'value' in spec : spec.from !== undefined || !scalar(spec.value)))) return null;
   if (action === 'input' && typeof spec !== 'string') return null;
   if (action === 'assign' && (!record(spec) || !knownKeys(spec, ['var', 'value', 'type', 'from']) || (spec.from !== 'badge' && !(scalar(spec.value) || list(spec.value))))) return null;
@@ -61,7 +63,7 @@ export function formOf(step: Record<string, unknown>): StepForm | null {
   const kind: ValueKind = list(value) ? 'List' : kindOf(value as ScalarValue);
   if ('value' in obj && obj.type !== undefined && !({ Number: ['int', 'float'], Text: ['str'], Boolean: ['bool'], None: ['NoneType'], List: [] as string[] }[kind].includes(String(obj.type)))) return null;
   return { action, line: step.line === undefined ? '' : String(step.line), caption: String(step.caption ?? ''),
-    over: String(obj.over ?? ''), nth: String(obj.nth ?? 1), name: action === 'select' ? String(spec ?? '') : String(obj.target ?? obj.var ?? ''),
+    over: String(obj.over ?? ''), nth: String(obj.nth ?? 1), name: ['select', 'remove'].includes(action) ? String(spec ?? '') : String(obj.target ?? obj.var ?? ''),
     source: action === 'convert' ? 'badge' : ['print', 'write'].includes(action) ? (obj.from === 'badge' ? 'badge' : 'literal') : String(obj.from ?? 'literal'),
     kind: action === 'input' ? 'Text' : kind, value: action === 'input' ? String(spec) : ['print', 'write'].includes(action) ? String(typeof spec === 'string' ? spec : obj.text) : value === null ? '' : String(value ?? ''),
     ...(list(value) ? { items: value.map((item, originalIndex) => ({ kind: kindOf(item), value: item === null ? '' : String(item), originalIndex })) } : {}),
@@ -91,18 +93,32 @@ export function badgeSources(snapshot: Snapshot): { name: string; value: Value; 
   for (const variable of [...(snapshot.frames.at(-1)?.vars ?? []), ...snapshot.vars]) {
     if (seen.has(variable.name)) continue;
     seen.add(variable.name);
-    if (['console', 'literal'].includes(variable.name)) continue;
-    if (scalar(variable.value)) result.push({ name: variable.name, value: variable.value, type: variable.type });
+    const reserved = ['console', 'literal'].includes(variable.name);
+    if (scalar(variable.value)) {
+      if (!reserved) result.push({ name: variable.name, value: variable.value, type: variable.type });
+    }
     else if (record(variable.value) && typeof variable.value.ref === 'string') {
       const ref = variable.value.ref;
       const object = snapshot.heap.find(item => item.id === ref);
       if (object && 'value' in object) {
-        result.push({ name: variable.name, value: [...object.value] });
+        if (!reserved) result.push({ name: variable.name, value: [...object.value] });
         object.value.forEach((value, index) => result.push({ name: `${variable.name}[${index}]`, value }));
       }
     }
   }
   return result;
+}
+
+/** List targets include empty lists and reserved badge-source names. */
+export function listBindings(snapshot: Snapshot) {
+  const seen = new Set<string>();
+  return [...(snapshot.frames.at(-1)?.vars ?? []), ...snapshot.vars].filter(variable => {
+    if (seen.has(variable.name)) return false;
+    seen.add(variable.name);
+    if (!record(variable.value) || typeof variable.value.ref !== 'string') return false;
+    const ref = variable.value.ref;
+    return snapshot.heap.some(object => object.id === ref && 'value' in object);
+  });
 }
 
 /** Input is always text, including empty input and digit-looking strings. */
@@ -160,7 +176,8 @@ export function editStep(source: string, index: number, form: StepForm, expected
   if (form.action === 'badge') setOptional(doc, [...base, 'select'], !form.selection ? undefined : form.selection === 'clear' ? null : form.selection);
   else doc.deleteIn([...base, 'select']);
   const path = [...base, form.action];
-  if (form.action === 'select') {
+  if (form.action === 'select' || form.action === 'remove') {
+    if (form.action === 'remove' && !form.name) throw new Error('Choose a list element to remove.');
     if (form.name && !listAddress(form.name)) throw new Error('Choose a list element address, such as numbers[0].');
     doc.setIn(path, form.name || null); return doc.toString();
   }
@@ -181,7 +198,11 @@ export function editStep(source: string, index: number, form: StepForm, expected
     setOptional(doc, [...path, 'from'], form.source === 'badge' ? 'badge' : undefined);
     return doc.toString();
   }
-  if (form.action === 'update') {
+  if (form.action === 'append') {
+    if (!/^[A-Za-z_]\w*$/.test(form.name)) throw new Error('Choose a list to append to.');
+    doc.setIn([...path, 'target'], form.name);
+    if (form.kind === 'List' && form.source !== 'badge') throw new Error('List items must be scalar values.');
+  } else if (form.action === 'update') {
     if (!listAddress(form.name)) throw new Error('Choose a list element address, such as numbers[0].');
     doc.setIn([...path, 'target'], form.name);
     if (form.kind === 'List' && form.source !== 'badge') throw new Error('List elements must be scalar values.');
@@ -197,13 +218,13 @@ export function editStep(source: string, index: number, form: StepForm, expected
   let value: Value | undefined, type: string | undefined;
   if (sourced) {
     value = sourced.value; type = sourced.type;
-  } else if (['assign', 'update'].includes(form.action) && form.source === 'badge') {
+  } else if (['assign', 'update', 'append'].includes(form.action) && form.source === 'badge') {
     doc.deleteIn([...path, 'value']); doc.deleteIn([...path, 'type']);
     doc.setIn([...path, 'from'], 'badge');
     return doc.toString();
   } else {
     value = formValue(form);
-    if (form.action !== 'update' && form.kind === 'Number' && form.numericType !== 'auto') type = form.numericType;
+    if (!['update', 'append'].includes(form.action) && form.kind === 'Number' && form.numericType !== 'auto') type = form.numericType;
     const old = step[form.action];
     if (record(old) && ((form.kind === 'Text' && old.type === 'str') || (form.kind === 'Boolean' && old.type === 'bool') || (form.kind === 'None' && old.type === 'NoneType'))) type = String(old.type);
   }
@@ -244,7 +265,7 @@ export function editDetails(source: string, values: { title: string; language: s
 export function addStep(source: string, action: Action) {
   const doc = readDocument(source), steps = doc.get('steps', true);
   if (!isSeq(steps)) throw new Error('Use YAML to repair the steps list.');
-  const specs: Record<Action, unknown> = { highlight: { line: 1 }, badge: { badge: { over: '', value: 0 } }, assign: { assign: { var: '', value: 0 } }, print: { print: '' }, write: { write: '' }, input: { input: '' }, convert: { convert: { value: 0 } }, update: { update: { target: 'numbers[0]', value: 0 } }, select: { select: null } };
+  const specs: Record<Action, unknown> = { highlight: { line: 1 }, badge: { badge: { over: '', value: 0 } }, assign: { assign: { var: '', value: 0 } }, print: { print: '' }, write: { write: '' }, input: { input: '' }, convert: { convert: { value: 0 } }, update: { update: { target: 'numbers[0]', value: 0 } }, select: { select: null }, append: { append: { target: 'numbers', value: 0 } }, remove: { remove: 'numbers[0]' } };
   steps.add(doc.createNode(specs[action]));
   return doc.toString();
 }

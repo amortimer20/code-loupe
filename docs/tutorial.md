@@ -78,7 +78,10 @@ contents. Binding a whole-list badge shares the object.
 value also has **List selection**, allowing a highlight alongside a badge.
 **Update a list element** accepts a scalar literal or the latest badge. Later
 source badges and printed text may need explicit repair after a mutation changes.
-Append/removal and global-scope mappings remain in YAML for now.
+**Append an item** chooses an existing list and accepts a scalar value or the
+latest badge. Empty lists can receive their first item. **Remove a list element**
+chooses an indexed cell, as Python `del` does; later indices shift down and no
+result badge is produced. Global-scope mappings remain in YAML for now.
 
 Print text remains explicit, allowing a badge's value inside a longer sentence.
 Badges and printing still require separate steps.
@@ -86,7 +89,20 @@ Badges and printing still require separate steps.
 Builder and YAML share undo/redo. Advanced actions remain available through YAML
 and their captions can be edited in Builder. Unsaved form entries remain visible
 when switching views, but only saved edits are saved/downloaded. Discard stale form edits if its step changed in YAML. Syntax errors and documents using anchors/aliases
-stay available in YAML. Click the selected step header to collapse or reopen its form without losing edits.
+stay available in YAML. The pending-forms count includes changed steps, lesson details, and an unsaved
+new card. Reverting controls to their saved values clears their pending state.
+Reloading or navigating away with pending entries triggers the browser's leave
+warning; choosing to leave still discards those entries. Save puts them in the
+shared YAML draft and Undo history. Switching Builder/YAML keeps pending forms.
+
+Invalid lessons show a problem banner above the editor. **Go to step** opens
+and focuses the failing card, which is marked **Needs attention**; unrelated
+pending edits remain intact. Syntax and untargeted errors offer **Open YAML**.
+Source choices display values from earlier authored steps, including list
+contents and element values. Headers describe saved outcomes, helping the
+collapsed overview read as a sequence of teaching steps.
+
+Click the selected step header to collapse or reopen its form without losing edits.
 The selected header stays highlighted; preview navigation preserves a collapsed
 overview. Clicking another header opens that step. The circle-and-dot picker beside
 **Code line** selects a line or expression from the preview; Escape cancels picking.

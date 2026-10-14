@@ -263,5 +263,16 @@ Flat-list literals use typed rows in badge/assignment forms. Existing whole-list
 and indexed-element sources fill values on explicit Save. Selection can be a
 standalone action or accompany a badge; updates accept scalar literals or the
 latest badge. Both introductory list lessons are form-editable, with raw YAML,
-comments, pending edits and shared Undo retained. Append/removal, scope mappings,
-and dictionary/instance forms remain future slices.
+comments, pending edits and shared Undo retained. Append/removal now extend this
+slice with scalar/badge append and indexed deletion, including empty-list
+transitions. Scope mappings and dictionary/instance forms remain future slices.
+
+
+### Builder usability pass
+
+Invalid lessons now expose a problem banner and direct navigation to the marked
+step, with YAML fallback for syntax errors. Pending-form counts and a conditional
+native leave warning protect unsaved entries without changing source history.
+Saved summaries show binding/mutation values, source choices display authored
+contents, and badge hints describe the action being edited. Pending edits remain
+form-local until Save; this pass adds no execution or new lesson syntax.

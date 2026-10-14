@@ -22,6 +22,9 @@ const download = document.querySelector<HTMLButtonElement>('#download')!;
 const preview = document.querySelector<HTMLElement>('#preview')!;
 const status = document.querySelector<HTMLElement>('#preview-status')!;
 const error = document.querySelector<HTMLElement>('#lesson-error')!;
+const problemBanner = document.querySelector<HTMLElement>('#lesson-problem')!;
+const problemButton = document.querySelector<HTMLButtonElement>('#go-to-problem')!;
+const pendingIndicator = document.querySelector<HTMLElement>('#pending-edits')!;
 const player = new CodeLoupe();
 const workspace = document.querySelector<HTMLElement>('.workspace')!;
 const desktopLayout = matchMedia('(min-width:961px)');
@@ -113,6 +116,21 @@ player.addEventListener('lessonerror', (event) => {
   lastError = (event as CustomEvent<{ message: string }>).detail.message;
 });
 
+function syncProblem(message: string) {
+  const step = builder?.setProblem(message);
+  problemBanner.hidden = !message;
+  problemButton.disabled = !assistance;
+  problemButton.textContent = step ? `Go to step ${step}` : 'Open YAML';
+}
+problemButton.addEventListener('click', () => {
+  const step = builder?.setProblem(lastError);
+  if (step) { selectMode('builder'); builder?.goToStep(step); }
+  else { selectMode('yaml'); assistance?.focus(); }
+});
+function warnPendingEdits(event: BeforeUnloadEvent) {
+  if (builder?.pendingCount()) event.preventDefault();
+}
+
 function saveDraft() {
   try {
     localStorage.setItem(DRAFT_KEY, draftText);
@@ -136,6 +154,7 @@ async function updatePreview(currentRevision: number) {
   status.textContent = loaded ? `Ready · ${player.total} steps` : 'Check your lesson';
   assistance?.setRuntimeError(loaded ? '' : lastError);
   syncWorkingRecovery(!loaded);
+  syncProblem(loaded ? '' : lastError);
   if (loaded) {
     workingText = previewSource;
     workingIsStartingLesson = false;
@@ -153,6 +172,7 @@ async function updatePreview(currentRevision: number) {
 editor.addEventListener('input', () => {
   draftText = assistance?.getValue() ?? editor.value;
   previewReady = false;
+  syncProblem('');
   builder?.refresh();
   destination = mode === 'builder' ? builder?.selectedStep() ?? 0 : null;
   previewReady = false;
@@ -237,6 +257,13 @@ async function start() {
   assistance.setRuntimeError(lastError);
   builder = createBuilder(document.querySelector<HTMLElement>('#builder-pane')!, {
     languages,
+    pending(count) {
+      if (count) window.addEventListener('beforeunload', warnPendingEdits);
+      else window.removeEventListener('beforeunload', warnPendingEdits);
+      const message = count ? `${count} unsaved ${count === 1 ? 'form' : 'forms'} · Save or discard before leaving.` : '';
+      pendingIndicator.hidden = !count;
+      if (pendingIndicator.textContent !== message) pendingIndicator.textContent = message;
+    },
     source: () => draftText,
     edit(source, step) { destination = step; assistance!.replace(source); },
     select(step) { destination = step; if (previewReady) player.goTo(Math.min(step, player.total)); },
@@ -245,6 +272,7 @@ async function start() {
     cancelPick: () => picker?.cancel(),
     pick(expressions) { if (mode === 'builder' && previewReady) { player.pause(); picker?.start(expressions); } },
   });
+  syncProblem(lastError);
   picker = createCodePicker(player, {
     code: () => String(readDocument(draftText).get('code') ?? ''),
     choose: target => builder!.applyCodeTarget(target),

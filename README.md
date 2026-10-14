@@ -40,8 +40,10 @@ or None type; an empty list is valid. Badge sources include existing whole lists
 and indexed elements, filled from the authored state on Save. **Select a list
 element** highlights or clears a cell; badges can also set selection in the same
 step. **Update a list element** uses a scalar result or the latest badge.
-The list-iteration and list-update samples are editable through these forms.
-Append/removal, scoped addresses, dictionaries, and calls remain available in YAML.
+**Append an item** accepts a scalar value or the latest badge, including for empty
+lists. **Remove a list element** deletes by index, shifting later items down.
+All four basic list samples are editable through forms. Scoped addresses,
+dictionaries, and calls remain available in YAML.
 
 Builder also supports **Show a prompt** (output without a newline), **Show entered
 text**, and **Convert a value**. A badge's **Latest console input** source fills a
@@ -65,8 +67,14 @@ There is no account or backend.
 
 In the playground, **Save step** and **Save lesson details** put form edits into
 this browser's draft. **Discard edits** and **Discard details edits** drop
-unsaved form entries; **Undo** reverses edits already saved. **Delete step** is
+unsaved form entries; **Undo** reverses edits already saved. A pending-forms count
+tracks real changes, and leaving with pending forms triggers the browser warning. **Delete step** is
 undoable. Deleting a step can leave later steps needing repair if they use its value.
+Invalid lessons show a visible problem banner. Step errors mark the affected
+header, and **Go to step** opens it without dropping pending edits. Syntax errors
+open YAML instead. Source choices show current authored values, and collapsed
+headers describe saved assignments and list mutations.
+
 If YAML becomes invalid, **Restore last working lesson** recovers the most recent
 successful preview, including after reloading when browser storage is available.
 Restore is itself undoable. Older drafts without a checkpoint can recover the

@@ -22,6 +22,8 @@ const samples = await getSamples();
         <div role="tablist" aria-label="Authoring view"><button id="builder-tab" type="button" role="tab" aria-controls="builder-pane" aria-selected="true">Builder</button><button id="yaml-tab" type="button" role="tab" aria-controls="source-pane" aria-selected="false">YAML</button></div>
         <div><button id="draft-undo" type="button" disabled>Undo</button><button id="draft-redo" type="button" disabled>Redo</button></div>
       </div>
+      <p id="pending-edits" class="builder-note" role="status" hidden></p>
+      <div id="lesson-problem" hidden><pre id="lesson-error" role="alert" hidden></pre><button id="go-to-problem" type="button" disabled>Open YAML</button></div>
       <div id="author-scroll" role="region" aria-label="Lesson editor" tabindex="0">
       <div id="draft-recovery" hidden><p id="draft-recovery-message" role="status"></p><button id="migrate-draft" type="button">Update draft syntax</button></div>
       <div id="working-recovery" hidden><p>Undo recent edits, or restore the last lesson that successfully previewed. Restoring replaces this draft; Undo brings it back.</p><button id="restore-working" type="button" disabled>Restore last working lesson</button></div>
@@ -35,7 +37,6 @@ const samples = await getSamples();
       <p id="editor-status" role="status">Loading source editor…</p>
       <ul id="editor-problems" aria-label="Source problems" hidden></ul>
       </div>
-      <pre id="lesson-error" role="alert" hidden></pre>
       </div>
     </section>
     <section class="preview-panel" aria-labelledby="preview-heading">

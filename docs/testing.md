@@ -265,3 +265,20 @@ Builder references intentionally change for the grouped picker and danger button
 
 Action-row checks verify Save/Discard/Delete alignment at desktop and narrow
 widths, pending-edit discard, deletion undo, and shared controls on advanced cards.
+
+
+Append/removal form checks rebuild both canonical lessons with identical
+snapshots, cover typed scalars and empty-list transitions, missing badges and
+invalid targets, indexed selection restoration, preserved comments and no-edit
+corpus drafts, and unsupported scoped/nested forms. Browser checks cover caption
+edits without changing actions, backward playback, Undo/Redo, reload, and a narrow
+plain-editor empty-list round trip with invalid pending values. Both motion modes
+run against existing screenshot references.
+
+
+Builder polish checks cover semantic-error card markers and focus/navigation from
+YAML, source-read repair without losing other pending edits, syntax fallback,
+meaningful pending counts for steps/details/new cards, no-op/revert cleanup, native
+leave cancellation and clean departure after Save, typed summaries and source
+previews, list-reference badge contents, and action-specific hints. Both motion
+modes and narrow layouts run against existing visual references.
