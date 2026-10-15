@@ -292,24 +292,12 @@ through a shared "where is this value on screen?" lookup.
 
 ---
 
-## 9. Mathematics visualization (separate experimental track)
+## 9. Mathematics (removed)
 
-Start this track while code-builder teacher trials proceed at the user's own pace.
-Follow [the math implementation plan](math-plan.md). Useful explanations and
-teacher-controlled detail take precedence over merely reaching the correct answer.
-
-- [x] Define the initial teaching scope and worked examples: arithmetic grouping
-      and one-variable linear equations with integer solutions.
-- [x] Build a separate read-only prototype with authored mathematical states,
-      captions, emphasis, and reversible playback. Keep math data/rendering out
-      of code lesson YAML, snapshots, and the code component.
-- [ ] Trial the visuals with teachers before choosing a public authoring format
-      or building a math editor. Notation tooling and any shared playback shell
-      remain design questions.
-- [ ] Explore automatic arithmetic tracing for the small supported subset after
-      the visual trial; consider algebra transformations separately. Broader term-motion
-      animation and mathematical validation remain later work. Student answer
-      checking is outside the current scope.
+A small experiment with authored arithmetic and algebra walkthroughs lived at `/math/` from
+2026-10-14 and was removed on 2026-10-15 because it did not meet expectations. It was isolated
+from the code player and lesson format. It can be recovered from git history (commit `a1c16e2`),
+but any future mathematics work should start from a fresh design discussion.
 
 ## Suggested order
 
@@ -323,9 +311,6 @@ teacher-controlled detail take precedence over merely reaching the correct answe
 
 The Reveal.js adapter remains in the embedding backlog; it is not part of the
 near-term sequence.
-
-The separate math experiment now begins with its own prototype sequence; it does
-not depend on completing code-builder trials or resuming code lesson expansion.
 
 ## Naming notes
 

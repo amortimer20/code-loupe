@@ -114,11 +114,11 @@ still entangled, with no new logic testable in Node. Browser specs already cover
 recovery with undo and redo, draft isolation between samples, blocked storage, and working-draft
 recovery. Revisit if the playground gains real logic, such as multiple documents or sync.
 
-## Phase 4: mathematics experiment (last)
+## Phase 4: mathematics experiment (done 2026-10-15)
 
-The prototype has not met expectations. Decide its direction before any
-refactoring: rework the visuals, freeze it as-is, or remove it. Refactoring code
-that may be replaced would be wasted effort.
+The prototype did not meet expectations, so it was removed instead of refactored: its page, code,
+12 browser tests, plan, and doc sections, plus the layout and theme changes made only for it. See
+the journal entry of the same date. It can be recovered from commit `a1c16e2`.
 
 ## Not in scope
 

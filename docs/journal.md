@@ -666,3 +666,13 @@ without a final layout snap, and highlight paint settles into the target style.
 The solved variable appears only after the final expression settles. These
 remain teacher-authored visual fixtures, not symbolic evaluation or a public
 math lesson format.
+
+## 2026-10-15 — Remove the math experiment
+
+The `/math/` experiment, begun on 2026-10-14, did not meet expectations, so it is removed
+rather than reworked or frozen. It was isolated from the code player, lesson format, and
+snapshots, so removal touched only its own page, code, 12 browser tests, plan, and doc
+sections, plus two small layout and theme changes made only for it. The earlier journal
+entries about it stay as history. It can be recovered from commit `a1c16e2`. Any future
+mathematics work should begin with a fresh design discussion; the older idea of authored
+algebra explanations remains an unexamined possibility, not a plan.

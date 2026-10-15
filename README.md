@@ -28,10 +28,6 @@ The home page is a searchable sample library. Each lesson has a player, teaching
 notes, a YAML download, and an **Edit in playground** link. Open
 [the playground](http://localhost:5173/playground/) to author a lesson locally.
 
-The separate experimental [math demo](http://localhost:5173/math/) shows three
-fixed arithmetic/algebra explanations with highlights, captions, and reversible
-playback. It has no solver or student answer checking; see the
-[math prototype plan](docs/math-plan.md).
 Builder opens with expandable step cards beside the live player. Use **Lesson
 details** for title, language, and code, then add a line highlight, value badge,
 assignment, or print step. Choose Number, Text, Boolean, or None explicitly.

@@ -2,8 +2,8 @@
 import '../site.css';
 import { sitePath } from '../lib/samples';
 import { themePresets } from 'code-loupe/themes';
-interface Props { title: string; description: string; wide?: boolean; showLessonTheme?: boolean }
-const { title, description, wide = false, showLessonTheme = true } = Astro.props;
+interface Props { title: string; description: string; wide?: boolean }
+const { title, description, wide = false } = Astro.props;
 const themeIds = themePresets.map(theme => theme.id);
 ---
 <!doctype html>
@@ -37,9 +37,9 @@ const themeIds = themePresets.map(theme => theme.id);
       <label class="theme-picker" for="site-appearance">Appearance
         <select id="site-appearance"><option value="light">Light</option><option value="dark">Dark</option></select>
       </label>
-      {showLessonTheme && <label class="theme-picker" for="site-theme">Lesson theme
+      <label class="theme-picker" for="site-theme">Lesson theme
         <select id="site-theme">{themePresets.map(theme => <option value={theme.id} selected={theme.id === 'midnight'}>{theme.label}</option>)}</select>
-      </label>}
+      </label>
       </div>
     </header>
     <main id="main" class:list={['site-main', { wide }]}><slot /></main>

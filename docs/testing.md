@@ -288,39 +288,6 @@ leave cancellation and clean departure after Save, typed summaries and source
 previews, list-reference badge contents, and action-specific hints. Both motion
 modes and narrow layouts run against existing visual references.
 
-The isolated math prototype checks arithmetic grouping, operation/simplification
-steps on both equation sides, exact backward restoration, example switching,
-keyboard boundaries, spoken labels/status updates, shared viewer palettes, and
-short/narrow fullscreen alignment. Its starting expression remains readable without
-JavaScript. Both motion modes run; reviewed code screenshot references stay
-unchanged. Math review screenshots are test artifacts, not new baselines.
-
-Math replacement checks inspect actual animated result movement and an anchored
-unchanged prefix, then verify the final authored state. They cover interruption
-by backward navigation, scrubbing, example changes, resize, and motion settings;
-reduced motion skips overlays and restores the same mathematical states.
-
-Math/code parity checks cover visible but inactive Step 0, fixed player height
-through all steps, unknown/solved/backward variable states, palette preservation,
-autoplay completion and pause, speed changes during motion, and a working motion
-toggle with explicit preference overriding the system default. Both arithmetic
-calculations have motion checks; native slider keys retain their own behavior.
-
-The first math quality pass captures operation, emerging result, landing, and
-finished frames at 1×/0.5× and desktop/narrow widths. Checks compare coordinates
-within the player (element screenshots can scroll the page), unchanged prefixes,
-constant result dimensions, final handoff bounds, and natural text widths.
-Frame review complements behavioral tests; it does not establish that all math
-transitions are polished. Existing visual references remain unchanged.
-
-Remaining math quality checks cover both arithmetic examples, retained-term
-movement, paired algebra operations, additive cancellation/+0 dwell, concurrent
-division results, and exact glyph bounds at the final handoff. They capture
-normal/slow frames at desktop/narrow widths, verify a stable equals sign and
-deferred solved-variable display, and interrupt cancellation with navigation
-and resize. Theme changes settle motion without stale highlight colors. Math
-review captures remain ignored artifacts; code visual references are unchanged.
-
 ## Corpus snapshot fixture
 
 `packages/player/tests/corpus-snapshots.test.ts` records every canonical lesson's
