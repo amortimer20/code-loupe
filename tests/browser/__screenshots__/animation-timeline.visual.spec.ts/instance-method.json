@@ -1,0 +1,1497 @@
+[
+ {
+  "step": 1,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 200,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "none",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(397.7px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"ada = Student(\"Ada\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.var[name=ada,ref=student-1] < div.vars.globals < section < div.data < div.stage \"ada=→ student-1Student\"",
+    "timing": {
+     "delay": 500,
+     "duration": 250,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translateX(-8px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.var[name=ada,ref=student-1] < div.vars.globals < section < div.data < div.stage \"ada=→ student-1Student\"",
+    "timing": {
+     "delay": 500,
+     "duration": 900,
+     "easing": "ease-out",
+     "fill": "auto",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "color-mix(in srgb, var(--ca-accent) 35%, transparent)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "transparent",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 2,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(397.7px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(448.1px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"ada = Student(\"Ada\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"grace = Student(\"Grace\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.var[name=grace,ref=student-2] < div.vars.globals < section < div.data < div.stage \"grace=→ student-2Student\"",
+    "timing": {
+     "delay": 500,
+     "duration": 250,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translateX(-8px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.var[name=grace,ref=student-2] < div.vars.globals < section < div.data < div.stage \"grace=→ student-2Student\"",
+    "timing": {
+     "delay": 500,
+     "duration": 900,
+     "easing": "ease-out",
+     "fill": "auto",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "color-mix(in srgb, var(--ca-accent) 35%, transparent)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "transparent",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 3,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(448.1px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(498.5px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"grace = Student(\"Grace\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"ada.rename(\"Lovelace\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner < div.badge[id=1] < div.badges < div.code-scroll < section.code \"\"Lovelace\"str\"",
+    "timing": {
+     "delay": 500,
+     "duration": 400,
+     "easing": "cubic-bezier(0.2, 0.9, 0.3, 1.3)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translateY(8px) scale(0.7)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 4,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(498.5px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(246.6px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"def rename(self, new_name):\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"ada.rename(\"Lovelace\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "section.frame.active[frameId=1] < section.call-stack < div.data < div.stage < div.ca \"Student.rename()ActiveReturns to line 10\"",
+    "timing": {
+     "delay": 500,
+     "duration": 250,
+     "easing": "ease-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translateY(8px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"Lovelace\"\"",
+    "timing": {
+     "delay": 750,
+     "duration": 654.8796803239044,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-163.8px, -140.4px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-327.5px, -184.8px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(-327.5px, -184.8px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.value < div.var[name=new_name] < div.vars < section.frame.active[frameId=1] < section.call-stack \"\"Lovelace\"\"",
+    "timing": {
+     "delay": 1344.8796803239043,
+     "duration": 150,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 5,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(246.6px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(297px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"def rename(self, new_name):\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"self.name = new_name\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"Lovelace\"\"",
+    "timing": {
+     "delay": 500,
+     "duration": 666.6940335108106,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(198.3px, -52.4px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(396.6px, -8.8px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(396.6px, -8.8px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner < div.badge[id=2] < div.badges < div.code-scroll < section.code \"\"Lovelace\"str\"",
+    "timing": {
+     "delay": 1106.6940335108106,
+     "duration": 220,
+     "easing": "ease-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 6,
+  "animations": [
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"Lovelace\"\"",
+    "timing": {
+     "delay": 0,
+     "duration": 705.7335052152911,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-188.2px, 88.6px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-376.4px, 273.1px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(-376.4px, 273.1px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.field-value < dd.field-content < div.object-field[key=name] < dl.object-fields.value < article.heap-object[ref=student-1] \"\"Lovelace\"\"",
+    "timing": {
+     "delay": 645.7335052152911,
+     "duration": 150,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.object-field[key=name] < dl.object-fields.value < article.heap-object[ref=student-1] < section.heap-panel < div.data \"name\"Lovelace\"str\"",
+    "timing": {
+     "delay": 705.7335052152911,
+     "duration": 900,
+     "easing": "ease-out",
+     "fill": "auto",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "color-mix(in srgb, var(--ca-accent) 35%, transparent)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 7,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(297px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(498.5px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"self.name = new_name\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"ada.rename(\"Lovelace\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner < div.badge[id=3] < div.badges < div.code-scroll < section.code \"NoneNoneType\"",
+    "timing": {
+     "delay": 500,
+     "duration": 250,
+     "easing": "ease-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "scale(0.8)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 8,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(498.5px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(548.9px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"ada.rename(\"Lovelace\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"print(ada.name)\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"Lovelace\"\"",
+    "timing": {
+     "delay": 500,
+     "duration": 611.1889743511925,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(131.4px, 23.8px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(262.9px, 143.7px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(262.9px, 143.7px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner < div.badge[id=4] < div.badges < div.code-scroll < section.code \"\"Lovelace\"str\"",
+    "timing": {
+     "delay": 1051.1889743511924,
+     "duration": 220,
+     "easing": "ease-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 9,
+  "animations": [
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"Lovelace\"\"",
+    "timing": {
+     "delay": 0,
+     "duration": 676.8712676796584,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-181px, 53px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-361.9px, 202px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(-361.9px, 202px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.chunk[index=0] < pre < section.console < div.ca \"Lovelace\"",
+    "timing": {
+     "delay": 596.8712676796584,
+     "duration": 200,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 10,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(548.9px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(599.3px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"print(ada.name)\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"print(grace.name)\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"Grace\"\"",
+    "timing": {
+     "delay": 500,
+     "duration": 594.9862656053994,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(130.5px, -11.3px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(261.1px, 73.5px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(261.1px, 73.5px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner < div.badge[id=5] < div.badges < div.code-scroll < section.code \"\"Grace\"str\"",
+    "timing": {
+     "delay": 1034.9862656053992,
+     "duration": 220,
+     "easing": "ease-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 11,
+  "animations": [
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"Grace\"\"",
+    "timing": {
+     "delay": 0,
+     "duration": 679.7352702709017,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-190.9px, 39px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(-381.7px, 174px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(-381.7px, 174px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.chunk[index=1] < pre < section.console < div.ca \"Grace\"",
+    "timing": {
+     "delay": 599.7352702709017,
+     "duration": 200,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ }
+]

@@ -1,0 +1,462 @@
+[
+ {
+  "step": 1,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 200,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "none",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(45px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"print(\"Starting\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 2,
+  "animations": [
+   {
+    "target": "span.chunk[index=0] < pre < section.console < div.ca \"Starting\"",
+    "timing": {
+     "delay": 0,
+     "duration": 250,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 3,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(45px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(95.4px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"print(\"Starting\")\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"age = \"abc\"\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.var[name=age] < div.vars.globals < section < div.data < div.stage \"age=\"abc\"str\"",
+    "timing": {
+     "delay": 500,
+     "duration": 250,
+     "easing": "linear",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translateX(-8px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "div.var[name=age] < div.vars.globals < section < div.data < div.stage \"age=\"abc\"str\"",
+    "timing": {
+     "delay": 500,
+     "duration": 900,
+     "easing": "ease-out",
+     "fill": "auto",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "color-mix(in srgb, var(--ca-accent) 35%, transparent)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "transparent",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 4,
+  "animations": [
+   {
+    "target": "div.arrow.visible < div.code-scroll < section.code < div.stage < div.ca",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "cubic-bezier(0.4, 0, 0.2, 1)",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(95.4px)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "transform": "translateY(145.8px)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"age = \"abc\"\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.line.active < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"years = int(age)\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner.ghost < div.overlay < div.ca \"\"abc\"\"",
+    "timing": {
+     "delay": 500,
+     "duration": 653.3857593709007,
+     "easing": "ease-in-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(0px, 0px) scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 0.1,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(0px, 0px) scale(1)",
+      "computedOffset": 0.1
+     },
+     {
+      "offset": 0.5,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(183.8px, -15.4px) scale(1.1)",
+      "computedOffset": 0.5
+     },
+     {
+      "offset": 0.92,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "translate(367.7px, 65.3px) scale(1)",
+      "computedOffset": 0.92
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "translate(367.7px, 65.3px) scale(1)",
+      "computedOffset": 1
+     }
+    ]
+   },
+   {
+    "target": "span.badge-inner < div.badge[id=1] < div.badges < div.code-scroll < section.code \"\"abc\"str\"",
+    "timing": {
+     "delay": 1093.3857593709008,
+     "duration": 220,
+     "easing": "ease-out",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "0",
+      "transform": "scale(0.9)",
+      "computedOffset": 0
+     },
+     {
+      "offset": null,
+      "easing": "linear",
+      "composite": "auto",
+      "opacity": "1",
+      "transform": "none",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "step": 5,
+  "animations": [
+   {
+    "target": "span.line.fault < code < pre.shiki.code-loupe-midnight < div.code-host < div.code-scroll \"years = int(age)\"",
+    "timing": {
+     "delay": 0,
+     "duration": 500,
+     "easing": "ease",
+     "fill": "backwards",
+     "iterations": 1,
+     "direction": "normal"
+    },
+    "keyframes": [
+     {
+      "offset": 0,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0 -0.1 / 0.1)",
+      "computedOffset": 0
+     },
+     {
+      "offset": 1,
+      "easing": "linear",
+      "composite": "auto",
+      "backgroundColor": "oklab(0.8 0.1 0 / 0.1)",
+      "computedOffset": 1
+     }
+    ]
+   }
+  ]
+ }
+]

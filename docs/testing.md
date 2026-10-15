@@ -8,6 +8,7 @@ execute the Python displayed in a lesson.
 | Layer | Coverage |
 | --- | --- |
 | Node tests | Lesson-schema validity, authored-type property coverage, corpus/schema compatibility and invalid action shapes; snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, shared-list identity/rebinding, preserved earlier snapshots, and corpus outcomes |
+| Animation timeline baselines | For every forward step of all 24 canonical lessons, each Web Animation the player creates (target, keyframes, delay, duration, easing), compared with checked-in JSON in the Docker visual project. Refactors of the animation code must reproduce them |
 | Corpus snapshot fixture | Complete snapshots of all 24 canonical lessons, compared per lesson against `packages/player/tests/fixtures/corpus-snapshots.json`. Behavior-preserving refactors of snapshot generation must leave it unchanged |
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
 | Type checks and builds | Player and site code, browser tests/configuration, canonical lesson metadata and semantic validation, independent player bundle and static site |
@@ -330,3 +331,19 @@ UPDATE_CORPUS_SNAPSHOTS=1 npm test --workspace code-loupe
 
 Adding or editing a canonical lesson also changes the fixture; regenerate it in
 the same commit. Never regenerate it to make an unexplained failure pass.
+
+## Animation timeline baselines
+
+Screenshots show still states, so `tests/browser/animation-timeline.visual.spec.ts`
+records the animations themselves. It steps forward through every canonical lesson,
+reads `getAnimations()` in the same task as each step, and compares the target,
+keyframes, delay, duration, easing, and fill of each animation with a baseline in
+`tests/browser/__screenshots__/animation-timeline.visual.spec.ts/`. Numbers are rounded
+to one decimal place. It runs only in the Docker visual project, because flight paths
+depend on layout and fonts.
+
+Use it as the safety net for refactoring `code-loupe.ts` or the visual animation
+modules. A failure names the lesson, and the diff shows the step and animation that
+changed. Regenerate with `npm run test:visual:update` only for an intentional change
+to animation timing, targets, or paths, and review the JSON diff. Adding or editing a
+canonical lesson also needs a new or updated baseline.
