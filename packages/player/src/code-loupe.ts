@@ -1,4 +1,3 @@
-import { codeToHtml, bundledThemes, type BundledTheme, type ThemeRegistration } from 'shiki';
 import { parseLesson, type Lesson, type StoredValue } from './lesson';
 import { buildSnapshots, findNth, type BadgeOrigin, type Snapshot } from './state';
 import { formatValue, isReference } from './values';
@@ -10,6 +9,9 @@ import { badgeDisplayValue } from './visuals/heap-state';
 import { captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
 import { heapStyles, renderHeap } from './visuals/heap-panel';
+import { highlightLesson } from './highlight';
+import { readLessonSource } from './lesson-source';
+import { applyPalette } from './visuals/palette';
 import { el, escapeHtml } from './visuals/dom';
 import { animateAssignment, animateBadgeAdded, animateCollectionChange, animateConsole, animateConversion, animateRemoval, type StepAnimationContext } from './visuals/step-animation';
 import { errorStyles, renderProgramError, renderErrorTarget } from './visuals/error-panel';
@@ -311,16 +313,16 @@ export class CodeLoupe extends HTMLElement {
     const loadId = ++this.#loadId;
     this.#loading = true;
     this.#source = source;
-    const preset = getThemePreset(this.getAttribute('theme') ?? DEFAULT_THEME);
-    if (!this.#lesson && preset) this.#applyPalette(preset);
+    const preset = getThemePreset(this.#themeName());
+    if (!this.#lesson && preset) applyPalette(this.#els.ca, this.#els.codeHost, preset);
     this.pause();
     try {
-      const yaml = source ?? await this.#readSource();
+      const yaml = source ?? await readLessonSource(this);
       if (loadId !== this.#loadId) return false;
       this.#source = yaml;
       const lesson = parseLesson(yaml);
       const snapshots = buildSnapshots(lesson);
-      const { codeHtml, literals, preset, variant } = await this.#highlightTheme(lesson, snapshots);
+      const { codeHtml, literals, preset, variant } = await highlightLesson(lesson, snapshots, () => this.#themeName());
       if (loadId !== this.#loadId) return false; // a newer load started while we were waiting
 
       this.#lesson = lesson;
@@ -328,16 +330,12 @@ export class CodeLoupe extends HTMLElement {
       this.#literals = literals;
       this.#index = 0;
 
-      const { ca, codeHost, title, error, scrub } = this.#els;
+      const { ca, title, error, scrub } = this.#els;
       ca.classList.remove('has-error');
       error.hidden = true;
       title.hidden = !lesson.title;
       title.textContent = lesson.title ?? '';
-      codeHost.innerHTML = codeHtml;
-      // Lines are display:block, so the newlines between them would add blank rows.
-      const code = codeHost.querySelector('code');
-      code?.childNodes.forEach((node) => node.nodeType === Node.TEXT_NODE && node.remove());
-      this.#applyPalette(preset, variant);
+      this.#installCode(codeHtml, preset, variant);
       scrub.max = String(this.total);
 
       this.#render(false);
@@ -349,35 +347,10 @@ export class CodeLoupe extends HTMLElement {
       this.#snapshots = [];
       this.#index = 0;
       this.#renderControls();
-      this.#els.ca.classList.add('has-error');
-      this.#els.status.textContent = '';
-      this.#els.error.hidden = false;
-      this.#els.error.textContent = `Couldn't load this lesson.\n\n${(err as Error).message}`;
-      this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message: (err as Error).message }, bubbles: true }));
+      this.#showError("Couldn't load this lesson.", err);
       return false;
     } finally {
       if (loadId === this.#loadId) this.#loading = false;
-    }
-  }
-
-  async #highlightTheme(lesson: Lesson, snapshots: Snapshot[]) {
-    // A theme can change while a lesson or its literals are highlighting.
-    // Finish with the latest choice without refetching or replacing a draft.
-    while (true) {
-      const name = this.getAttribute('theme') ?? DEFAULT_THEME;
-      const preset = getThemePreset(name);
-      try {
-        const theme = preset?.highlight ?? (await bundledThemes[name as BundledTheme]?.())?.default ?? name;
-        const [codeHtml, literals] = await Promise.all([
-          codeToHtml(lesson.code, { lang: lesson.language, theme }),
-          this.#highlightLiterals(lesson, snapshots, theme),
-        ]);
-        if (name === (this.getAttribute('theme') ?? DEFAULT_THEME)) {
-          return { codeHtml, literals, preset, variant: typeof theme === 'string' ? undefined : theme.type };
-        }
-      } catch (error) {
-        if (name === (this.getAttribute('theme') ?? DEFAULT_THEME)) throw error;
-      }
     }
   }
 
@@ -387,83 +360,39 @@ export class CodeLoupe extends HTMLElement {
     const loadId = this.#loadId;
     this.pause();
     try {
-      const { codeHtml, literals, preset, variant } = await this.#highlightTheme(lesson, this.#snapshots);
+      const { codeHtml, literals, preset, variant } = await highlightLesson(lesson, this.#snapshots, () => this.#themeName());
       if (loadId !== this.#loadId || lesson !== this.#lesson) return;
       this.#literals = literals;
-      this.#els.codeHost.innerHTML = codeHtml;
-      this.#els.codeHost.querySelector('code')?.childNodes.forEach(node => node.nodeType === Node.TEXT_NODE && node.remove());
-      this.#applyPalette(preset, variant);
+      this.#installCode(codeHtml, preset, variant);
       this.#els.ca.classList.remove('has-error');
       this.#els.error.hidden = true;
       this.#render(false);
     } catch (error) {
       if (loadId !== this.#loadId || lesson !== this.#lesson) return;
-      this.#els.ca.classList.add('has-error');
-      this.#els.status.textContent = '';
-      this.#els.error.hidden = false;
-      this.#els.error.textContent = `Couldn't apply this theme.\n\n${(error as Error).message}`;
-      this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message: (error as Error).message }, bubbles: true }));
+      this.#showError("Couldn't apply this theme.", error);
     }
   }
 
-  #applyPalette(preset: ThemePreset | undefined, variant?: 'light' | 'dark') {
+  /** The theme attribute, or the default; read again whenever a theme change must be noticed. */
+  #themeName() {
+    return this.getAttribute('theme') ?? DEFAULT_THEME;
+  }
+
+  #installCode(codeHtml: string, preset: ThemePreset | undefined, variant: 'light' | 'dark' | undefined) {
     const { ca, codeHost } = this.#els;
-    // Clear every preset override when returning to a regular Shiki theme.
-    for (const token of ['bg', 'fg', 'panel', 'raised', 'muted', 'line', 'accent', 'name', 'input', 'error']) {
-      ca.style.removeProperty(`--ca-${token}`);
-    }
-    if (preset) {
-      const p = preset.palette;
-      const tokens = { bg: p.bg, fg: p.fg, panel: p.panel, raised: p.raised, muted: p.muted,
-        line: p.border, accent: p.accent, name: p.name, input: p.input, error: p.error };
-      for (const [token, color] of Object.entries(tokens)) {
-        ca.style.setProperty(`--ca-${token}`, color);
-      }
-      ca.style.colorScheme = preset.variant;
-    } else {
-      const pre = codeHost.querySelector('pre');
-      if (pre?.style.backgroundColor) ca.style.setProperty('--ca-bg', pre.style.backgroundColor);
-      if (pre?.style.color) ca.style.setProperty('--ca-fg', pre.style.color);
-      ca.style.colorScheme = variant ?? 'normal';
-    }
+    codeHost.innerHTML = codeHtml;
+    // Lines are display:block, so the newlines between them would add blank rows.
+    codeHost.querySelector('code')?.childNodes.forEach((node) => node.nodeType === Node.TEXT_NODE && node.remove());
+    applyPalette(ca, codeHost, preset, variant);
   }
 
-  async #readSource(): Promise<string> {
-    const src = this.getAttribute('src');
-    if (src) {
-      const response = await fetch(new URL(src, document.baseURI));
-      if (!response.ok) throw new Error(`${src} returned ${response.status} ${response.statusText}.`);
-      return response.text();
-    }
-    const inline = this.querySelector('script[type="text/yaml"], script[type="application/yaml"]');
-    if (inline?.textContent) return dedent(inline.textContent);
-    throw new Error('Set a `src` attribute or put the lesson in a <script type="text/yaml"> child.');
-  }
-
-  /** Highlight every value that can appear so badges and variables match the code's colors. */
-  async #highlightLiterals(lesson: Lesson, snapshots: Snapshot[], theme: string | ThemeRegistration) {
-    const texts = new Set<string>();
-    for (const snap of snapshots) {
-      for (const v of [...snap.vars, ...snap.frames.flatMap(f => f.vars), ...snap.badges]) {
-        if (isReference(v.value)) continue;
-        texts.add(formatValue(v.value, lesson.language, v.type));
-        if (Array.isArray(v.value)) for (const item of v.value) texts.add(formatValue(item, lesson.language));
-      }
-      for (const object of snap.heap) {
-        if ('fields' in object) {
-          for (const item of Object.values(object.fields)) texts.add(formatValue(item, lesson.language));
-        } else {
-          texts.add(formatValue(object.value, lesson.language, object.type));
-          for (const item of object.value) texts.add(formatValue(item, lesson.language));
-        }
-      }
-      const from = snap.events.converted?.from;
-      if (from && !isReference(from.value)) texts.add(formatValue(from.value, lesson.language, from.type));
-    }
-    const entries = await Promise.all(
-      [...texts].map(async (text) => [text, await codeToHtml(text, { lang: lesson.language, theme, structure: 'inline' })] as const),
-    );
-    return new Map(entries);
+  #showError(prefix: string, error: unknown) {
+    const message = (error as Error).message;
+    this.#els.ca.classList.add('has-error');
+    this.#els.status.textContent = '';
+    this.#els.error.hidden = false;
+    this.#els.error.textContent = `${prefix}\n\n${message}`;
+    this.dispatchEvent(new CustomEvent('lessonerror', { detail: { message }, bubbles: true }));
   }
 
   // ---- Rendering ----
@@ -823,11 +752,4 @@ function storeSetting(key: string, value: string) {
 function readStoredSpeed(): number | null {
   const speed = Number(readSetting(SPEED_STORAGE_KEY));
   return speed > 0 ? speed : null;
-}
-
-/** Remove the common indentation from inline YAML so it can be indented to match the page's HTML. */
-function dedent(text: string) {
-  const lines = text.replace(/^\n+|\s+$/g, '').split('\n');
-  const indent = Math.min(...lines.filter((l) => l.trim()).map((l) => l.match(/^ */)![0].length));
-  return lines.map((l) => l.slice(indent)).join('\n');
 }
