@@ -612,3 +612,57 @@ controls do not warn. Pending forms remain separate from the saved YAML draft,
 so confirming departure discards them. Saved summaries and authored source-value
 previews make the overview and action-specific help clearer. No lesson format
 or player behavior changes, and no code execution is introduced.
+
+
+## 2026-10-14 — Separate mathematics visualization track
+
+Begin a small mathematics experiment while code-builder teacher trials proceed
+at their own pace. Prioritize useful explanations and teacher-controlled pacing:
+fixed arithmetic examples and a linear-equation worked solution come before
+automatic tracing. Student answer checking is outside the scope. Keep math data
+and rendering separate from code lesson YAML and the code player. The
+[math plan](math-plan.md) records the first teaching beats and prototype slices;
+notation tooling, a public authoring format, and shared playback architecture
+remain open decisions for the experiment.
+
+The first `/math/` viewer uses explicit display parts for the three simple
+examples, with spoken expression labels and matching emphasis on both equation
+sides. Previous/current states make each transformation inspectable; keyboard
+stepping and fullscreen support classroom review. General notation rendering,
+mathematical validation, and a public format remain open rather than implied by
+these fixed fixtures.
+
+The first result animation replaces `2 × 4` with `8` while anchoring the
+unchanged prefix. Explicit display-part identities drive presentation only;
+authored steps remain the source of state. Navigation, resize, and motion-setting
+changes cancel the transition safely. Math playback adopts the code viewer's
+icon vocabulary and adds scrubbing and an animation toggle, while retaining
+one-click/one-transition teacher pacing. Cancellation notation and broader
+algebra animations remain separate future work.
+
+
+Teacher feedback establishes visual parity with code loupes: use the same
+viewer palettes, Variables/expression stage, captions, playback icons, autoplay,
+speed, and motion preference. Remove the previous/current split and keep the
+stage height stable. Step 0 displays the starting expression without execution
+emphasis or caption; advancing begins the explanation. Both calculations in
+the first arithmetic example now have result-replacement motion. Algebra's
+variable values remain authored, including unknown-to-solved and backward reset.
+
+
+Motion quality now takes precedence over expanding math features. The first
+quality pass is limited to `2 × 4 → 8`: replace padded term slots with natural
+spacing, measure the result in its final layout, keep its highlight size constant,
+and hand off to the final DOM before removing the overlay. Responsive changes
+remeasure the anchor. Review this transition at normal/slow speeds before
+applying the treatment to the remaining arithmetic or algebra examples.
+
+
+The remaining quality passes extend measured replacement to both arithmetic
+examples and use a distinct algebra sequence: paired operation introduction,
+additive cancellation through +0, then simplification on each side. Terms do
+not cross the equals sign. Transformable display parts move retained terms
+without a final layout snap, and highlight paint settles into the target style.
+The solved variable appears only after the final expression settles. These
+remain teacher-authored visual fixtures, not symbolic evaluation or a public
+math lesson format.

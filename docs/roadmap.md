@@ -287,15 +287,24 @@ through a shared "where is this value on screen?" lookup.
 
 ---
 
-## 9. Mathematics exploration (long-term backlog)
+## 9. Mathematics visualization (separate experimental track)
 
-- [ ] Explore authored algebra lessons after the code-teaching foundations.
-      Start with a small prototype displaying successive teacher-authored equations
-      and captions, using LaTeX-style notation rendered by a math library such as
-      KaTeX. Keep math lesson types and rendering separate from code execution state;
-      assess shared playback controls and captions before extracting a common shell.
-      Animated term transformations, mathematical validation, and student-entered
-      solutions are later questions. This is not part of the near-term sequence.
+Start this track while code-builder teacher trials proceed at the user's own pace.
+Follow [the math implementation plan](math-plan.md). Useful explanations and
+teacher-controlled detail take precedence over merely reaching the correct answer.
+
+- [x] Define the initial teaching scope and worked examples: arithmetic grouping
+      and one-variable linear equations with integer solutions.
+- [x] Build a separate read-only prototype with authored mathematical states,
+      captions, emphasis, and reversible playback. Keep math data/rendering out
+      of code lesson YAML, snapshots, and the code component.
+- [ ] Trial the visuals with teachers before choosing a public authoring format
+      or building a math editor. Notation tooling and any shared playback shell
+      remain design questions.
+- [ ] Explore automatic arithmetic tracing for the small supported subset after
+      the visual trial; consider algebra transformations separately. Broader term-motion
+      animation and mathematical validation remain later work. Student answer
+      checking is outside the current scope.
 
 ## Suggested order
 
@@ -309,6 +318,9 @@ through a shared "where is this value on screen?" lookup.
 
 The Reveal.js adapter remains in the embedding backlog; it is not part of the
 near-term sequence.
+
+The separate math experiment now begins with its own prototype sequence; it does
+not depend on completing code-builder trials or resuming code lesson expansion.
 
 ## Naming notes
 
