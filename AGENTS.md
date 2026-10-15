@@ -48,6 +48,9 @@ This is an npm workspace monorepo:
   `src/authoring/` contains pure YAML-document edits, the Step cards builder, and
   `actions.ts`, the one definition of each builder action's label, defaults, accepted
   shapes, summary, and change-detection fields.
+  Builder markup is built with the auto-escaping `html` tag (`html.ts`): interpolated
+  text is escaped, nested markup uses another `html` template, and `raw` is only for
+  constant fragments, never teacher text.
   Preserve the raw draft, advanced actions, comments, and shared source undo history.
   Import the browser player only in client scripts; its entry depends on DOM globals.
   Build-time validation uses `code-loupe/lesson` and `code-loupe/state` instead.

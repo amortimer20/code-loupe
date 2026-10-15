@@ -91,7 +91,13 @@ procedural: they share long common tails across actions, so per-action objects w
 duplicate those tails or redesign them. A new action now needs a registry entry plus a branch in
 each of those two; 3.3 reshapes the rendering side.
 
-**3.3 Builder rendering.** `builder.ts` builds its UI from long template strings,
+**3.3a Safe markup (done 2026-10-15).** `authoring/html.ts` adds a template tag that escapes every
+interpolated value unless it is already `SafeHtml`, with `raw` for constant fragments. All of
+`builder.ts`'s markup now uses it, so a forgotten `escape()` can no longer turn teacher text into
+elements. The builder-DOM baselines (`tests/browser/builder-dom.visual.spec.ts`) proved the HTML
+byte-identical for every canonical step, every new-card form, and a hostile lesson.
+
+**3.3b Split rendering from the controller.** `builder.ts` builds its UI from long template strings,
 with 36 lines over 200 characters (one is about 2,000), and safety depends on
 remembering `escape()`. Introduce a small tagged `html` template that escapes
 interpolations by default, then split rendering (per-action field renderers)
