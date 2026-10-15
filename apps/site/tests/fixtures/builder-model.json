@@ -1,0 +1,4733 @@
+{
+ "labels": {
+  "highlight": "Highlight a line",
+  "badge": "Show a value",
+  "assign": "Store a value",
+  "print": "Print",
+  "write": "Show a prompt",
+  "input": "Show entered text",
+  "convert": "Convert a value",
+  "update": "Update a list element",
+  "select": "Select a list element",
+  "append": "Append an item",
+  "remove": "Remove a list element"
+ },
+ "added": {
+  "highlight": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { line: 1 } ]\n",
+  "badge": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { badge: { over: \"\", value: 0 } } ]\n",
+  "assign": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { assign: { var: \"\", value: 0 } } ]\n",
+  "print": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { print: \"\" } ]\n",
+  "write": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { write: \"\" } ]\n",
+  "input": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { input: \"\" } ]\n",
+  "convert": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { convert: { value: 0 } } ]\n",
+  "update": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { update: { target: \"numbers[0]\", value: 0 } } ]\n",
+  "select": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { select: null } ]\n",
+  "append": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { append: { target: numbers, value: 0 } } ]\n",
+  "remove": "title: New lesson\nlanguage: python\ncode: |\n  # Write your code here.\nsteps: [ { remove: \"numbers[0]\" } ]\n"
+ },
+ "newForms": {
+  "highlight": {
+   "action": "highlight",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  },
+  "badge": {
+   "action": "badge",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  },
+  "assign": {
+   "action": "assign",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  },
+  "print": {
+   "action": "print",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "",
+   "numericType": "auto"
+  },
+  "write": {
+   "action": "write",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "",
+   "numericType": "auto"
+  },
+  "input": {
+   "action": "input",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Text",
+   "value": "",
+   "numericType": "auto"
+  },
+  "convert": {
+   "action": "convert",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "badge",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  },
+  "update": {
+   "action": "update",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  },
+  "select": {
+   "action": "select",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  },
+  "append": {
+   "action": "append",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  },
+  "remove": {
+   "action": "remove",
+   "line": "1",
+   "caption": "",
+   "over": "",
+   "nth": "1",
+   "name": "",
+   "source": "literal",
+   "kind": "Number",
+   "value": "0",
+   "numericType": "auto"
+  }
+ },
+ "canonical": {
+  "accumulator-loop#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Start the running total at zero.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "literal",
+    "kind": "Number",
+    "value": "0",
+    "numericType": "auto"
+   },
+   "summary": "Store 0 in total",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "accumulator-loop#2": {
+   "form": {
+    "action": "assign",
+    "line": "2",
+    "caption": "The first value supplied by range(3) is 0.",
+    "over": "",
+    "nth": "1",
+    "name": "n",
+    "source": "literal",
+    "kind": "Number",
+    "value": "0",
+    "numericType": "auto"
+   },
+   "summary": "Store 0 in n",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "accumulator-loop#3": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "On the first iteration, 0 + 0 gives 0.",
+    "over": "total + n",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "0",
+    "numericType": "auto"
+   },
+   "summary": "Show 0",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "accumulator-loop#4": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Store the result back in total. Its value is still 0.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in total",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "accumulator-loop#5": {
+   "form": {
+    "action": "assign",
+    "line": "2",
+    "caption": "The next iteration sets n to 1. The total is retained.",
+    "over": "",
+    "nth": "1",
+    "name": "n",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Store 1 in n",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "accumulator-loop#6": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Now 0 + 1 gives 1.",
+    "over": "total + n",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Show 1",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "accumulator-loop#7": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "The running total becomes 1.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in total",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "accumulator-loop#8": {
+   "form": {
+    "action": "assign",
+    "line": "2",
+    "caption": "The third iteration sets n to 2. The total is still 1.",
+    "over": "",
+    "nth": "1",
+    "name": "n",
+    "source": "literal",
+    "kind": "Number",
+    "value": "2",
+    "numericType": "auto"
+   },
+   "summary": "Store 2 in n",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "accumulator-loop#9": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "This time, 1 + 2 gives 3.",
+    "over": "total + n",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "3",
+    "numericType": "auto"
+   },
+   "summary": "Show 3",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "accumulator-loop#10": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "The running total becomes 3.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in total",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "accumulator-loop#11": {
+   "form": {
+    "action": "highlight",
+    "line": "2",
+    "caption": "range(3) has no more values. Execution leaves the loop.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 2",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "accumulator-loop#12": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Look up the final total to print it.",
+    "over": "total",
+    "nth": "1",
+    "name": "",
+    "source": "total",
+    "kind": "Number",
+    "value": "3",
+    "numericType": "auto"
+   },
+   "summary": "Read total",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "accumulator-loop#13": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows 3, the sum of 0, 1, and 2.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "3",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "boolean-comparisons#1": {
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "A comparison asks a question about values. Is 2 less than 3?",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "boolean-comparisons#2": {
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "Yes. The comparison produces True, a Boolean value, rather than another number.",
+    "over": "2 < 3",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Boolean",
+    "value": "true",
+    "numericType": "auto"
+   },
+   "summary": "Show True",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "boolean-comparisons#3": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows True, the result of the first comparison.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "True",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "boolean-comparisons#4": {
+   "form": {
+    "action": "highlight",
+    "line": "2",
+    "caption": "Now ask whether 2 equals 3. The == operator compares values; it does not assign a value to a name.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 2",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "boolean-comparisons#5": {
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "The values are not equal, so this comparison produces False. Both results have the bool type.",
+    "over": "2 == 3",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Boolean",
+    "value": "false",
+    "numericType": "auto"
+   },
+   "summary": "Show False",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "boolean-comparisons#6": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The second console line shows False. Conditions can use these Boolean results to decide what runs next.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "False",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "changing-value#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Start with score bound to 5.",
+    "over": "",
+    "nth": "1",
+    "name": "score",
+    "source": "literal",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Store 5 in score",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "changing-value#2": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Read the old value of score on the right-hand side first. It is still 5.",
+    "over": "score",
+    "nth": "2",
+    "name": "",
+    "source": "score",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Read score",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "changing-value#3": {
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "Adding 2 gives 7. This is the new result, but score still holds 5 until assignment happens.",
+    "over": "score + 2",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "7",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 7",
+   "unchanged": false,
+   "changes": "11110011100"
+  },
+  "changing-value#4": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Now bind score to the result 7, replacing its previous value. This is an assignment, not an algebraic equality.",
+    "over": "",
+    "nth": "1",
+    "name": "score",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in score",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "changing-value#5": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Reading score now gives 7.",
+    "over": "score",
+    "nth": "1",
+    "name": "",
+    "source": "score",
+    "kind": "Number",
+    "value": "7",
+    "numericType": "auto"
+   },
+   "summary": "Read score",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "changing-value#6": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows the updated value 7.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "7",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "class-instance#1": {
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "Student has an initializer named __init__. No Student instance exists yet; the initializer runs when we create one.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "class-instance#2": {
+   "form": {
+    "action": "badge",
+    "line": "5",
+    "caption": "Evaluate the argument \"Ada\" before constructing a Student.",
+    "over": "\"Ada\"",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "Ada",
+    "numericType": "auto"
+   },
+   "summary": "Show \"Ada\"",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "class-instance#3": {
+   "form": null,
+   "summary": "Advanced · allocate",
+   "unchanged": null,
+   "changes": null
+  },
+  "class-instance#4": {
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  "class-instance#5": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read the local parameter name on the right-hand side. It is separate from the instance attribute self.name.",
+    "over": "name",
+    "nth": "2",
+    "name": "",
+    "source": "name",
+    "kind": "Text",
+    "value": "Ada",
+    "numericType": "auto"
+   },
+   "summary": "Read name",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "class-instance#6": {
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  "class-instance#7": {
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  "class-instance#8": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Bind student to the constructed instance. The initializer's local self and name no longer exist.",
+    "over": "",
+    "nth": "1",
+    "name": "student",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in student",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "class-instance#9": {
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  "class-instance#10": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows Ada. student still points to the Student instance with its name attribute.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "Ada",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "conditional#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Store the integer 16 in age.",
+    "over": "",
+    "nth": "1",
+    "name": "age",
+    "source": "literal",
+    "kind": "Number",
+    "value": "16",
+    "numericType": "auto"
+   },
+   "summary": "Store 16 in age",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "conditional#2": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Look up age before comparing it with 18.",
+    "over": "age",
+    "nth": "1",
+    "name": "",
+    "source": "age",
+    "kind": "Number",
+    "value": "16",
+    "numericType": "auto"
+   },
+   "summary": "Read age",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "conditional#3": {
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "Evaluating 16 >= 18 gives False, a Boolean value.",
+    "over": "age >= 18",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Boolean",
+    "value": "false",
+    "numericType": "auto"
+   },
+   "summary": "Convert to False",
+   "unchanged": false,
+   "changes": "11110011000"
+  },
+  "conditional#4": {
+   "form": {
+    "action": "highlight",
+    "line": "5",
+    "caption": "The condition is false, so skip line 3 and enter the else branch.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 5",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "conditional#5": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "Only the selected branch prints its message.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "Under 18",
+    "numericType": "auto"
+   },
+   "summary": "Print \"Under 18\"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "dictionary-fields#1": {
+   "form": null,
+   "summary": "Advanced · allocate, assign",
+   "unchanged": null,
+   "changes": null
+  },
+  "dictionary-fields#2": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "The key \"score\" identifies the field to change. We will store 7 there while leaving \"name\" unchanged.",
+    "over": "7",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "7",
+    "numericType": "auto"
+   },
+   "summary": "Show 7",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "dictionary-fields#3": {
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  "dictionary-fields#4": {
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  "dictionary-fields#5": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows 7. The dictionary still has both fields, and name still holds \"Ada\".",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "7",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "function-call#1": {
+   "form": {
+    "action": "assign",
+    "line": "5",
+    "caption": "Store 10 in the global variable value. Defining the function did not run its body.",
+    "over": "",
+    "nth": "1",
+    "name": "value",
+    "source": "literal",
+    "kind": "Number",
+    "value": "10",
+    "numericType": "auto"
+   },
+   "summary": "Store 10 in value",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "function-call#2": {
+   "form": {
+    "action": "badge",
+    "line": "6",
+    "caption": "Look up the argument before calling add_one().",
+    "over": "value",
+    "nth": "1",
+    "name": "",
+    "source": "value",
+    "kind": "Number",
+    "value": "10",
+    "numericType": "auto"
+   },
+   "summary": "Read value",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "function-call#3": {
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  "function-call#4": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Inside the function, value refers to the local parameter. The global value is separate.",
+    "over": "value",
+    "nth": "1",
+    "name": "",
+    "source": "value",
+    "kind": "Number",
+    "value": "10",
+    "numericType": "auto"
+   },
+   "summary": "Read value",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "function-call#5": {
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "Adding 1 to the local value gives 11.",
+    "over": "value + 1",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "11",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 11",
+   "unchanged": false,
+   "changes": "11110011100"
+  },
+  "function-call#6": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Store 11 in result, another variable local to this call.",
+    "over": "",
+    "nth": "1",
+    "name": "result",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in result",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "function-call#7": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Look up the local result to return it.",
+    "over": "result",
+    "nth": "1",
+    "name": "",
+    "source": "result",
+    "kind": "Number",
+    "value": "11",
+    "numericType": "auto"
+   },
+   "summary": "Read result",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "function-call#8": {
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  "function-call#9": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Store the returned number in the global variable answer. The global value is still 10.",
+    "over": "",
+    "nth": "1",
+    "name": "answer",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in answer",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "function-call#10": {
+   "form": {
+    "action": "badge",
+    "line": "7",
+    "caption": "Look up answer for the final output.",
+    "over": "answer",
+    "nth": "1",
+    "name": "",
+    "source": "answer",
+    "kind": "Number",
+    "value": "11",
+    "numericType": "auto"
+   },
+   "summary": "Read answer",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "function-call#11": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows 11. The local result existed only while the function was running.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "11",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "hello-world#1": {
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "The arrow marks the line we are about to run. print() sends a message to the console.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "hello-world#2": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows Hello, world! The quotation marks belong to the code; they are not part of the printed message.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "Hello, world!",
+    "numericType": "auto"
+   },
+   "summary": "Print \"Hello, world!\"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "instance-method#1": {
+   "form": null,
+   "summary": "Advanced · allocate, assign",
+   "unchanged": null,
+   "changes": null
+  },
+  "instance-method#2": {
+   "form": null,
+   "summary": "Advanced · allocate, assign",
+   "unchanged": null,
+   "changes": null
+  },
+  "instance-method#3": {
+   "form": {
+    "action": "badge",
+    "line": "10",
+    "caption": "ada identifies the instance receiving the method call. Evaluate \"Lovelace\" for the new_name argument.",
+    "over": "\"Lovelace\"",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "Lovelace",
+    "numericType": "auto"
+   },
+   "summary": "Show \"Lovelace\"",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "instance-method#4": {
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  "instance-method#5": {
+   "form": {
+    "action": "badge",
+    "line": "6",
+    "caption": "Read the local parameter new_name. The instance's name attribute still holds \"Ada\".",
+    "over": "new_name",
+    "nth": "1",
+    "name": "",
+    "source": "new_name",
+    "kind": "Text",
+    "value": "Lovelace",
+    "numericType": "auto"
+   },
+   "summary": "Read new_name",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "instance-method#6": {
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  "instance-method#7": {
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  "instance-method#8": {
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  "instance-method#9": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "Print the name changed by the method.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "Lovelace",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "instance-method#10": {
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  "instance-method#11": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The outputs show the method's lasting change to one instance. Its None result was not printed or assigned.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "Grace",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "list-aliasing#1": {
+   "form": null,
+   "summary": "Advanced · allocate, assign",
+   "unchanged": null,
+   "changes": null
+  },
+  "list-aliasing#2": {
+   "form": null,
+   "summary": "Advanced · assign",
+   "unchanged": null,
+   "changes": null
+  },
+  "list-aliasing#3": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "We will append 6 through other. Predict what printing numbers will show.",
+    "over": "6",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "6",
+    "numericType": "auto"
+   },
+   "summary": "Show 6",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "list-aliasing#4": {
+   "form": {
+    "action": "append",
+    "line": "",
+    "caption": "Change the shared list to [2, 4, 6]. The two names still point to the same object.",
+    "over": "",
+    "nth": "1",
+    "name": "other",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Append latest badge to other",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-aliasing#5": {
+   "form": {
+    "action": "select",
+    "line": "",
+    "caption": "Through numbers, we can see the new element at index 2. It is the very same list.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers[2]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Select numbers[2]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-aliasing#6": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Read the list through numbers, even though the append used other.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers",
+    "kind": "List",
+    "value": "2,4,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 2
+     }
+    ],
+    "selection": "clear",
+    "numericType": "auto"
+   },
+   "summary": "Read numbers",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-aliasing#7": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows [2, 4, 6]. Assignment gave the list another name; it did not copy its contents.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "[2, 4, 6]",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "list-append#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Create a list with two elements, at indices 0 and 1.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers",
+    "source": "literal",
+    "kind": "List",
+    "value": "2,4",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Store [2, 4] in numbers",
+   "unchanged": false,
+   "changes": "11001110001"
+  },
+  "list-append#2": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "The value to append is 6. It will go after the existing elements.",
+    "over": "6",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "6",
+    "numericType": "auto"
+   },
+   "summary": "Show 6",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "list-append#3": {
+   "form": {
+    "action": "append",
+    "line": "",
+    "caption": "Add 6 at the end. The list grows from two elements to three.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Append latest badge to numbers",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-append#4": {
+   "form": {
+    "action": "select",
+    "line": "",
+    "caption": "The new element has index 2. The original cells keep their values and indices.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers[2]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Select numbers[2]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-append#5": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read the whole list after appending.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers",
+    "kind": "List",
+    "value": "2,4,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 2
+     }
+    ],
+    "selection": "clear",
+    "numericType": "auto"
+   },
+   "summary": "Read numbers",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-append#6": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows [2, 4, 6]. Step backward to restore the two-element list.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "[2, 4, 6]",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "list-copying#1": {
+   "form": null,
+   "summary": "Advanced · allocate, assign",
+   "unchanged": null,
+   "changes": null
+  },
+  "list-copying#2": {
+   "form": null,
+   "summary": "Advanced · allocate, assign",
+   "unchanged": null,
+   "changes": null
+  },
+  "list-copying#3": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "We will append 6 through other. Predict what printing each list will show.",
+    "over": "6",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "6",
+    "numericType": "auto"
+   },
+   "summary": "Show 6",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "list-copying#4": {
+   "form": {
+    "action": "append",
+    "line": "",
+    "caption": "Only list-2 grows to [2, 4, 6]. The original list-1 remains [2, 4].",
+    "over": "",
+    "nth": "1",
+    "name": "other",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Append latest badge to other",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-copying#5": {
+   "form": {
+    "action": "select",
+    "line": "",
+    "caption": "The new element at index 2 belongs to the copy. Equal starting contents did not make these the same object.",
+    "over": "",
+    "nth": "1",
+    "name": "other[2]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Select other[2]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-copying#6": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Read the original list through numbers. It still contains just 2 and 4.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers",
+    "kind": "List",
+    "value": "2,4",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     }
+    ],
+    "selection": "clear",
+    "numericType": "auto"
+   },
+   "summary": "Read numbers",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-copying#7": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "Printing numbers shows [2, 4]; appending to the copy left it unchanged.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "[2, 4]",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "list-copying#8": {
+   "form": {
+    "action": "badge",
+    "line": "5",
+    "caption": "Read the separate list through other. This is the one we changed.",
+    "over": "other",
+    "nth": "1",
+    "name": "",
+    "source": "other",
+    "kind": "List",
+    "value": "2,4,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 2
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Read other",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-copying#9": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "Printing other shows [2, 4, 6]. Compare this with assignment alone, where both names pointed to one list.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "[2, 4, 6]",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "list-iteration#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "The list contains three elements. Their positions are numbered 0, 1, and 2.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers",
+    "source": "literal",
+    "kind": "List",
+    "value": "2,4,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 2
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Store [2, 4, 6] in numbers",
+   "unchanged": false,
+   "changes": "11001110001"
+  },
+  "list-iteration#2": {
+   "form": {
+    "action": "assign",
+    "line": "2",
+    "caption": "Start the running total at zero.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "literal",
+    "kind": "Number",
+    "value": "0",
+    "numericType": "auto"
+   },
+   "summary": "Store 0 in total",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "list-iteration#3": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "The loop reads the first element, at index 0. Its value is 2.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers[0]",
+    "kind": "Number",
+    "value": "2",
+    "selection": "numbers[0]",
+    "numericType": "auto"
+   },
+   "summary": "Read numbers[0]",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-iteration#4": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Bind n to the element's value, 2. n is not the index.",
+    "over": "",
+    "nth": "1",
+    "name": "n",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in n",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-iteration#5": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Add the current element to the total. 0 + 2 gives 2.",
+    "over": "total + n",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "2",
+    "numericType": "auto"
+   },
+   "summary": "Show 2",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "list-iteration#6": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Store 2 in total. Reading the element did not change the list.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in total",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-iteration#7": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Advance to index 1. The next element's value is 4.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers[1]",
+    "kind": "Number",
+    "value": "4",
+    "selection": "numbers[1]",
+    "numericType": "auto"
+   },
+   "summary": "Read numbers[1]",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-iteration#8": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "n becomes 4; total retains 2 from the previous iteration.",
+    "over": "",
+    "nth": "1",
+    "name": "n",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in n",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-iteration#9": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Now 2 + 4 gives 6.",
+    "over": "total + n",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "6",
+    "numericType": "auto"
+   },
+   "summary": "Show 6",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "list-iteration#10": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "The running total becomes 6. The list still contains 2, 4, and 6.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in total",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-iteration#11": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Advance to the final element, at index 2. Its value is 6.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers[2]",
+    "kind": "Number",
+    "value": "6",
+    "selection": "numbers[2]",
+    "numericType": "auto"
+   },
+   "summary": "Read numbers[2]",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-iteration#12": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "n becomes 6. The index is 2, while the element's value is 6.",
+    "over": "",
+    "nth": "1",
+    "name": "n",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in n",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-iteration#13": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Add the last element. 6 + 6 gives 12.",
+    "over": "total + n",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "12",
+    "numericType": "auto"
+   },
+   "summary": "Show 12",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "list-iteration#14": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "The running total becomes 12.",
+    "over": "",
+    "nth": "1",
+    "name": "total",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in total",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-iteration#15": {
+   "form": {
+    "action": "select",
+    "line": "3",
+    "caption": "There are no more elements. Leave the loop; Python keeps n at its last value, 6.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Clear list selection",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-iteration#16": {
+   "form": {
+    "action": "badge",
+    "line": "5",
+    "caption": "Read the final total to print it.",
+    "over": "total",
+    "nth": "1",
+    "name": "",
+    "source": "total",
+    "kind": "Number",
+    "value": "12",
+    "numericType": "auto"
+   },
+   "summary": "Read total",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-iteration#17": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows 12, the sum of the list's three elements.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "12",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "list-removal#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Create a list with three elements at indices 0, 1, and 2.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers",
+    "source": "literal",
+    "kind": "List",
+    "value": "2,4,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 2
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Store [2, 4, 6] in numbers",
+   "unchanged": false,
+   "changes": "11001110001"
+  },
+  "list-removal#2": {
+   "form": {
+    "action": "select",
+    "line": "2",
+    "caption": "Index 1 selects the second element, whose value is 4.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers[1]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Select numbers[1]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-removal#3": {
+   "form": {
+    "action": "remove",
+    "line": "",
+    "caption": "Delete that element. The list shrinks to two cells; 6 moves from index 2 to index 1.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers[1]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Remove numbers[1]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-removal#4": {
+   "form": {
+    "action": "select",
+    "line": "",
+    "caption": "Index 1 now refers to 6. Its value did not change; its position did.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers[1]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Select numbers[1]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-removal#5": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read the shorter list. There is no empty cell or gap at the removed position.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers",
+    "kind": "List",
+    "value": "2,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 1
+     }
+    ],
+    "selection": "clear",
+    "numericType": "auto"
+   },
+   "summary": "Read numbers",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-removal#6": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows [2, 6]. Step backward to restore 4 and the original indices.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "[2, 6]",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "list-update#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Create a list with three elements at indices 0, 1, and 2.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers",
+    "source": "literal",
+    "kind": "List",
+    "value": "2,4,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "4",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 2
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Store [2, 4, 6] in numbers",
+   "unchanged": false,
+   "changes": "11001110001"
+  },
+  "list-update#2": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Index 1 selects the second element, currently 4. The new value is 10.",
+    "over": "10",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "10",
+    "selection": "numbers[1]",
+    "numericType": "auto"
+   },
+   "summary": "Show 10",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "list-update#3": {
+   "form": {
+    "action": "update",
+    "line": "",
+    "caption": "Replace the element at index 1 with 10. Only this cell changes.",
+    "over": "",
+    "nth": "1",
+    "name": "numbers[1]",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Set numbers[1] to latest badge",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "list-update#4": {
+   "form": {
+    "action": "select",
+    "line": "",
+    "caption": "The list is now [2, 10, 6]. Its length is still three, and indices 0 and 2 retain their values.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Clear list selection",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  "list-update#5": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read the whole updated list to print it.",
+    "over": "numbers",
+    "nth": "1",
+    "name": "",
+    "source": "numbers",
+    "kind": "List",
+    "value": "2,10,6",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "10",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Number",
+      "value": "6",
+      "originalIndex": 2
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Read numbers",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "list-update#6": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows the updated list. Step backward to compare it with the original.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "[2, 10, 6]",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "naming-value#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Assignment binds the name score to the integer 5. The Variables panel shows its current value.",
+    "over": "",
+    "nth": "1",
+    "name": "score",
+    "source": "literal",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Store 5 in score",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "naming-value#2": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Read score to find the value that print() will use. The name refers to 5; it is not the message to print.",
+    "over": "score",
+    "nth": "1",
+    "name": "",
+    "source": "score",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Read score",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "naming-value#3": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows 5. Reading score did not change its stored value.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "nested-function-call#1": {
+   "form": {
+    "action": "assign",
+    "line": "10",
+    "caption": "Store 10 globally. Neither function body has run yet.",
+    "over": "",
+    "nth": "1",
+    "name": "value",
+    "source": "literal",
+    "kind": "Number",
+    "value": "10",
+    "numericType": "auto"
+   },
+   "summary": "Store 10 in value",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "nested-function-call#2": {
+   "form": {
+    "action": "badge",
+    "line": "11",
+    "caption": "Look up the argument for double_after_bump().",
+    "over": "value",
+    "nth": "1",
+    "name": "",
+    "source": "value",
+    "kind": "Number",
+    "value": "10",
+    "numericType": "auto"
+   },
+   "summary": "Read value",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "nested-function-call#3": {
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  "nested-function-call#4": {
+   "form": {
+    "action": "badge",
+    "line": "6",
+    "caption": "The outer function passes its local value to add_one(). Its result is not assigned yet.",
+    "over": "value",
+    "nth": "1",
+    "name": "",
+    "source": "value",
+    "kind": "Number",
+    "value": "10",
+    "numericType": "auto"
+   },
+   "summary": "Read value",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "nested-function-call#5": {
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  "nested-function-call#6": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "This value belongs to add_one(). Each call has a separate parameter with the same name.",
+    "over": "value",
+    "nth": "1",
+    "name": "",
+    "source": "value",
+    "kind": "Number",
+    "value": "10",
+    "numericType": "auto"
+   },
+   "summary": "Read value",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "nested-function-call#7": {
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "Add 1 to the inner parameter to get 11.",
+    "over": "value + 1",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "11",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 11",
+   "unchanged": false,
+   "changes": "11110011100"
+  },
+  "nested-function-call#8": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Create result in the inner frame. The paused outer frame still has no result.",
+    "over": "",
+    "nth": "1",
+    "name": "result",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in result",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "nested-function-call#9": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read the inner result for the first return.",
+    "over": "result",
+    "nth": "1",
+    "name": "",
+    "source": "result",
+    "kind": "Number",
+    "value": "11",
+    "numericType": "auto"
+   },
+   "summary": "Read result",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "nested-function-call#10": {
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  "nested-function-call#11": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Store the returned 11 in the outer frame's own result variable.",
+    "over": "",
+    "nth": "1",
+    "name": "result",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in result",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "nested-function-call#12": {
+   "form": {
+    "action": "badge",
+    "line": "7",
+    "caption": "Read the outer result. The inner frame has already gone.",
+    "over": "result",
+    "nth": "1",
+    "name": "",
+    "source": "result",
+    "kind": "Number",
+    "value": "11",
+    "numericType": "auto"
+   },
+   "summary": "Read result",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "nested-function-call#13": {
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "Double the returned value to get 22.",
+    "over": "result * 2",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "22",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 22",
+   "unchanged": false,
+   "changes": "11110011100"
+  },
+  "nested-function-call#14": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Update the outer result to 22. The global value remains 10.",
+    "over": "",
+    "nth": "1",
+    "name": "result",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in result",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "nested-function-call#15": {
+   "form": {
+    "action": "badge",
+    "line": "8",
+    "caption": "Read the outer result for the second return.",
+    "over": "result",
+    "nth": "1",
+    "name": "",
+    "source": "result",
+    "kind": "Number",
+    "value": "22",
+    "numericType": "auto"
+   },
+   "summary": "Read result",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "nested-function-call#16": {
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  "nested-function-call#17": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Assign the final returned value to the global answer.",
+    "over": "",
+    "nth": "1",
+    "name": "answer",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in answer",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "nested-function-call#18": {
+   "form": {
+    "action": "badge",
+    "line": "12",
+    "caption": "Look up the global answer for printing.",
+    "over": "answer",
+    "nth": "1",
+    "name": "",
+    "source": "answer",
+    "kind": "Number",
+    "value": "22",
+    "numericType": "auto"
+   },
+   "summary": "Read answer",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "nested-function-call#19": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows 22. Step backward across each return to restore that call's locals.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "22",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "numeric-input#1": {
+   "form": {
+    "action": "write",
+    "line": "1",
+    "caption": "input() shows its prompt and waits for the user to type something.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "Enter your age: ",
+    "numericType": "auto"
+   },
+   "summary": "Prompt \"Enter your age: \"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "numeric-input#2": {
+   "form": {
+    "action": "input",
+    "line": "",
+    "caption": "The user types 30 and presses Enter.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "30",
+    "numericType": "auto"
+   },
+   "summary": "Enter \"30\"",
+   "unchanged": false,
+   "changes": "11000001000"
+  },
+  "numeric-input#3": {
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "input() always gives back a string, even when the user types digits.",
+    "over": "input(\"Enter your age: \")",
+    "nth": "1",
+    "name": "",
+    "source": "console",
+    "kind": "Text",
+    "value": "30",
+    "numericType": "auto"
+   },
+   "summary": "Read console",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "numeric-input#4": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "The string \"30\" is stored in the variable text.",
+    "over": "",
+    "nth": "1",
+    "name": "text",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in text",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "numeric-input#5": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Python looks up text and finds the string \"30\".",
+    "over": "text",
+    "nth": "1",
+    "name": "",
+    "source": "text",
+    "kind": "Text",
+    "value": "30",
+    "numericType": "auto"
+   },
+   "summary": "Read text",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "numeric-input#6": {
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "int() converts the string \"30\" into the integer 30.",
+    "over": "int(text)",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "30",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 30",
+   "unchanged": false,
+   "changes": "11110011100"
+  },
+  "numeric-input#7": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Now age holds a number, so we can do math with it.",
+    "over": "",
+    "nth": "1",
+    "name": "age",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in age",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "numeric-input#8": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Because age is an int, 100 - age works out to 70.",
+    "over": "100 - age",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "70",
+    "numericType": "auto"
+   },
+   "summary": "Show 70",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "numeric-input#9": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The f-string fills in 70 and print() shows the message.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "You will be 100 in 70 years!",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "runtime-error#1": {
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "This program can begin executing. First it reaches a print statement.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "runtime-error#2": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console records Starting before anything fails.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "Starting",
+    "numericType": "auto"
+   },
+   "summary": "Print \"Starting\"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "runtime-error#3": {
+   "form": {
+    "action": "assign",
+    "line": "2",
+    "caption": "Store the string \"abc\" in age. Assigning a string is valid.",
+    "over": "",
+    "nth": "1",
+    "name": "age",
+    "source": "literal",
+    "kind": "Text",
+    "value": "abc",
+    "numericType": "auto"
+   },
+   "summary": "Store \"abc\" in age",
+   "unchanged": false,
+   "changes": "11001111000"
+  },
+  "runtime-error#4": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read age before trying to convert it to an integer. years has not been assigned yet.",
+    "over": "age",
+    "nth": "1",
+    "name": "",
+    "source": "age",
+    "kind": "Text",
+    "value": "abc",
+    "numericType": "auto"
+   },
+   "summary": "Read age",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "runtime-error#5": {
+   "form": null,
+   "summary": "Advanced · error",
+   "unchanged": null,
+   "changes": null
+  },
+  "simple-arithmetic#1": {
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "Before print() can show anything, Python evaluates the addition inside the parentheses. What is 2 + 3?",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "simple-arithmetic#2": {
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "The expression 2 + 3 evaluates to the integer 5. The badge shows that result beside the code.",
+    "over": "2 + 3",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Show 5",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "simple-arithmetic#3": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "print() sends the result to the console. The output is 5, rather than the expression 2 + 3.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "strings-and-numbers#1": {
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "These operands are integers. Predict the result of adding 2 and 3.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "strings-and-numbers#2": {
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "Integer addition gives 5. The int tag identifies the result as a number.",
+    "over": "2 + 3",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Show 5",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "strings-and-numbers#3": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The first console line shows 5.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "5",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "strings-and-numbers#4": {
+   "form": {
+    "action": "highlight",
+    "line": "2",
+    "caption": "Quotation marks make these operands strings. What will joining \"2\" and \"3\" produce?",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 2",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "strings-and-numbers#5": {
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "For strings, + joins the text. The result is \"23\", with a str tag; it is not integer addition.",
+    "over": "\"2\" + \"3\"",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "23",
+    "numericType": "auto"
+   },
+   "summary": "Show \"23\"",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "strings-and-numbers#6": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The second console line shows 23 without quotation marks. The badge showed its string type; console text alone does not show that distinction.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "23",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "syntax-error#1": {
+   "form": null,
+   "summary": "Advanced · error",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#1": {
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "The Student definition is already available. Each new instance will have its own name attribute.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "two-instances#2": {
+   "form": {
+    "action": "badge",
+    "line": "5",
+    "caption": "Evaluate \"Ada\" for the first constructor call.",
+    "over": "\"Ada\"",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "Ada",
+    "numericType": "auto"
+   },
+   "summary": "Show \"Ada\"",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "two-instances#3": {
+   "form": null,
+   "summary": "Advanced · allocate",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#4": {
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#5": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read this call's local name parameter.",
+    "over": "name",
+    "nth": "2",
+    "name": "",
+    "source": "name",
+    "kind": "Text",
+    "value": "Ada",
+    "numericType": "auto"
+   },
+   "summary": "Read name",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "two-instances#6": {
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#7": {
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#8": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Bind ada to the first instance. The initializer's locals are gone.",
+    "over": "",
+    "nth": "1",
+    "name": "ada",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in ada",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "two-instances#9": {
+   "form": {
+    "action": "badge",
+    "line": "6",
+    "caption": "Evaluate \"Grace\" for a separate constructor call using the same class.",
+    "over": "\"Grace\"",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "Grace",
+    "numericType": "auto"
+   },
+   "summary": "Show \"Grace\"",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "two-instances#10": {
+   "form": null,
+   "summary": "Advanced · allocate",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#11": {
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#12": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read \"Grace\" from the second initializer's local name parameter.",
+    "over": "name",
+    "nth": "2",
+    "name": "",
+    "source": "name",
+    "kind": "Text",
+    "value": "Grace",
+    "numericType": "auto"
+   },
+   "summary": "Read name",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "two-instances#13": {
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#14": {
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#15": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "ada and grace point to two independent instances of the same class. Both have an attribute named name.",
+    "over": "",
+    "nth": "1",
+    "name": "grace",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in grace",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "two-instances#16": {
+   "form": {
+    "action": "badge",
+    "line": "7",
+    "caption": "Evaluate the replacement name before updating ada's instance.",
+    "over": "\"Lovelace\"",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "Lovelace",
+    "numericType": "auto"
+   },
+   "summary": "Show \"Lovelace\"",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "two-instances#17": {
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#18": {
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#19": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "Print the first instance's updated name.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "Lovelace",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "two-instances#20": {
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  "two-instances#21": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The two outputs confirm independent state. Updating ada.name did not change grace.name.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "Grace",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "while-loop#1": {
+   "form": {
+    "action": "assign",
+    "line": "1",
+    "caption": "Start count at 0. The loop will check count before running its body.",
+    "over": "",
+    "nth": "1",
+    "name": "count",
+    "source": "literal",
+    "kind": "Number",
+    "value": "0",
+    "numericType": "auto"
+   },
+   "summary": "Store 0 in count",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  "while-loop#2": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "With count at 0, 0 < 2 is True. Enter the loop body.",
+    "over": "count < 2",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Boolean",
+    "value": "true",
+    "numericType": "auto"
+   },
+   "summary": "Show True",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "while-loop#3": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read count for the first print. Its value is 0.",
+    "over": "count",
+    "nth": "1",
+    "name": "",
+    "source": "count",
+    "kind": "Number",
+    "value": "0",
+    "numericType": "auto"
+   },
+   "summary": "Read count",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "while-loop#4": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The first iteration prints 0.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "0",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "while-loop#5": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Evaluate 0 + 1 to get 1. count still holds 0 until assignment.",
+    "over": "count + 1",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Show 1",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "while-loop#6": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Store 1 in count, then return to the condition at the top of the loop.",
+    "over": "",
+    "nth": "1",
+    "name": "count",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in count",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "while-loop#7": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Now 1 < 2 is True. Run the body again with count at 1.",
+    "over": "count < 2",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Boolean",
+    "value": "true",
+    "numericType": "auto"
+   },
+   "summary": "Show True",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "while-loop#8": {
+   "form": {
+    "action": "badge",
+    "line": "3",
+    "caption": "Read count for the second print. Its value is now 1.",
+    "over": "count",
+    "nth": "1",
+    "name": "",
+    "source": "count",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Read count",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  "while-loop#9": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The second iteration prints 1.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  "while-loop#10": {
+   "form": {
+    "action": "badge",
+    "line": "4",
+    "caption": "Evaluate 1 + 1 to get 2. count still holds 1 until assignment.",
+    "over": "count + 1",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "2",
+    "numericType": "auto"
+   },
+   "summary": "Show 2",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  "while-loop#11": {
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "Store 2 in count, then check the condition again.",
+    "over": "",
+    "nth": "1",
+    "name": "count",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in count",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  "while-loop#12": {
+   "form": {
+    "action": "badge",
+    "line": "2",
+    "caption": "Now 2 < 2 is False. Skip the body; there is no third iteration and no printed 2.",
+    "over": "count < 2",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Boolean",
+    "value": "false",
+    "numericType": "auto"
+   },
+   "summary": "Show False",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  "while-loop#13": {
+   "form": {
+    "action": "highlight",
+    "line": "5",
+    "caption": "Leave the loop and continue at the unindented print after it. count remains 2.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 5",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  "while-loop#14": {
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "The console shows 0, 1, then Done. The final false condition ended the loop.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "Done",
+    "numericType": "auto"
+   },
+   "summary": "Print \"Done\"",
+   "unchanged": false,
+   "changes": "11000101000"
+  }
+ },
+ "edges": [
+  {
+   "step": {
+    "line": 1
+   },
+   "form": {
+    "action": "highlight",
+    "line": "1",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 1",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  {
+   "step": {
+    "caption": "Only a caption."
+   },
+   "form": {
+    "action": "highlight",
+    "line": "",
+    "caption": "Only a caption.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Explain the current moment",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  {
+   "step": {
+    "line": 2,
+    "caption": "Both."
+   },
+   "form": {
+    "action": "highlight",
+    "line": "2",
+    "caption": "Both.",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Highlight line 2",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  {
+   "step": {},
+   "form": {
+    "action": "highlight",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Explain the current moment",
+   "unchanged": false,
+   "changes": "11000000000"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Show 1",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "type": "int",
+     "nth": 2
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "2",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "int"
+   },
+   "summary": "Show 1",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1.5,
+     "type": "float"
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1.5",
+    "numericType": "float"
+   },
+   "summary": "Show 1.5",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": "a",
+     "type": "str"
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "a",
+    "numericType": "auto"
+   },
+   "summary": "Show \"a\"",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "type": "str"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": "a",
+     "type": "bogus"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": true
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Boolean",
+    "value": "true",
+    "numericType": "auto"
+   },
+   "summary": "Show True",
+   "unchanged": false,
+   "changes": "11110111010"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": null
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "None",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Show None",
+   "unchanged": false,
+   "changes": "11110110010"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": [
+      1,
+      "a",
+      true,
+      null
+     ]
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "List",
+    "value": "1,a,true,",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "1",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Text",
+      "value": "a",
+      "originalIndex": 1
+     },
+     {
+      "kind": "Boolean",
+      "value": "true",
+      "originalIndex": 2
+     },
+     {
+      "kind": "None",
+      "value": "",
+      "originalIndex": 3
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Show [1, \"a\", True, None]",
+   "unchanged": false,
+   "changes": "11110110011"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": [
+      [
+       1
+      ]
+     ]
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "typo": true
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": "x"
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "from": "x"
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "x",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Read x",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "from": "x[0]"
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "x[0]",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Read x[0]",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": "abc",
+     "from": "console"
+    }
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "console",
+    "kind": "Text",
+    "value": "abc",
+    "numericType": "auto"
+   },
+   "summary": "Read console",
+   "unchanged": false,
+   "changes": "11110100010"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "from": "console"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "from": {
+      "target": "x"
+     }
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1,
+     "from": "x[\"k\"]"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1
+    },
+    "select": "x[0]"
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "selection": "x[0]",
+    "numericType": "auto"
+   },
+   "summary": "Show 1",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1
+    },
+    "select": null
+   },
+   "form": {
+    "action": "badge",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "selection": "clear",
+    "numericType": "auto"
+   },
+   "summary": "Show 1",
+   "unchanged": false,
+   "changes": "11110111110"
+  },
+  {
+   "step": {
+    "badge": {
+     "over": "x",
+     "value": 1
+    },
+    "select": "x"
+   },
+   "form": null,
+   "summary": "Advanced · badge, select",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "convert": {
+     "value": 1
+    }
+   },
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 1",
+   "unchanged": false,
+   "changes": "11100011100"
+  },
+  {
+   "step": {
+    "convert": {
+     "value": 1,
+     "over": "x"
+    }
+   },
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 1",
+   "unchanged": false,
+   "changes": "11110011100"
+  },
+  {
+   "step": {
+    "convert": {
+     "value": 1,
+     "over": "x",
+     "nth": 2
+    }
+   },
+   "form": {
+    "action": "convert",
+    "line": "",
+    "caption": "",
+    "over": "x",
+    "nth": "2",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Convert to 1",
+   "unchanged": false,
+   "changes": "11110011100"
+  },
+  {
+   "step": {
+    "convert": {
+     "value": 1,
+     "nth": 2
+    }
+   },
+   "form": null,
+   "summary": "Advanced · convert",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "convert": {
+     "value": 1,
+     "over": ""
+    }
+   },
+   "form": null,
+   "summary": "Advanced · convert",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "convert": {
+     "value": [
+      1
+     ]
+    }
+   },
+   "form": null,
+   "summary": "Advanced · convert",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "convert": {
+     "value": 1,
+     "type": "str"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · convert",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "value": 1
+    }
+   },
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Store 1 in x",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "value": 1,
+     "type": "float"
+    }
+   },
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "float"
+   },
+   "summary": "Store 1.0 in x",
+   "unchanged": false,
+   "changes": "11001111100"
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "value": "a"
+    }
+   },
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x",
+    "source": "literal",
+    "kind": "Text",
+    "value": "a",
+    "numericType": "auto"
+   },
+   "summary": "Store \"a\" in x",
+   "unchanged": false,
+   "changes": "11001111000"
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "value": [
+      1,
+      2
+     ]
+    }
+   },
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x",
+    "source": "literal",
+    "kind": "List",
+    "value": "1,2",
+    "items": [
+     {
+      "kind": "Number",
+      "value": "1",
+      "originalIndex": 0
+     },
+     {
+      "kind": "Number",
+      "value": "2",
+      "originalIndex": 1
+     }
+    ],
+    "numericType": "auto"
+   },
+   "summary": "Store [1, 2] in x",
+   "unchanged": false,
+   "changes": "11001110001"
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "from": "badge"
+    }
+   },
+   "form": {
+    "action": "assign",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Store latest badge in x",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "value": 1,
+     "from": "badge"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · assign",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "from": "other"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · assign",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "ref": "list-1"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · assign",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "from": "badge",
+     "type": "int"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · assign",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "print": "hi"
+   },
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "hi",
+    "numericType": "auto"
+   },
+   "summary": "Print \"hi\"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  {
+   "step": {
+    "print": {
+     "text": "hi"
+    }
+   },
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "hi",
+    "numericType": "auto"
+   },
+   "summary": "Print \"hi\"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  {
+   "step": {
+    "print": {
+     "text": "hi",
+     "from": "badge"
+    }
+   },
+   "form": {
+    "action": "print",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "hi",
+    "numericType": "auto"
+   },
+   "summary": "Print the latest badge",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  {
+   "step": {
+    "print": {
+     "text": "hi",
+     "from": "x"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · print",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "print": {
+     "text": 5
+    }
+   },
+   "form": null,
+   "summary": "Advanced · print",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "print": {
+     "text": "hi",
+     "extra": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · print",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "write": "prompt: "
+   },
+   "form": {
+    "action": "write",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "prompt: ",
+    "numericType": "auto"
+   },
+   "summary": "Prompt \"prompt: \"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  {
+   "step": {
+    "write": {
+     "text": "p",
+     "from": "badge"
+    }
+   },
+   "form": {
+    "action": "write",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "badge",
+    "kind": "Number",
+    "value": "p",
+    "numericType": "auto"
+   },
+   "summary": "Prompt \"p\"",
+   "unchanged": false,
+   "changes": "11000101000"
+  },
+  {
+   "step": {
+    "input": "abc"
+   },
+   "form": {
+    "action": "input",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "abc",
+    "numericType": "auto"
+   },
+   "summary": "Enter \"abc\"",
+   "unchanged": false,
+   "changes": "11000001000"
+  },
+  {
+   "step": {
+    "input": ""
+   },
+   "form": {
+    "action": "input",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Text",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Enter \"\"",
+   "unchanged": false,
+   "changes": "11000001000"
+  },
+  {
+   "step": {
+    "input": 5
+   },
+   "form": null,
+   "summary": "Advanced · input",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x[0]",
+     "value": 1
+    }
+   },
+   "form": {
+    "action": "update",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x[0]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Set x[0] to 1",
+   "unchanged": false,
+   "changes": "11001111000"
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x[0]",
+     "from": "badge"
+    }
+   },
+   "form": {
+    "action": "update",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x[0]",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Set x[0] to latest badge",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x[0]",
+     "value": 1,
+     "from": "badge"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x",
+     "value": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x[\"k\"]",
+     "value": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x[0]"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x[0]",
+     "value": [
+      1
+     ]
+    }
+   },
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "update": {
+     "target": "x[0]",
+     "value": 1,
+     "scope": "global"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · update",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "append": {
+     "target": "x",
+     "value": 1
+    }
+   },
+   "form": {
+    "action": "append",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x",
+    "source": "literal",
+    "kind": "Number",
+    "value": "1",
+    "numericType": "auto"
+   },
+   "summary": "Append 1 to x",
+   "unchanged": false,
+   "changes": "11001111000"
+  },
+  {
+   "step": {
+    "append": {
+     "target": "x",
+     "from": "badge"
+    }
+   },
+   "form": {
+    "action": "append",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x",
+    "source": "badge",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Append latest badge to x",
+   "unchanged": false,
+   "changes": "11001100000"
+  },
+  {
+   "step": {
+    "append": {
+     "target": "x",
+     "value": 1,
+     "from": "badge"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · append",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "append": {
+     "target": "x[0]",
+     "value": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · append",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "append": {
+     "target": "x",
+     "value": [
+      1
+     ]
+    }
+   },
+   "form": null,
+   "summary": "Advanced · append",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "append": {
+     "target": "x"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · append",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "select": "x[0]"
+   },
+   "form": {
+    "action": "select",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x[0]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Select x[0]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  {
+   "step": {
+    "select": null
+   },
+   "form": {
+    "action": "select",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Clear list selection",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  {
+   "step": {
+    "select": "x"
+   },
+   "form": null,
+   "summary": "Advanced · select",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "select": "x[\"k\"]"
+   },
+   "form": null,
+   "summary": "Advanced · select",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "remove": "x[0]"
+   },
+   "form": {
+    "action": "remove",
+    "line": "",
+    "caption": "",
+    "over": "",
+    "nth": "1",
+    "name": "x[0]",
+    "source": "literal",
+    "kind": "Number",
+    "value": "",
+    "numericType": "auto"
+   },
+   "summary": "Remove x[0]",
+   "unchanged": false,
+   "changes": "11001000000"
+  },
+  {
+   "step": {
+    "remove": "x"
+   },
+   "form": null,
+   "summary": "Advanced · remove",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "remove": null
+   },
+   "form": null,
+   "summary": "Advanced · remove",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "call": {
+     "name": "f",
+     "line": 1,
+     "over": "f()"
+    }
+   },
+   "form": null,
+   "summary": "Advanced · call",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "return": {
+     "value": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · return",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "allocate": {
+     "id": "a",
+     "value": []
+    }
+   },
+   "form": null,
+   "summary": "Advanced · allocate",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "error": {
+     "kind": "runtime",
+     "name": "E",
+     "message": "m",
+     "line": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · error",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "print": "a",
+    "badge": {
+     "over": "x",
+     "value": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · print, badge",
+   "unchanged": null,
+   "changes": null
+  },
+  {
+   "step": {
+    "assign": {
+     "var": "x",
+     "value": 1
+    },
+    "update": {
+     "target": "x[0]",
+     "value": 1
+    }
+   },
+   "form": null,
+   "summary": "Advanced · assign, update",
+   "unchanged": null,
+   "changes": null
+  }
+ ]
+}

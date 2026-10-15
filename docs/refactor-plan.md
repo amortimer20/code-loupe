@@ -59,27 +59,37 @@ Move each event's animation (badge travel, conversion, assignment, call/return,
 collection change, console output) into `visuals/` functions sharing an
 animation context, following the existing Call stack panel pattern.
 
-**2.2 Loading and highlighting.** Move source reading, Shiki highlighting, and
+**2.2 Loading and highlighting (done 2026-10-15).** Move source reading, Shiki highlighting, and
 theme refresh (`#load`, `#highlightTheme`, `#refreshTheme`, `#highlightLiterals`)
 into a module with a narrow interface. Preserve the existing load-race and
 theme-race guarantees; the browser suite covers them.
 
-**2.3 Playback and keyboard.** Separate the playback/autoplay timer and key
-handling from rendering so their state is in one place.
+**2.3 Playback and keyboard (assessed 2026-10-15, not done).** Autoplay is about 12 lines
+and key handling about 20, and both are tightly coupled to rendering state: `#playing` drives
+the play/pause icon, error steps and loads pause playback, and `#ms` is shared with the
+animations. They are covered by browser tests (keyboard navigation, autoplay, form-control
+keys, focus rules) and cannot be unit-tested in Node because they depend on DOM events and
+`getAnimations()`. A separate controller would be an interface of callbacks around roughly
+30 lines, which adds indirection without the clarity gained by 2.1 and 2.2. Revisit only if
+playback gains real logic, such as chapters or a playback API.
 
 ## Phase 3: authoring site
 
-**3.1 Use the player's address grammar.** The site re-implements identifiers
-and list addresses with regexes in five places (`lesson-document.ts`,
-`draft-migration.ts`). Use `code-loupe/address` instead, so the two can't
-disagree.
+**3.1 Use the player's address grammar (done 2026-10-15).** The site re-implemented
+identifiers and list addresses with regexes in eleven places. `authoring/addresses.ts` now wraps
+`code-loupe/address` as `isName` and `isListAddress`; a test keeps the old patterns as a reference
+and checks the two agree on 47 inputs, including malformed ones.
 
-**3.2 Action registry.** Each builder action is described across several places:
-`actionLabels`, the `formOf` condition chain, `addStep` defaults, `editStep`
-branches, `stepSummary`, and `stepFields`. Give each action one definition
-(label, recognize YAML, default form, write YAML, fields, summary). Do this
-before adding dictionary, call, or instance forms; each new form then becomes
-one registry entry.
+**3.2 Action registry (done 2026-10-15).** The facts about each builder action were spread across
+eight functions in four files. `authoring/actions.ts` now holds one definition per action:
+label, the YAML a new step starts as, new-card form defaults, which values the builder accepts,
+its one-line summary, and which form fields count as a change. `formOf`, `addStep`, `newStepForm`,
+`stepSummary`, the change signature, and the list-value choice consult it. A golden fixture
+(`tests/builder-model.test.ts`) over every canonical step plus 80 hand-written edge cases proved
+the behavior unchanged. `editStep` (writing YAML) and `stepFields` (rendering a form) stay
+procedural: they share long common tails across actions, so per-action objects would either
+duplicate those tails or redesign them. A new action now needs a registry entry plus a branch in
+each of those two; 3.3 reshapes the rendering side.
 
 **3.3 Builder rendering.** `builder.ts` builds its UI from long template strings,
 with 36 lines over 200 characters (one is about 2,000), and safety depends on

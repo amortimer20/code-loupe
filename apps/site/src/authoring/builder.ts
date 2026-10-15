@@ -2,6 +2,7 @@ import { insertStepForm, duplicateStep, moveStep, newStepForm, deleteStep, actio
 
 import { languageChoices, type LanguageChoice } from './languages';
 import { findNth } from 'code-loupe/state';
+import { actionDefinitions } from './actions';
 import { badgeDisplay, hasFormChanges, problemStep, stepSummary, storedDisplay } from './builder-presentation';
 import { formatValue } from '../../../../packages/player/src/values';
 import type { CodeTarget } from './code-target';
@@ -104,7 +105,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
   }
 
   function valueFields(form: StepForm) {
-    const kind = `<label>Value type<select aria-label="Value type" name="kind">${(form.action === 'badge' || form.action === 'assign' ? ['Number', 'Text', 'Boolean', 'None', 'List'] : ['Number', 'Text', 'Boolean', 'None']).map(value => option(value, value, form.kind)).join('')}</select></label>`;
+    const kind = `<label>Value type<select aria-label="Value type" name="kind">${(actionDefinitions[form.action].listValues ? ['Number', 'Text', 'Boolean', 'None', 'List'] : ['Number', 'Text', 'Boolean', 'None']).map(value => option(value, value, form.kind)).join('')}</select></label>`;
     if (form.kind === 'List') return `${kind}<div class="builder-list-items">${(form.items ?? []).map((item, index) => `<div class="builder-fields"><label>Item ${index} type<select name="item-kind-${index}" aria-label="Item ${index} type">${['Number', 'Text', 'Boolean', 'None'].map(type => option(type, type, item.kind)).join('')}</select></label>${item.kind === 'None' ? '<span>None</span>' : item.kind === 'Boolean' ? `<label>Item ${index} value<select name="item-value-${index}" aria-label="Item ${index} value">${option('true', 'True', item.value)}${option('false', 'False', item.value)}</select></label>` : field(`item-value-${index}`, `Item ${index} value`, item.value)}<button type="button" data-remove-item="${index}">Remove item ${index}</button></div>`).join('')}<button type="button" data-add-item>Add list item</button><p class="builder-note">Items are numbered from 0. Empty lists are allowed; nested lists are not supported.</p></div>`;
     const value = form.kind === 'None'  ? '<label>Value<input value="None" disabled></label>'
       : form.kind === 'Boolean' ? `<label>Value<select aria-label="Value" name="value">${option('true', 'True', form.value)}${option('false', 'False', form.value)}</select></label>`
@@ -288,7 +289,7 @@ export function createBuilder(container: HTMLElement, host: Host) {
     if (select.tagName !== 'SELECT' || !select.closest('[data-step-form]')) return;
     const form = select.closest('form')!, values = capture(form);
     if (!('action' in values)) return;
-    if (select.name === 'action') { values.source = values.action === 'convert' ? 'badge' : 'literal'; if (values.action === 'input') values.kind = 'Text'; else if (values.kind === 'List' && !['assign', 'badge'].includes(values.action)) values.kind = 'Number'; else values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
+    if (select.name === 'action') { values.source = newStepForm(values.action).source; if (values.action === 'input') values.kind = 'Text'; else if (values.kind === 'List' && !actionDefinitions[values.action].listValues) values.kind = 'Number'; else values.kind ||= 'Number'; values.over ||= ''; values.name ||= ''; }
     if (select.name.startsWith('item-kind-')) { const item = values.items?.[Number(select.name.slice(10))]; if (item?.kind === 'Boolean') item.value = 'true'; }
     if (select.name === 'kind' && values.kind === 'List') values.items ??= [];
     if (select.name === 'kind' && values.kind === 'Boolean') values.value = 'true';

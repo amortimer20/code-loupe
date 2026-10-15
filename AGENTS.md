@@ -28,7 +28,10 @@ This is an npm workspace monorepo:
 - `packages/player/src/code-loupe.ts`: `CodeLoupe`, the `<code-loupe>` web
   component; loading, rendering, animation, playback, and viewer preferences.
 - `packages/player/src/values.ts`, `styles.ts`, `index.ts`: value formatting,
-  component styles, and browser entry/registration.
+  component styles, and browser entry/registration. `highlight.ts` and
+  `lesson-source.ts` hold Shiki highlighting (including its theme-change race
+  loop) and lesson-source reading; the component keeps the load and theme-refresh
+  race guards.
 - `packages/player/src/themes.ts`: DOM-independent starter palettes and syntax
   themes shared with the site. Keep regular Shiki theme names working.
 - `packages/player/src/visuals/`: pure call-frame scope helpers, the Call stack
@@ -42,7 +45,9 @@ This is an npm workspace monorepo:
   `error-panel.ts` annotations. They end execution while preserving prior state;
   they are distinct from invalid-YAML load failures.
 - `apps/site/`: Astro static gallery, sample pages, authoring guide, and playground.
-  `src/authoring/` contains pure YAML-document edits and the Step cards builder.
+  `src/authoring/` contains pure YAML-document edits, the Step cards builder, and
+  `actions.ts`, the one definition of each builder action's label, defaults, accepted
+  shapes, summary, and change-detection fields.
   Preserve the raw draft, advanced actions, comments, and shared source undo history.
   Import the browser player only in client scripts; its entry depends on DOM globals.
   Build-time validation uses `code-loupe/lesson` and `code-loupe/state` instead.

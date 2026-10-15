@@ -1,11 +1,12 @@
 import { isMap, isNode, isSeq, parseDocument, visit, type Node, type YAMLMap } from 'yaml';
+import { isName } from './addresses';
 import { readDocument } from './lesson-document';
 
 const oldKeys = ['var', 'index', 'key', 'attribute'];
 const legacy = (node: unknown): node is YAMLMap => isMap(node) && oldKeys.some(key => node.has(key));
 function address(map: YAMLMap, action: string) {
   const name = map.get('var');
-  if (typeof name !== 'string' || !/^[A-Za-z_]\w*$/.test(name)) throw new Error('An old location needs a variable name supported by the address grammar.');
+  if (!isName(name)) throw new Error('An old location needs a variable name supported by the address grammar.');
   if (map.has('target')) throw new Error('A location mixes old keys with target; repair it in YAML.');
   const accessors = ['index', 'key', 'attribute'].filter(key => map.has(key));
   if (accessors.length > 1) throw new Error('A location has multiple accessors; repair it in YAML.');
@@ -16,7 +17,7 @@ function address(map: YAMLMap, action: string) {
   const index = map.get('index'), key = map.get('key'), attribute = map.get('attribute');
   if (map.has('index') && (typeof index !== 'number' || !Number.isSafeInteger(index) || index < 0)) throw new Error('A list index must be a nonnegative safe integer.');
   if (map.has('key') && (typeof key !== 'string' || !key || /\s/.test(JSON.stringify(key)))) throw new Error('This key cannot be represented by the current address grammar.');
-  if (map.has('attribute') && (typeof attribute !== 'string' || !/^[A-Za-z_]\w*$/.test(attribute))) throw new Error('An attribute needs a supported name.');
+  if (map.has('attribute') && !isName(attribute)) throw new Error('An attribute needs a supported name.');
   return name + (map.has('index') ? `[${index}]` : map.has('key') ? `[${JSON.stringify(key)}]` : map.has('attribute') ? `.${attribute}` : '');
 }
 function comments(node: Node) {

@@ -10,6 +10,7 @@ execute the Python displayed in a lesson.
 | Node tests | Lesson-schema validity, authored-type property coverage, corpus/schema compatibility and invalid action shapes; snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, shared-list identity/rebinding, preserved earlier snapshots, and corpus outcomes |
 | Rendered-DOM baselines | A hash of the player's complete rendered DOM and palette at the first and last step of every canonical lesson, for each starter preset (fresh load) and a regular Shiki theme (live switch), in the Docker visual project. Characterizes loading, highlighting, literal coloring, and palette application |
 | Animation timeline baselines | For every forward step of all 24 canonical lessons, each Web Animation the player creates (target, keyframes, delay, duration, easing), compared with checked-in JSON in the Docker visual project. Refactors of the animation code must reproduce them |
+| Builder model fixture | Recognition, new-card defaults, summaries, labels, and change-detection fields for every canonical step plus 80 hand-written edge steps, against `apps/site/tests/fixtures/builder-model.json`. Refactors of the builder's per-action model must leave it unchanged |
 | Corpus snapshot fixture | Complete snapshots of all 24 canonical lessons, compared per lesson against `packages/player/tests/fixtures/corpus-snapshots.json`. Behavior-preserving refactors of snapshot generation must leave it unchanged |
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
 | Type checks and builds | Player and site code, browser tests/configuration, canonical lesson metadata and semantic validation, independent player bundle and static site |
@@ -364,3 +365,17 @@ a failure can be inspected: regenerate the same files from the parent commit and
 Regenerate baselines with `npm run test:visual:update` only for an intentional rendering
 change, and review which hashes moved. Adding or editing a canonical lesson needs a new or
 updated baseline.
+
+## Builder model fixture
+
+`apps/site/tests/builder-model.test.ts` characterizes the builder's per-action model
+(`authoring/actions.ts` and the functions that consult it): which steps each action accepts
+and which it leaves to YAML, how new cards start, how saved steps are summarized, and which
+form fields count as an edit for each action. It runs over every canonical lesson step and
+80 hand-written boundary cases. Regenerate only for an intentional builder change:
+
+```sh
+UPDATE_BUILDER_MODEL=1 npm test --workspace @code-loupe/site
+```
+
+then review the JSON diff. Adding or editing a canonical lesson changes it too.

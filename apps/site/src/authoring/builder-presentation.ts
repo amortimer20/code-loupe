@@ -1,7 +1,8 @@
 import { formatValue, isReference } from '../../../../packages/player/src/values';
 import type { StoredValue } from 'code-loupe/lesson';
 import type { Snapshot, BadgeState } from 'code-loupe/state';
-import { formOf, record, type StepForm } from './lesson-document';
+import { actionDefinitions, record } from './actions';
+import { formOf, type StepForm } from './lesson-document';
 
 /** Only semantic validation errors with an existing step have a card target. */
 export function problemStep(message: string, count: number): number | undefined {
@@ -26,35 +27,26 @@ export function stepSummary(step: Record<string, unknown>, language: string): st
   const spec = step[form.action];
   const value = record(spec) ? spec.value : undefined;
   const shown = value === undefined ? 'latest badge' : formatValue(value as Parameters<typeof formatValue>[0], language, record(spec) ? spec.type as string | undefined : undefined);
-  if (form.action === 'assign') return `Store ${shown} in ${form.name || 'a variable'}`;
-  if (form.action === 'append') return `Append ${shown} to ${form.name || 'a list'}`;
-  if (form.action === 'update') return `Set ${form.name || 'a list element'} to ${shown}`;
-  if (form.action === 'remove') return `Remove ${form.name || 'a list element'}`;
-  if (form.action === 'select') return form.name ? `Select ${form.name}` : 'Clear list selection';
-  if (form.action === 'badge') return form.source === 'literal' ? `Show ${shown}` : `Read ${form.source}`;
-  if (form.action === 'convert') return `Convert to ${shown}`;
-  if (form.action === 'input') return `Enter ${JSON.stringify(form.value)}`;
-  if (form.action === 'write') return `Prompt ${JSON.stringify(form.value)}`;
-  if (form.action === 'print') return form.source === 'badge' ? 'Print the latest badge' : `Print ${JSON.stringify(form.value)}`;
-  return form.line ? `Highlight line ${form.line}` : 'Explain the current moment';
+  return actionDefinitions[form.action].summary(form, shown);
 }
 
 /** Compare the controls relevant to an action, avoiding warnings for no-op edits. */
 function formSignature(form: StepForm) {
+  const fields = actionDefinitions[form.action].fields;
   const result: Record<string, unknown> = { action:form.action, line:form.line, caption:form.caption };
-  if (['badge','convert'].includes(form.action)) {
+  if (fields.over) {
     result.over = form.over;
     if (form.over) result.nth = form.nth;
   }
-  if (form.action === 'badge') result.selection = form.selection || '';
-  if (['assign','select','update','append','remove'].includes(form.action)) result.name = form.name;
-  if (['badge','assign','update','append','print','write'].includes(form.action)) result.source = form.source;
-  if (['print','write','input'].includes(form.action)) result.value = form.value;
-  if (form.action === 'convert' || (['badge','assign','update','append'].includes(form.action) && form.source === 'literal')) {
+  if (fields.selection) result.selection = form.selection || '';
+  if (fields.name) result.name = form.name;
+  if (fields.source) result.source = form.source;
+  if (fields.text) result.value = form.value;
+  if (fields.typed === 'always' || (fields.typed === 'literal' && form.source === 'literal')) {
     result.kind = form.kind;
     if (form.kind === 'List') result.items = form.items ?? [];
     else if (form.kind !== 'None') result.value = form.value;
-    if (form.kind === 'Number' && ['badge','assign','convert'].includes(form.action)) result.numericType = form.numericType;
+    if (form.kind === 'Number' && fields.numeric) result.numericType = form.numericType;
   }
   return JSON.stringify(result);
 }
