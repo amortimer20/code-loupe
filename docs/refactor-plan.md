@@ -105,8 +105,14 @@ reveal, and undo, and shrank from 452 to 356 lines. The preview state a form nee
 lazily through a callback, so it is still computed only when a card is expanded. The builder-DOM
 baselines proved the HTML byte-identical.
 
-**3.4 Playground wiring.** Separate draft storage and recovery from layout and
-mode switching in `playground.ts`.
+**3.4 Playground wiring (assessed 2026-10-15, not done).** `playground.ts` is a 293-line top-level
+script whose DOM lookups, roughly twenty module-level variables, and functions are all interdependent.
+Draft storage is three `localStorage` calls in try/catch (about 25 lines); the recovery logic around it
+is bound to the recovery banners, the editor's undo state, the builder, the mode switch, and the
+preview revision counter. Splitting would yield about 25 lines of helpers and a controller that is
+still entangled, with no new logic testable in Node. Browser specs already cover legacy-syntax
+recovery with undo and redo, draft isolation between samples, blocked storage, and working-draft
+recovery. Revisit if the playground gains real logic, such as multiple documents or sync.
 
 ## Phase 4: mathematics experiment (last)
 
