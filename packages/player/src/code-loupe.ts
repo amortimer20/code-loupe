@@ -7,9 +7,11 @@ import { CallStackPanel, callStackStyles, type CapturedValue } from './visuals/c
 import { renderVariables } from './visuals/variables';
 import { stepAnnouncement } from './visuals/accessibility';
 import { badgeDisplayValue } from './visuals/heap-state';
-import { animateCollectionAppend, animateCollectionRemoval, animateCollectionUpdate, captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
+import { captureCollectionCells, collectionStyles, type CapturedCell } from './visuals/collection';
 import { getThemePreset, type ThemePreset } from './themes';
 import { heapStyles, renderHeap } from './visuals/heap-panel';
+import { el, escapeHtml } from './visuals/dom';
+import { animateAssignment, animateBadgeAdded, animateCollectionChange, animateConsole, animateConversion, animateRemoval, type StepAnimationContext } from './visuals/step-animation';
 import { errorStyles, renderProgramError, renderErrorTarget } from './visuals/error-panel';
 
 const DEFAULT_THEME = 'dark-plus';
@@ -17,8 +19,6 @@ const DEFAULT_THEME = 'dark-plus';
 // Durations at 1× speed. Every animation is divided by the current speed.
 const LINE_MS = 500;
 const MOVE_MS = 800;
-const POP_MS = 400;
-const TYPE_MS_PER_CHAR = 150;
 const AUTOPLAY_PAUSE_MS = 1600;
 
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2];
@@ -625,136 +625,31 @@ export class CodeLoupe extends HTMLElement {
   }
 
   #animateStep(snap: Snapshot, oldBadges: Map<number, CapturedValue>, oldCells: CapturedCell[]) {
-    const ev = snap.events;
+    const ctx = this.#animationContext();
     // Let the arrow arrive at the new line before anything on it happens.
-    let t = ev.lineChanged ? this.#ms(LINE_MS) : 0;
-    this.#callStack.animate(snap, oldBadges, t, {
+    let t = snap.events.lineChanged ? this.#ms(LINE_MS) : 0;
+    this.#callStack.animate(snap, oldBadges, t, ctx);
+    t = animateConsole(ctx, snap, t);
+    t = animateBadgeAdded(ctx, snap, t);
+    t = animateConversion(ctx, snap, oldBadges, t);
+    t = animateAssignment(ctx, snap, t);
+    t = animateCollectionChange(ctx, snap, t);
+    animateRemoval(ctx, snap, oldCells, t);
+  }
+
+  #animationContext(): StepAnimationContext {
+    return {
       ms: duration => this.#ms(duration),
-      fly: (html, from, to, delay, align) => this.#fly(html, from, to, delay, align),
+      fly: (html, from, to, delay, align, dissolve) => this.#fly(html, from, to, delay, align, dissolve),
       literalHtml: (value, type) => this.#literalHtml(value, type),
+      printedForm: (value, type) => this.#printedForm(value, type),
       badge: id => this.#badgeInnerEl(id),
-    });
-
-    // 1. Console: input is typed one character at a time; output fades in, or a badge's value flies into it.
-    for (const chunkEl of this.#els.console.querySelectorAll<HTMLElement>('.chunk')) {
-      const index = Number(chunkEl.dataset.index);
-      if (index < ev.consoleFrom) continue;
-      const chunk = snap.console[index];
-      const typed = chunkEl.querySelector<HTMLElement>('.in');
-      if (typed) {
-        const n = Math.max(1, chunk.text.length);
-        const duration = this.#ms(n * TYPE_MS_PER_CHAR);
-        typed.animate([{ width: '0ch' }, { width: `${n}ch` }], { duration, delay: t, easing: `steps(${n}, end)`, fill: 'backwards' });
-        t += duration + this.#ms(150);
-        chunkEl.querySelector('.enter')!.animate([{ opacity: 0, transform: 'scale(1.4)' }, { opacity: 0.75, transform: 'none' }], {
-          duration: this.#ms(250),
-          delay: t,
-          fill: 'backwards',
-        });
-        t += this.#ms(300);
-        continue;
-      }
-      const badge = snap.badges.find((b) => b.id === chunk.fromBadge);
-      const source = badge ? this.#badgeInnerEl(badge.id) : null;
-      if (badge && source) {
-        const value = badgeDisplayValue(snap, badge.value);
-        const landing = textRect(chunkEl, this.#printedForm(value, badge.type)) ?? chunkEl.getBoundingClientRect();
-        t += this.#fly(this.#literalHtml(value, badge.type), source.getBoundingClientRect(), landing, t, 'start');
-        chunkEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(200), delay: t - this.#ms(80), fill: 'backwards' });
-      } else {
-        chunkEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(250), delay: t, fill: 'backwards' });
-        t += this.#ms(250);
-      }
-    }
-
-    // 2. A new badge appears above its code, flying in from the console or a variable when it has a source.
-    if (ev.badgeAdded) {
-      const inner = this.#badgeInnerEl(ev.badgeAdded.id);
-      const source = this.#originEl(ev.badgeAdded.from);
-      if (inner && source) {
-        const html = ev.badgeAdded.from?.kind === 'console' ? `<span class="typed">${escapeHtml(source.textContent ?? '')}</span>` : source.innerHTML;
-        t += this.#fly(html, source.getBoundingClientRect(), inner.getBoundingClientRect(), t, 'center');
-        inner.animate([{ opacity: 0, transform: 'scale(0.85)' }, { opacity: 1, transform: 'none' }], {
-          duration: this.#ms(220),
-          delay: t - this.#ms(60),
-          easing: 'ease-out',
-          fill: 'backwards',
-        });
-        t += this.#ms(200);
-      } else if (inner) {
-        inner.animate(
-          [
-            { opacity: 0, transform: 'translateY(8px) scale(0.7)' },
-            { opacity: 1, transform: 'none' },
-          ],
-          { duration: this.#ms(POP_MS), delay: t, easing: 'cubic-bezier(0.2, 0.9, 0.3, 1.3)', fill: 'backwards' },
-        );
-        t += this.#ms(POP_MS);
-      }
-    }
-
-    // 3. A badge converts: the old value moves to the new spot and dissolves into the new value.
-    if (ev.converted) {
-      const old = oldBadges.get(ev.converted.id);
-      const inner = this.#badgeInnerEl(ev.converted.id);
-      if (old && inner) {
-        const flight = this.#fly(old.html, old.rect, inner.getBoundingClientRect(), t, 'center', true);
-        inner.animate(
-          [
-            { opacity: 0, transform: 'scale(1.5)' },
-            { opacity: 1, transform: 'none' },
-          ],
-          { duration: this.#ms(450), delay: t + flight * 0.7, easing: 'ease-out', fill: 'backwards' },
-        );
-        t += flight + this.#ms(150);
-      }
-    }
-
-    // 4. A value is stored: it flies from its badge into the Variables panel.
-    if (ev.assigned) {
-      const vars = ev.assigned.frameId === 0 ? snap.vars : snap.frames.find(f => f.id === ev.assigned!.frameId)!.vars;
-      const variable = vars.find((v) => v.name === ev.assigned!.name)!;
-      const row = this.#varRow(variable.name, ev.assigned.frameId);
-      const valueEl = row?.querySelector<HTMLElement>('.value');
-      const source = ev.assigned.fromBadge !== undefined ? this.#badgeInnerEl(ev.assigned.fromBadge) : null;
-      if (row && valueEl) {
-        if (ev.assigned.isNew) {
-          row.animate([{ opacity: 0, transform: 'translateX(-8px)' }, { opacity: 1, transform: 'none' }], {
-            duration: this.#ms(250),
-            delay: t,
-            fill: 'backwards',
-          });
-        }
-        if (source && !isReference(variable.value)) {
-          t += this.#fly(this.#literalHtml(variable.value, variable.type), source.getBoundingClientRect(), valueEl.getBoundingClientRect(), t, 'start');
-          valueEl.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(150), delay: t - this.#ms(60), fill: 'backwards' });
-        }
-        row.animate(
-          [{ backgroundColor: 'color-mix(in srgb, var(--ca-accent) 35%, transparent)' }, { backgroundColor: 'transparent' }],
-          { duration: this.#ms(900), delay: t, easing: 'ease-out' },
-        );
-      }
-    }
-    if (ev.updated || ev.appended) {
-      const update = (ev.updated ?? ev.appended)!;
-      const key = 'attribute' in update ? update.attribute : 'key' in update ? update.key : undefined;
-      const field = key !== undefined;
-      const cell = this.#collectionRow(update.ref)?.querySelector<HTMLElement>(field ? `.object-field[data-key="${CSS.escape(key)}"]` : `.collection-cell[data-index="${'index' in update ? update.index : ''}"]`);
-      const value = cell?.querySelector<HTMLElement>(field ? '.field-value' : '.collection-item');
-      const source = update.fromBadge !== undefined ? this.#badgeInnerEl(update.fromBadge) : null;
-      if (cell && value) {
-        if (ev.appended) animateCollectionAppend(cell, t, this.#ms(250));
-        if (source) {
-          t += this.#fly(value.innerHTML, source.getBoundingClientRect(), value.getBoundingClientRect(), t, 'start');
-          value.animate([{ opacity: 0 }, { opacity: 1 }], { duration: this.#ms(150), delay: t - this.#ms(60), fill: 'backwards' });
-        }
-        animateCollectionUpdate(cell, t, this.#ms(900));
-      }
-    }
-    if (ev.removed) {
-      const row = this.#collectionRow(ev.removed.ref);
-      if (row) animateCollectionRemoval(row, oldCells, ev.removed.index, this.#els.overlay, t, this.#ms(300));
-    }
+      origin: from => this.#originEl(from),
+      varRow: (name, frameId) => this.#varRow(name, frameId),
+      collectionRow: ref => this.#collectionRow(ref),
+      console: this.#els.console,
+      overlay: this.#els.overlay,
+    };
   }
 
   /**
@@ -905,25 +800,6 @@ export class CodeLoupe extends HTMLElement {
   }
 }
 
-function el<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string) {
-  const node = document.createElement(tag);
-  node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-
-/** Screen rectangle of `text` inside a container's own text, or null if it isn't there. */
-function textRect(container: HTMLElement, text: string): DOMRect | null {
-  if (!text) return null;
-  const node = [...container.childNodes].find((n) => n.nodeType === Node.TEXT_NODE && n.textContent!.includes(text));
-  if (!node) return null;
-  const start = node.textContent!.indexOf(text);
-  const range = document.createRange();
-  range.setStart(node, start);
-  range.setEnd(node, start + text.length);
-  return range.getBoundingClientRect();
-}
-
 const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)');
 
 // Viewer preferences live in localStorage, which can be unavailable (private windows,
@@ -947,10 +823,6 @@ function storeSetting(key: string, value: string) {
 function readStoredSpeed(): number | null {
   const speed = Number(readSetting(SPEED_STORAGE_KEY));
   return speed > 0 ? speed : null;
-}
-
-function escapeHtml(text: string) {
-  return text.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 }
 
 /** Remove the common indentation from inline YAML so it can be indented to match the page's HTML. */

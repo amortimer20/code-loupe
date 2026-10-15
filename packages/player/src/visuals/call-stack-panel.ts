@@ -6,7 +6,7 @@ import { renderVariables, type ValueRenderer } from './variables';
 
 export interface CapturedValue { rect: DOMRect; html: string }
 
-interface AnimationContext {
+export interface AnimationContext {
   ms: (duration: number) => number;
   fly: (html: string, from: DOMRect, to: DOMRect, delay: number, align: 'center' | 'start') => number;
   literalHtml: (value: StoredValue, type: string) => string;

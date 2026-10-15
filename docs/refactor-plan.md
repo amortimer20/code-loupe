@@ -54,7 +54,7 @@ and binding explicit references). Error messages are unchanged and covered by
 
 ## Phase 2: player component (`code-loupe.ts`, 961 lines)
 
-**2.1 Step animations.** `#animateStep` is 138 lines handling every event type.
+**2.1 Step animations (done 2026-10-15).** `#animateStep` is 138 lines handling every event type.
 Move each event's animation (badge travel, conversion, assignment, call/return,
 collection change, console output) into `visuals/` functions sharing an
 animation context, following the existing Call stack panel pattern.

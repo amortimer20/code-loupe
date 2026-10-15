@@ -32,7 +32,7 @@ This is an npm workspace monorepo:
 - `packages/player/src/themes.ts`: DOM-independent starter palettes and syntax
   themes shared with the site. Keep regular Shiki theme names working.
 - `packages/player/src/visuals/`: pure call-frame scope helpers, the Call stack
-  panel and its animations, collection helpers/transitions, dictionary field
+  panel and its animations, the forward-step animations (`step-animation.ts`), collection helpers/transitions, dictionary field
   and instance attribute/constructor helpers, and object identity helpers/panel.
   Variables hold references; list contents or scalar named fields live once in each
   snapshot's heap. Every variable-held list is a heap object; plain list values
