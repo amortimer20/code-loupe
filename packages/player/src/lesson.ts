@@ -1,4 +1,5 @@
 import { parse } from 'yaml';
+import { isRecord } from './validation';
 
 /** A runtime value as written in a lesson file. YAML strings become language strings, numbers stay numbers. */
 export type ScalarValue = string | number | boolean | null;
@@ -155,8 +156,4 @@ export function parseLesson(source: string): Lesson {
     code: code.replace(/\n+$/, ''),
     steps: steps as Step[],
   };
-}
-
-function isRecord(x: unknown): x is Record<string, unknown> {
-  return typeof x === 'object' && x !== null && !Array.isArray(x);
 }

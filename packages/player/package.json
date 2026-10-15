@@ -9,6 +9,7 @@
     ".": "./src/index.ts",
     "./lesson": "./src/lesson.ts",
     "./state": "./src/state.ts",
+    "./address": "./src/address.ts",
     "./themes": "./src/themes.ts",
     "./lesson.schema.json": "./lesson.schema.json"
   },

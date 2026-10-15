@@ -8,6 +8,7 @@ import { constructedInstance, instanceAttribute, type AttributeTarget } from './
 import { programError, type ProgramError } from './visuals/error-state';
 import { checkBadgeSourceValue } from './visuals/source-value';
 import { normalizeAddress } from './address';
+import { checkKeys, isRecord } from './validation';
 
 export type { CallFrame } from './visuals/call-stack-state';
 
@@ -457,16 +458,6 @@ function resolveOrigin(from: unknown, s: Snapshot, fail: (msg: string) => never)
     return { kind: 'var', name: from.var, frameId: found!.frameId, ...referenceIdentity(found!.variable) };
   }
   return fail('`from` must be `console` or `{ var: name }`.');
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-function checkKeys(value: object, allowed: string[], label: string, fail: (msg: string) => never) {
-  for (const key of Object.keys(value)) {
-    if (!allowed.includes(key)) fail(`unknown ${label} key \`${key}\`.`);
-  }
 }
 
 /** Index of the nth (1-based) occurrence of needle in text, or -1. */
