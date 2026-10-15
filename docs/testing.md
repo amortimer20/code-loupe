@@ -8,6 +8,7 @@ execute the Python displayed in a lesson.
 | Layer | Coverage |
 | --- | --- |
 | Node tests | Lesson-schema validity, authored-type property coverage, corpus/schema compatibility and invalid action shapes; snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, shared-list identity/rebinding, preserved earlier snapshots, and corpus outcomes |
+| Builder DOM baselines | A hash of the builder's complete HTML for every canonical lesson step (card expanded), the new-card form of every action, and a lesson full of hostile markup, plus per-state checks that none of that markup becomes live. Docker visual project |
 | Rendered-DOM baselines | A hash of the player's complete rendered DOM and palette at the first and last step of every canonical lesson, for each starter preset (fresh load) and a regular Shiki theme (live switch), in the Docker visual project. Characterizes loading, highlighting, literal coloring, and palette application |
 | Animation timeline baselines | For every forward step of all 24 canonical lessons, each Web Animation the player creates (target, keyframes, delay, duration, easing), compared with checked-in JSON in the Docker visual project. Refactors of the animation code must reproduce them |
 | Builder model fixture | Recognition, new-card defaults, summaries, labels, and change-detection fields for every canonical step plus 80 hand-written edge steps, against `apps/site/tests/fixtures/builder-model.json`. Refactors of the builder's per-action model must leave it unchanged |
@@ -379,3 +380,22 @@ UPDATE_BUILDER_MODEL=1 npm test --workspace @code-loupe/site
 ```
 
 then review the JSON diff. Adding or editing a canonical lesson changes it too.
+
+## Builder DOM baselines
+
+The builder draws its interface from template strings, so
+`tests/browser/builder-dom.visual.spec.ts` records a hash of `#builder-pane` for every
+canonical lesson step with its card expanded, for the new-card form of each action in two
+lessons, and for a hostile lesson. Baselines are one JSON file per lesson in
+`tests/browser/__screenshots__/builder-dom.visual.spec.ts/`; the HTML of every state is
+written to `test-results/builder-dom/` (git-ignored) so a failure can be inspected.
+
+The hostile lesson puts `<img onerror>`, `<svg onload>`, `<script>`, a `</textarea>` breakout,
+an attribute-injection attempt, and an `<iframe srcdoc>` into its title, code, captions,
+values, variable names, prompts, and list items. In every state it captures it asserts that
+no `img`, `iframe`, `script`, or inline handler exists in the builder and that nothing set
+`window.__xss`. Removing the escaping from one field fails this check, not only the hash.
+
+Use it when changing how the builder renders. Regenerate with `npm run test:visual:update`
+only for an intentional change to the builder's markup, and review which hashes moved.
+Adding or editing a canonical lesson needs a new or updated baseline.
