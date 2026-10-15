@@ -8,6 +8,7 @@ execute the Python displayed in a lesson.
 | Layer | Coverage |
 | --- | --- |
 | Node tests | Lesson-schema validity, authored-type property coverage, corpus/schema compatibility and invalid action shapes; snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, shared-list identity/rebinding, preserved earlier snapshots, and corpus outcomes |
+| Rendered-DOM baselines | A hash of the player's complete rendered DOM and palette at the first and last step of every canonical lesson, for each starter preset (fresh load) and a regular Shiki theme (live switch), in the Docker visual project. Characterizes loading, highlighting, literal coloring, and palette application |
 | Animation timeline baselines | For every forward step of all 24 canonical lessons, each Web Animation the player creates (target, keyframes, delay, duration, easing), compared with checked-in JSON in the Docker visual project. Refactors of the animation code must reproduce them |
 | Corpus snapshot fixture | Complete snapshots of all 24 canonical lessons, compared per lesson against `packages/player/tests/fixtures/corpus-snapshots.json`. Behavior-preserving refactors of snapshot generation must leave it unchanged |
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
@@ -347,3 +348,19 @@ modules. A failure names the lesson, and the diff shows the step and animation t
 changed. Regenerate with `npm run test:visual:update` only for an intentional change
 to animation timing, targets, or paths, and review the JSON diff. Adding or editing a
 canonical lesson also needs a new or updated baseline.
+
+## Rendered-DOM baselines
+
+`tests/browser/rendered-dom.visual.spec.ts` complements the screenshots, which sample only
+a few states. For each canonical lesson it loads the sample page with each starter preset,
+and switches a loaded player to a regular Shiki theme, then hashes the full shadow DOM and
+palette style at the first and last step. The baselines are one JSON file per lesson in
+`tests/browser/__screenshots__/rendered-dom.visual.spec.ts/`. Layout decimals are rounded
+to one place so the hash is stable.
+
+Use it when refactoring loading, highlighting, theme application, or any rendering. The
+normalized HTML of every state is written to `test-results/rendered-dom/` (git-ignored) so
+a failure can be inspected: regenerate the same files from the parent commit and diff them.
+Regenerate baselines with `npm run test:visual:update` only for an intentional rendering
+change, and review which hashes moved. Adding or editing a canonical lesson needs a new or
+updated baseline.
