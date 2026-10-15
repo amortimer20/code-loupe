@@ -97,11 +97,13 @@ interpolated value unless it is already `SafeHtml`, with `raw` for constant frag
 elements. The builder-DOM baselines (`tests/browser/builder-dom.visual.spec.ts`) proved the HTML
 byte-identical for every canonical step, every new-card form, and a hostile lesson.
 
-**3.3b Split rendering from the controller.** `builder.ts` builds its UI from long template strings,
-with 36 lines over 200 characters (one is about 2,000), and safety depends on
-remembering `escape()`. Introduce a small tagged `html` template that escapes
-interpolations by default, then split rendering (per-action field renderers)
-from the controller (events, pending forms, undo, moves).
+**3.3b Split rendering from the controller (done 2026-10-15).** `authoring/builder-view.ts` now draws
+everything from explicit models (`BuilderModel` for the cards, details, and new-step picker;
+`FieldsModel` for one form's action-specific fields) and never touches the host, the DOM, or
+controller state. `builder.ts` keeps reconciling moved and pending cards, event handlers, scroll
+reveal, and undo, and shrank from 452 to 356 lines. The preview state a form needs is supplied
+lazily through a callback, so it is still computed only when a card is expanded. The builder-DOM
+baselines proved the HTML byte-identical.
 
 **3.4 Playground wiring.** Separate draft storage and recovery from layout and
 mode switching in `playground.ts`.
