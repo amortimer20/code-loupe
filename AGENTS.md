@@ -21,8 +21,10 @@ Live tracing and trace-to-authored-lesson conversion are future work.
 This is an npm workspace monorepo:
 
 - `packages/player/src/lesson.ts`: YAML lesson types and parsing.
-- `packages/player/src/state.ts`: pure step-to-snapshot generation and semantic
-  validation. Full snapshots make backward stepping and scrubbing lookups.
+- `packages/player/src/state.ts`: snapshot types and `buildSnapshots`, which runs each
+  step's actions in the explicit `STEP_ACTIONS` order from `step-actions.ts`
+  (with `step-calls.ts`, `step-bindings.ts`, and the per-step `step-context.ts`).
+  Pure semantic validation; full snapshots make backward stepping and scrubbing lookups.
 - `packages/player/src/code-loupe.ts`: `CodeLoupe`, the `<code-loupe>` web
   component; loading, rendering, animation, playback, and viewer preferences.
 - `packages/player/src/values.ts`, `styles.ts`, `index.ts`: value formatting,

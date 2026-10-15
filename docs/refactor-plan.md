@@ -25,17 +25,17 @@ not a refactor and must be split out and discussed.
 
 ## Phase 1: player state (`state.ts`, 480 lines)
 
-**1.0 Characterization fixture.** Serialize every canonical lesson's snapshots
+**1.0 Characterization fixture (done 2026-10-14).** Serialize every canonical lesson's snapshots
 to a checked-in JSON fixture and assert equality in a test. This is the safety
 net for the rest of the phase. Update the fixture only in slices that
 intentionally change state, which this plan has none of.
 
-**1.1 Shared validation helpers.** `isRecord` is defined in both `lesson.ts`
+**1.1 Shared validation helpers (done 2026-10-14).** `isRecord` is defined in both `lesson.ts`
 and `state.ts`; `checkKeys` and key lists live inline. Move them to one small
 module. Export the address parser as `code-loupe/address` so the site can use it
 (see 3.1).
 
-**1.2 Per-action handlers.** `buildSnapshots` is one large step callback with
+**1.2 Per-action handlers (done 2026-10-14).** `buildSnapshots` is one large step callback with
 an implicit action order. Split each action into a handler (`error`,
 `call`/`return`, `line`, `select`, output, `badge`, `convert`, `assign`,
 collection mutations, `allocate`) that receives a step context: the working

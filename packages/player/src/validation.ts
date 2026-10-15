@@ -10,3 +10,13 @@ export function checkKeys(value: object, allowed: string[], label: string, fail:
     if (!allowed.includes(key)) fail(`unknown ${label} key \`${key}\`.`);
   }
 }
+
+/** Index of the nth (1-based) occurrence of needle in text, or -1. */
+export function findNth(text: string, needle: string, nth: number): number {
+  let index = -1;
+  for (let k = 0; k < nth; k++) {
+    index = text.indexOf(needle, index + 1);
+    if (index < 0) return -1;
+  }
+  return index;
+}
