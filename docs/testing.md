@@ -8,6 +8,7 @@ execute the Python displayed in a lesson.
 | Layer | Coverage |
 | --- | --- |
 | Node tests | Lesson-schema validity, authored-type property coverage, corpus/schema compatibility and invalid action shapes; snapshot generation, invalid transitions, scope/shadowing, nested calls, list values/selection/indices, shared-list identity/rebinding, preserved earlier snapshots, and corpus outcomes |
+| Corpus snapshot fixture | Complete snapshots of all 24 canonical lessons, compared per lesson against `packages/player/tests/fixtures/corpus-snapshots.json`. Behavior-preserving refactors of snapshot generation must leave it unchanged |
 | Theme tests | Text/syntax contrast on preset surfaces and real Python/JavaScript/literal highlighting |
 | Type checks and builds | Player and site code, browser tests/configuration, canonical lesson metadata and semantic validation, independent player bundle and static site |
 | Playwright behavior | Gallery filters, all samples' outcomes and downloads, draft restoration/isolation, invalid draft recovery/download, nested frames, both returns, backward stepping, scrubbing, keyboard navigation, autoplay, animations, theme/draft/load races, storage failure, and narrow layouts |
@@ -315,3 +316,17 @@ normal/slow frames at desktop/narrow widths, verify a stable equals sign and
 deferred solved-variable display, and interrupt cancellation with navigation
 and resize. Theme changes settle motion without stale highlight colors. Math
 review captures remain ignored artifacts; code visual references are unchanged.
+
+## Corpus snapshot fixture
+
+`packages/player/tests/corpus-snapshots.test.ts` records every canonical lesson's
+full snapshots and fails, naming the lesson, if snapshot generation changes. It is
+the safety net for refactors of `state.ts` and its helpers. Regenerate it only for
+an intentional state change, then review the JSON diff like any other result:
+
+```sh
+UPDATE_CORPUS_SNAPSHOTS=1 npm test --workspace code-loupe
+```
+
+Adding or editing a canonical lesson also changes the fixture; regenerate it in
+the same commit. Never regenerate it to make an unexplained failure pass.

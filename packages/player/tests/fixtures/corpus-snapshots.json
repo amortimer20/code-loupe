@@ -1,0 +1,10052 @@
+{
+ "accumulator-loop": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Start the running total at zero.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The first value supplied by range(3) is 0.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "n",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "On the first iteration, 0 + 0 gives 0.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "total + n",
+     "nth": 1,
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Store the result back in total. Its value is still 0.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "total + n",
+     "nth": 1,
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "fromBadge": 1,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The next iteration sets n to 1. The total is retained.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "n",
+     "frameId": 0,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Now 0 + 1 gives 1.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "total + n",
+     "nth": 1,
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The running total becomes 1.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 1,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "total + n",
+     "nth": 1,
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "fromBadge": 2,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The third iteration sets n to 2. The total is still 1.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 1,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "n",
+     "frameId": 0,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "This time, 1 + 2 gives 3.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 1,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 3,
+     "over": "total + n",
+     "nth": 1,
+     "value": 3,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 3
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The running total becomes 3.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 3,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 3,
+     "over": "total + n",
+     "nth": 1,
+     "value": 3,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "fromBadge": 3,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "range(3) has no more values. Execution leaves the loop.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 3,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Look up the final total to print it.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 3,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 4,
+     "over": "total",
+     "nth": 1,
+     "value": 3,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 4,
+     "from": {
+      "kind": "var",
+      "name": "total",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "The console shows 3, the sum of 0, 1, and 2.",
+   "vars": [
+    {
+     "name": "total",
+     "value": 3,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 4,
+     "over": "total",
+     "nth": 1,
+     "value": 3,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "3\n",
+     "fromBadge": 4
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "boolean-comparisons": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "A comparison asks a question about values. Is 2 less than 3?",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Yes. The comparison produces True, a Boolean value, rather than another number.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "2 < 3",
+     "nth": 1,
+     "value": true,
+     "type": "bool"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The console shows True, the result of the first comparison.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "2 < 3",
+     "nth": 1,
+     "value": true,
+     "type": "bool"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "True\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Now ask whether 2 equals 3. The == operator compares values; it does not assign a value to a name.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "True\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The values are not equal, so this comparison produces False. Both results have the bool type.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "2 == 3",
+     "nth": 1,
+     "value": false,
+     "type": "bool"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "True\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 2
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The second console line shows False. Conditions can use these Boolean results to decide what runs next.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "2 == 3",
+     "nth": 1,
+     "value": false,
+     "type": "bool"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "True\n",
+     "fromBadge": 1
+    },
+    {
+     "kind": "out",
+     "text": "False\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  }
+ ],
+ "changing-value": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Start with score bound to 5.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "score",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Read the old value of score on the right-hand side first. It is still 5.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "score",
+     "nth": 2,
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "score",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Adding 2 gives 7. This is the new result, but score still holds 5 until assignment happens.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "score + 2",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "converted": {
+     "id": 1,
+     "from": {
+      "id": 1,
+      "line": 2,
+      "over": "score",
+      "nth": 2,
+      "value": 5,
+      "type": "int"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Now bind score to the result 7, replacing its previous value. This is an assignment, not an algebraic equality.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "score + 2",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "score",
+     "frameId": 0,
+     "fromBadge": 1,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Reading score now gives 7.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "score",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "score",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The console shows the updated value 7.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "score",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "7\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "class-instance": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Student has an initializer named __init__. No Student instance exists yet; the initializer runs when we create one.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Evaluate the argument \"Ada\" before constructing a Student.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 5,
+     "over": "\"Ada\"",
+     "nth": 1,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Allocate a new Student instance. It has no name attribute yet, and student has not been assigned.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 5,
+     "over": "\"Ada\"",
+     "nth": 1,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Enter __init__. self points to the new instance, while the local parameter name holds \"Ada\".",
+   "vars": [],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 5,
+      "over": "Student(\"Ada\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 5,
+       "over": "\"Ada\"",
+       "nth": 1,
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "construct": "student-1"
+    }
+   ],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "called": {
+     "frameId": 1,
+     "args": [
+      {
+       "name": "self"
+      },
+      {
+       "name": "name",
+       "fromBadge": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read the local parameter name on the right-hand side. It is separate from the instance attribute self.name.",
+   "vars": [],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 5,
+      "over": "Student(\"Ada\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 5,
+       "over": "\"Ada\"",
+       "nth": 1,
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "construct": "student-1"
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "name",
+     "nth": 2,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "name",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Store \"Ada\" in the instance's name attribute. self still points to the same object.",
+   "vars": [],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 5,
+      "over": "Student(\"Ada\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 5,
+       "over": "\"Ada\"",
+       "nth": 1,
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "construct": "student-1"
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "name",
+     "nth": 2,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "updated": {
+     "name": "self",
+     "frameId": 1,
+     "attribute": "name",
+     "ref": "student-1",
+     "fromBadge": 2
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "__init__ finishes with None. The enclosing Student(\"Ada\") constructor call produces the initialized instance, shown by its reference badge.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 5,
+     "over": "Student(\"Ada\")",
+     "nth": 1,
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "returned": {
+     "frameId": 1,
+     "badgeId": 3
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Bind student to the constructed instance. The initializer's local self and name no longer exist.",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 5,
+     "over": "Student(\"Ada\")",
+     "nth": 1,
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "student",
+     "frameId": 0,
+     "fromBadge": 3,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Read student.name from the instance. Dot notation accesses an attribute, rather than a dictionary key.",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 6,
+     "over": "student.name",
+     "nth": 1,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 4,
+     "from": {
+      "kind": "var",
+      "name": "student",
+      "frameId": 0,
+      "attribute": "name",
+      "ref": "student-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "The console shows Ada. student still points to the Student instance with its name attribute.",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 6,
+     "over": "student.name",
+     "nth": 1,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Ada\n",
+     "fromBadge": 4
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "conditional": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Store the integer 16 in age.",
+   "vars": [
+    {
+     "name": "age",
+     "value": 16,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "age",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Look up age before comparing it with 18.",
+   "vars": [
+    {
+     "name": "age",
+     "value": 16,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "age",
+     "nth": 1,
+     "value": 16,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "age",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Evaluating 16 >= 18 gives False, a Boolean value.",
+   "vars": [
+    {
+     "name": "age",
+     "value": 16,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "age >= 18",
+     "nth": 1,
+     "value": false,
+     "type": "bool"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "converted": {
+     "id": 1,
+     "from": {
+      "id": 1,
+      "line": 2,
+      "over": "age",
+      "nth": 1,
+      "value": 16,
+      "type": "int"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "The condition is false, so skip line 3 and enter the else branch.",
+   "vars": [
+    {
+     "name": "age",
+     "value": 16,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Only the selected branch prints its message.",
+   "vars": [
+    {
+     "name": "age",
+     "value": 16,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Under 18\n"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "dictionary-fields": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Create a dictionary with two named fields. student points to this one object; name holds \"Ada\" and score holds 5.",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "dict"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada",
+      "score": 5
+     },
+     "type": "dict"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "student",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The key \"score\" identifies the field to change. We will store 7 there while leaving \"name\" unchanged.",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "dict"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "7",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada",
+      "score": 5
+     },
+     "type": "dict"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Replace the score field's value 5 with 7. The dictionary and student's reference keep the same identity.",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "dict"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "7",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada",
+      "score": 7
+     },
+     "type": "dict"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "updated": {
+     "name": "student",
+     "frameId": 0,
+     "key": "score",
+     "ref": "student-1",
+     "fromBadge": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read the value stored under \"score\". The field supplies the integer 7 to print().",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "dict"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "student[\"score\"]",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada",
+      "score": 7
+     },
+     "type": "dict"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "student",
+      "frameId": 0,
+      "key": "score",
+      "ref": "student-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The console shows 7. The dictionary still has both fields, and name still holds \"Ada\".",
+   "vars": [
+    {
+     "name": "student",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "dict"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "student[\"score\"]",
+     "nth": 1,
+     "value": 7,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "7\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada",
+      "score": 7
+     },
+     "type": "dict"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "function-call": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Store 10 in the global variable value. Defining the function did not run its body.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "value",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Look up the argument before calling add_one().",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 6,
+     "over": "value",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "value",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Enter add_one(). Its parameter value is local to this new call frame.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "called": {
+     "frameId": 1,
+     "args": [
+      {
+       "name": "value",
+       "fromBadge": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Inside the function, value refers to the local parameter. The global value is separate.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "value",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "value",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Adding 1 to the local value gives 11.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "value + 1",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "converted": {
+     "id": 2,
+     "from": {
+      "id": 2,
+      "line": 2,
+      "over": "value",
+      "nth": 1,
+      "value": 10,
+      "type": "int"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Store 11 in result, another variable local to this call.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 11,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "value + 1",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "result",
+     "frameId": 1,
+     "fromBadge": 2,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Look up the local result to return it.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 11,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 3,
+     "line": 3,
+     "over": "result",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 3,
+     "from": {
+      "kind": "var",
+      "name": "result",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Return 11 to the caller. The function frame and its local variables are removed.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 6,
+     "over": "add_one(value)",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "returned": {
+     "frameId": 1,
+     "badgeId": 4,
+     "fromBadge": 3
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Store the returned number in the global variable answer. The global value is still 10.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    },
+    {
+     "name": "answer",
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 6,
+     "over": "add_one(value)",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "answer",
+     "frameId": 0,
+     "fromBadge": 4,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 7,
+   "caption": "Look up answer for the final output.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    },
+    {
+     "name": "answer",
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 7,
+     "over": "answer",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 5,
+     "from": {
+      "kind": "var",
+      "name": "answer",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 7,
+   "caption": "The console shows 11. The local result existed only while the function was running.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    },
+    {
+     "name": "answer",
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 7,
+     "over": "answer",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "11\n",
+     "fromBadge": 5
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "hello-world": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The arrow marks the line we are about to run. print() sends a message to the console.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The console shows Hello, world! The quotation marks belong to the code; they are not part of the printed message.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Hello, world!\n"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "instance-method": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 8,
+   "caption": "Begin with ada pointing to a Student named \"Ada\". This setup step summarizes construction and initialization.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "ada",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 9,
+   "caption": "Summarize construction of a second Student named \"Grace\". The two instances have independent state.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "grace",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 10,
+   "caption": "ada identifies the instance receiving the method call. Evaluate \"Lovelace\" for the new_name argument.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 10,
+     "over": "\"Lovelace\"",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Enter rename. The receiver ada becomes the local self reference; new_name holds \"Lovelace\". Both ada and self point to student-1.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.rename",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "new_name",
+       "value": "Lovelace",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 10,
+      "over": "ada.rename(\"Lovelace\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 10,
+       "over": "\"Lovelace\"",
+       "nth": 1,
+       "value": "Lovelace",
+       "type": "str"
+      }
+     ]
+    }
+   ],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "called": {
+     "frameId": 1,
+     "args": [
+      {
+       "name": "self"
+      },
+      {
+       "name": "new_name",
+       "fromBadge": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Read the local parameter new_name. The instance's name attribute still holds \"Ada\".",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.rename",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "new_name",
+       "value": "Lovelace",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 10,
+      "over": "ada.rename(\"Lovelace\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 10,
+       "over": "\"Lovelace\"",
+       "nth": 1,
+       "value": "Lovelace",
+       "type": "str"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 6,
+     "over": "new_name",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "new_name",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Update the instance through self. ada sees the same object's new name, while grace's separate instance stays unchanged.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.rename",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "new_name",
+       "value": "Lovelace",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 10,
+      "over": "ada.rename(\"Lovelace\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 10,
+       "over": "\"Lovelace\"",
+       "nth": 1,
+       "value": "Lovelace",
+       "type": "str"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 6,
+     "over": "new_name",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "updated": {
+     "name": "self",
+     "frameId": 1,
+     "attribute": "name",
+     "ref": "student-1",
+     "fromBadge": 2
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 10,
+   "caption": "rename reaches the end without an explicit return, so the call's result is None. Its locals disappear, but the attribute change remains. Unlike construction, this call does not produce an instance reference.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 10,
+     "over": "ada.rename(\"Lovelace\")",
+     "nth": 1,
+     "value": null,
+     "type": "NoneType"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "returned": {
+     "frameId": 1,
+     "badgeId": 3
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 11,
+   "caption": "The unused None result is discarded. Read \"Lovelace\" through ada, which still points to student-1.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 11,
+     "over": "ada.name",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 4,
+     "from": {
+      "kind": "var",
+      "name": "ada",
+      "frameId": 0,
+      "attribute": "name",
+      "ref": "student-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 11,
+   "caption": "Print the name changed by the method.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 11,
+     "over": "ada.name",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Lovelace\n",
+     "fromBadge": 4
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 12,
+   "caption": "Read grace's name from student-2. The method was called on ada, so this instance still holds \"Grace\".",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 12,
+     "over": "grace.name",
+     "nth": 1,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Lovelace\n",
+     "fromBadge": 4
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 5,
+     "from": {
+      "kind": "var",
+      "name": "grace",
+      "frameId": 0,
+      "attribute": "name",
+      "ref": "student-2"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 12,
+   "caption": "The outputs show the method's lasting change to one instance. Its None result was not printed or assigned.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 12,
+     "over": "grace.name",
+     "nth": 1,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Lovelace\n",
+     "fromBadge": 4
+    },
+    {
+     "kind": "out",
+     "text": "Grace\n",
+     "fromBadge": 5
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  }
+ ],
+ "list-aliasing": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Create one list. The name numbers points to it; list-1 is our label for this object.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "numbers",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Bind other to the same list. Both arrows point to list-1; no second list is created.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "other",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "We will append 6 through other. Predict what printing numbers will show.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Change the shared list to [2, 4, 6]. The two names still point to the same object.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "appended": {
+     "name": "other",
+     "frameId": 0,
+     "index": 2,
+     "fromBadge": 1,
+     "ref": "list-1"
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Through numbers, we can see the new element at index 2. It is the very same list.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 2,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Read the list through numbers, even though the append used other.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 4,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "The console shows [2, 4, 6]. Assignment gave the list another name; it did not copy its contents.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 4,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "[2, 4, 6]\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "list-append": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Create a list with two elements, at indices 0 and 1.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "numbers",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The value to append is 6. It will go after the existing elements.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Add 6 at the end. The list grows from two elements to three.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "appended": {
+     "name": "numbers",
+     "frameId": 0,
+     "index": 2,
+     "fromBadge": 1,
+     "ref": "list-1"
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The new element has index 2. The original cells keep their values and indices.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 2,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read the whole list after appending.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The console shows [2, 4, 6]. Step backward to restore the two-element list.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "[2, 4, 6]\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "list-copying": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Create a list and bind numbers to it. Its teaching label is list-1.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "numbers",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "copy() creates a second list with the same contents. The two names now point to different objects.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "other",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "We will append 6 through other. Predict what printing each list will show.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Only list-2 grows to [2, 4, 6]. The original list-1 remains [2, 4].",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "appended": {
+     "name": "other",
+     "frameId": 0,
+     "index": 2,
+     "fromBadge": 1,
+     "ref": "list-2"
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The new element at index 2 belongs to the copy. Equal starting contents did not make these the same object.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "6",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "other",
+    "frameId": 0,
+    "index": 2,
+    "ref": "list-2"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Read the original list through numbers. It still contains just 2 and 4.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 4,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Printing numbers shows [2, 4]; appending to the copy left it unchanged.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 4,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "[2, 4]\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Read the separate list through other. This is the one we changed.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 5,
+     "over": "other",
+     "nth": 1,
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "[2, 4]\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 3,
+     "from": {
+      "kind": "var",
+      "name": "other",
+      "frameId": 0,
+      "ref": "list-2"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Printing other shows [2, 4, 6]. Compare this with assignment alone, where both names pointed to one list.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "other",
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 5,
+     "over": "other",
+     "nth": 1,
+     "value": {
+      "ref": "list-2"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "[2, 4]\n",
+     "fromBadge": 2
+    },
+    {
+     "kind": "out",
+     "text": "[2, 4, 6]\n",
+     "fromBadge": 3
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4
+     ],
+     "type": "list"
+    },
+    {
+     "id": "list-2",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  }
+ ],
+ "list-iteration": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The list contains three elements. Their positions are numbered 0, 1, and 2.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "numbers",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Start the running total at zero.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The loop reads the first element, at index 0. Its value is 2.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 0,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "index": 0,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Bind n to the element's value, 2. n is not the index.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 0,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "n",
+     "frameId": 0,
+     "fromBadge": 1,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Add the current element to the total. 0 + 2 gives 2.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 0,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 4,
+     "over": "total + n",
+     "nth": 1,
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 0,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Store 2 in total. Reading the element did not change the list.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 2,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 4,
+     "over": "total + n",
+     "nth": 1,
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 0,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "fromBadge": 2,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Advance to index 1. The next element's value is 4.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 2,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": 4,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 3,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "index": 1,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "n becomes 4; total retains 2 from the previous iteration.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 2,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 4,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": 4,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "n",
+     "frameId": 0,
+     "fromBadge": 3,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Now 2 + 4 gives 6.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 2,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 4,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 4,
+     "over": "total + n",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 4
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "The running total becomes 6. The list still contains 2, 4, and 6.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 6,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 4,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 4,
+     "over": "total + n",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "fromBadge": 4,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Advance to the final element, at index 2. Its value is 6.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 6,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 4,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 2,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 5,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "index": 2,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "n becomes 6. The index is 2, while the element's value is 6.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 6,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 2,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "n",
+     "frameId": 0,
+     "fromBadge": 5,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Add the last element. 6 + 6 gives 12.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 6,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 6,
+     "line": 4,
+     "over": "total + n",
+     "nth": 1,
+     "value": 12,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 2,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 6
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "The running total becomes 12.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 12,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 6,
+     "line": 4,
+     "over": "total + n",
+     "nth": 1,
+     "value": 12,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 2,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "total",
+     "frameId": 0,
+     "fromBadge": 6,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "There are no more elements. Leave the loop; Python keeps n at its last value, 6.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 12,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Read the final total to print it.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 12,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 7,
+     "line": 5,
+     "over": "total",
+     "nth": 1,
+     "value": 12,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 7,
+     "from": {
+      "kind": "var",
+      "name": "total",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "The console shows 12, the sum of the list's three elements.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    },
+    {
+     "name": "total",
+     "value": 12,
+     "type": "int"
+    },
+    {
+     "name": "n",
+     "value": 6,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 7,
+     "line": 5,
+     "over": "total",
+     "nth": 1,
+     "value": 12,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "12\n",
+     "fromBadge": 7
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "list-removal": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Create a list with three elements at indices 0, 1, and 2.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "numbers",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Index 1 selects the second element, whose value is 4.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Delete that element. The list shrinks to two cells; 6 moves from index 2 to index 1.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "removed": {
+     "name": "numbers",
+     "frameId": 0,
+     "index": 1,
+     "ref": "list-1"
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Index 1 now refers to 6. Its value did not change; its position did.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read the shorter list. There is no empty cell or gap at the removed position.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The console shows [2, 6]. Step backward to restore 4 and the original indices.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "[2, 6]\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "list-update": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Create a list with three elements at indices 0, 1, and 2.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "numbers",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Index 1 selects the second element, currently 4. The new value is 10.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "10",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      4,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Replace the element at index 1 with 10. Only this cell changes.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "10",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": {
+    "name": "numbers",
+    "frameId": 0,
+    "index": 1,
+    "ref": "list-1"
+   },
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      10,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "updated": {
+     "name": "numbers",
+     "frameId": 0,
+     "index": 1,
+     "fromBadge": 1,
+     "ref": "list-1"
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The list is now [2, 10, 6]. Its length is still three, and indices 0 and 2 retain their values.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "10",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      10,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read the whole updated list to print it.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      10,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "numbers",
+      "frameId": 0,
+      "ref": "list-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The console shows the updated list. Step backward to compare it with the original.",
+   "vars": [
+    {
+     "name": "numbers",
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "numbers",
+     "nth": 1,
+     "value": {
+      "ref": "list-1"
+     },
+     "type": "list"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "[2, 10, 6]\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "list-1",
+     "value": [
+      2,
+      10,
+      6
+     ],
+     "type": "list"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "naming-value": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Assignment binds the name score to the integer 5. The Variables panel shows its current value.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "score",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Read score to find the value that print() will use. The name refers to 5; it is not the message to print.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "score",
+     "nth": 1,
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "score",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The console shows 5. Reading score did not change its stored value.",
+   "vars": [
+    {
+     "name": "score",
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "score",
+     "nth": 1,
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "5\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "nested-function-call": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 10,
+   "caption": "Store 10 globally. Neither function body has run yet.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "value",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 11,
+   "caption": "Look up the argument for double_after_bump().",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 11,
+     "over": "value",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "value",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "The outer call gets its own local parameter value. The global value stays separate.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "called": {
+     "frameId": 1,
+     "args": [
+      {
+       "name": "value",
+       "fromBadge": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "The outer function passes its local value to add_one(). Its result is not assigned yet.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 6,
+     "over": "value",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "value",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The outer frame pauses at line 6 while add_one() runs in a new frame.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 2,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "called": {
+     "frameId": 2,
+     "args": [
+      {
+       "name": "value",
+       "fromBadge": 2
+      }
+     ]
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "This value belongs to add_one(). Each call has a separate parameter with the same name.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 2,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 3,
+     "line": 2,
+     "over": "value",
+     "nth": 1,
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 3,
+     "from": {
+      "kind": "var",
+      "name": "value",
+      "frameId": 2
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Add 1 to the inner parameter to get 11.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 2,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 3,
+     "line": 2,
+     "over": "value + 1",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "converted": {
+     "id": 3,
+     "from": {
+      "id": 3,
+      "line": 2,
+      "over": "value",
+      "nth": 1,
+      "value": 10,
+      "type": "int"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Create result in the inner frame. The paused outer frame still has no result.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 11,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 2,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 3,
+     "line": 2,
+     "over": "value + 1",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "result",
+     "frameId": 2,
+     "fromBadge": 3,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read the inner result for the first return.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    },
+    {
+     "id": 2,
+     "name": "add_one",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 11,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "add_one(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 2,
+       "line": 6,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 4,
+     "line": 3,
+     "over": "result",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 4,
+     "from": {
+      "kind": "var",
+      "name": "result",
+      "frameId": 2
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Return 11 to line 6. Only add_one() finishes; the outer frame resumes.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 5,
+     "line": 6,
+     "over": "add_one(value)",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "returned": {
+     "frameId": 2,
+     "badgeId": 5,
+     "fromBadge": 4
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Store the returned 11 in the outer frame's own result variable.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 11,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 5,
+     "line": 6,
+     "over": "add_one(value)",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "result",
+     "frameId": 1,
+     "fromBadge": 5,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 7,
+   "caption": "Read the outer result. The inner frame has already gone.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 11,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 6,
+     "line": 7,
+     "over": "result",
+     "nth": 1,
+     "value": 11,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 6,
+     "from": {
+      "kind": "var",
+      "name": "result",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 7,
+   "caption": "Double the returned value to get 22.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 11,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 6,
+     "line": 7,
+     "over": "result * 2",
+     "nth": 1,
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "converted": {
+     "id": 6,
+     "from": {
+      "id": 6,
+      "line": 7,
+      "over": "result",
+      "nth": 1,
+      "value": 11,
+      "type": "int"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 7,
+   "caption": "Update the outer result to 22. The global value remains 10.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 22,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 6,
+     "line": 7,
+     "over": "result * 2",
+     "nth": 1,
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "result",
+     "frameId": 1,
+     "fromBadge": 6,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 8,
+   "caption": "Read the outer result for the second return.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [
+    {
+     "id": 1,
+     "name": "double_after_bump",
+     "vars": [
+      {
+       "name": "value",
+       "value": 10,
+       "type": "int"
+      },
+      {
+       "name": "result",
+       "value": 22,
+       "type": "int"
+      }
+     ],
+     "returnTo": {
+      "line": 11,
+      "over": "double_after_bump(value)",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 11,
+       "over": "value",
+       "nth": 1,
+       "value": 10,
+       "type": "int"
+      }
+     ]
+    }
+   ],
+   "badges": [
+    {
+     "id": 7,
+     "line": 8,
+     "over": "result",
+     "nth": 1,
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 7,
+     "from": {
+      "kind": "var",
+      "name": "result",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 11,
+   "caption": "Return 22 to line 11. Both calls have now finished, and no function frames remain.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 8,
+     "line": 11,
+     "over": "double_after_bump(value)",
+     "nth": 1,
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "returned": {
+     "frameId": 1,
+     "badgeId": 8,
+     "fromBadge": 7
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 11,
+   "caption": "Assign the final returned value to the global answer.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    },
+    {
+     "name": "answer",
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 8,
+     "line": 11,
+     "over": "double_after_bump(value)",
+     "nth": 1,
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "answer",
+     "frameId": 0,
+     "fromBadge": 8,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 12,
+   "caption": "Look up the global answer for printing.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    },
+    {
+     "name": "answer",
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 9,
+     "line": 12,
+     "over": "answer",
+     "nth": 1,
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 9,
+     "from": {
+      "kind": "var",
+      "name": "answer",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 12,
+   "caption": "The console shows 22. Step backward across each return to restore that call's locals.",
+   "vars": [
+    {
+     "name": "value",
+     "value": 10,
+     "type": "int"
+    },
+    {
+     "name": "answer",
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 9,
+     "line": 12,
+     "over": "answer",
+     "nth": 1,
+     "value": 22,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "22\n",
+     "fromBadge": 9
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "numeric-input": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "input() shows its prompt and waits for the user to type something.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The user types 30 and presses Enter.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "input() always gives back a string, even when the user types digits.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "input(\"Enter your age: \")",
+     "nth": 1,
+     "value": "30",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 2,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "console",
+      "chunk": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The string \"30\" is stored in the variable text.",
+   "vars": [
+    {
+     "name": "text",
+     "value": "30",
+     "type": "str"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "input(\"Enter your age: \")",
+     "nth": 1,
+     "value": "30",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 2,
+    "assigned": {
+     "name": "text",
+     "frameId": 0,
+     "fromBadge": 1,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Python looks up text and finds the string \"30\".",
+   "vars": [
+    {
+     "name": "text",
+     "value": "30",
+     "type": "str"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "text",
+     "nth": 1,
+     "value": "30",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 2,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "text",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "int() converts the string \"30\" into the integer 30.",
+   "vars": [
+    {
+     "name": "text",
+     "value": "30",
+     "type": "str"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "int(text)",
+     "nth": 1,
+     "value": 30,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 2,
+    "converted": {
+     "id": 2,
+     "from": {
+      "id": 2,
+      "line": 2,
+      "over": "text",
+      "nth": 1,
+      "value": "30",
+      "type": "str"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Now age holds a number, so we can do math with it.",
+   "vars": [
+    {
+     "name": "text",
+     "value": "30",
+     "type": "str"
+    },
+    {
+     "name": "age",
+     "value": 30,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "int(text)",
+     "nth": 1,
+     "value": 30,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 2,
+    "assigned": {
+     "name": "age",
+     "frameId": 0,
+     "fromBadge": 2,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Because age is an int, 100 - age works out to 70.",
+   "vars": [
+    {
+     "name": "text",
+     "value": "30",
+     "type": "str"
+    },
+    {
+     "name": "age",
+     "value": 30,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 3,
+     "over": "100 - age",
+     "nth": 1,
+     "value": 70,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 2,
+    "badgeAdded": {
+     "id": 3
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The f-string fills in 70 and print() shows the message.",
+   "vars": [
+    {
+     "name": "text",
+     "value": "30",
+     "type": "str"
+    },
+    {
+     "name": "age",
+     "value": 30,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 3,
+     "over": "100 - age",
+     "nth": 1,
+     "value": 70,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Enter your age: "
+    },
+    {
+     "kind": "in",
+     "text": "30"
+    },
+    {
+     "kind": "out",
+     "text": "You will be 100 in 70 years!\n",
+     "fromBadge": 3
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 2
+   }
+  }
+ ],
+ "runtime-error": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "This program can begin executing. First it reaches a print statement.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The console records Starting before anything fails.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Starting\n"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Store the string \"abc\" in age. Assigning a string is valid.",
+   "vars": [
+    {
+     "name": "age",
+     "value": "abc",
+     "type": "str"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Starting\n"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "assigned": {
+     "name": "age",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read age before trying to convert it to an integer. years has not been assigned yet.",
+   "vars": [
+    {
+     "name": "age",
+     "value": "abc",
+     "type": "str"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 3,
+     "over": "age",
+     "nth": 1,
+     "value": "abc",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Starting\n"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 1,
+     "from": {
+      "kind": "var",
+      "name": "age",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": {
+    "kind": "runtime",
+    "name": "ValueError",
+    "message": "Cannot convert \"abc\" to an integer.",
+    "line": 3,
+    "over": "int(age)",
+    "nth": 1
+   },
+   "line": 3,
+   "caption": "The conversion fails before assignment. age and the earlier output remain, but years is never created and the final print statement is not reached.",
+   "vars": [
+    {
+     "name": "age",
+     "value": "abc",
+     "type": "str"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Starting\n"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  }
+ ],
+ "simple-arithmetic": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Before print() can show anything, Python evaluates the addition inside the parentheses. What is 2 + 3?",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The expression 2 + 3 evaluates to the integer 5. The badge shows that result beside the code.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "2 + 3",
+     "nth": 1,
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "print() sends the result to the console. The output is 5, rather than the expression 2 + 3.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "2 + 3",
+     "nth": 1,
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "5\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "strings-and-numbers": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "These operands are integers. Predict the result of adding 2 and 3.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Integer addition gives 5. The int tag identifies the result as a number.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "2 + 3",
+     "nth": 1,
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The first console line shows 5.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 1,
+     "over": "2 + 3",
+     "nth": 1,
+     "value": 5,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "5\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Quotation marks make these operands strings. What will joining \"2\" and \"3\" produce?",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "5\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "For strings, + joins the text. The result is \"23\", with a str tag; it is not integer addition.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "\"2\" + \"3\"",
+     "nth": 1,
+     "value": "23",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "5\n",
+     "fromBadge": 1
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 2
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "The second console line shows 23 without quotation marks. The badge showed its string type; console text alone does not show that distinction.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 2,
+     "over": "\"2\" + \"3\"",
+     "nth": 1,
+     "value": "23",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "5\n",
+     "fromBadge": 1
+    },
+    {
+     "kind": "out",
+     "text": "23\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  }
+ ],
+ "syntax-error": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": {
+    "kind": "syntax",
+    "name": "SyntaxError",
+    "message": "Expected \":\" after the condition.",
+    "line": 2,
+    "over": "if age >= 18",
+    "nth": 1
+   },
+   "line": 2,
+   "caption": "The if statement is missing its colon. Python cannot begin executing this program, so even the earlier age assignment has not happened.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  }
+ ],
+ "two-instances": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "The Student definition is already available. Each new instance will have its own name attribute.",
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Evaluate \"Ada\" for the first constructor call.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 5,
+     "over": "\"Ada\"",
+     "nth": 1,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Allocate the first Student. Its name attribute has not been initialized yet.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 5,
+     "over": "\"Ada\"",
+     "nth": 1,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "In this initializer call, self points to student-1 and the local name is \"Ada\".",
+   "vars": [],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 5,
+      "over": "Student(\"Ada\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 5,
+       "over": "\"Ada\"",
+       "nth": 1,
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "construct": "student-1"
+    }
+   ],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "called": {
+     "frameId": 1,
+     "args": [
+      {
+       "name": "self"
+      },
+      {
+       "name": "name",
+       "fromBadge": 1
+      }
+     ]
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read this call's local name parameter.",
+   "vars": [],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 5,
+      "over": "Student(\"Ada\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 5,
+       "over": "\"Ada\"",
+       "nth": 1,
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "construct": "student-1"
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "name",
+     "nth": 2,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "name",
+      "frameId": 1
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Initialize student-1's name to \"Ada\" through self.",
+   "vars": [],
+   "frames": [
+    {
+     "id": 1,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-1"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 5,
+      "over": "Student(\"Ada\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 1,
+       "line": 5,
+       "over": "\"Ada\"",
+       "nth": 1,
+       "value": "Ada",
+       "type": "str"
+      }
+     ],
+     "construct": "student-1"
+    }
+   ],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "name",
+     "nth": 2,
+     "value": "Ada",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "updated": {
+     "name": "self",
+     "frameId": 1,
+     "attribute": "name",
+     "ref": "student-1",
+     "fromBadge": 2
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "The initializer finishes with None; the constructor expression produces a reference to student-1.",
+   "vars": [],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 5,
+     "over": "Student(\"Ada\")",
+     "nth": 1,
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "returned": {
+     "frameId": 1,
+     "badgeId": 3
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Bind ada to the first instance. The initializer's locals are gone.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 5,
+     "over": "Student(\"Ada\")",
+     "nth": 1,
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "ada",
+     "frameId": 0,
+     "fromBadge": 3,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Evaluate \"Grace\" for a separate constructor call using the same class.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 6,
+     "over": "\"Grace\"",
+     "nth": 1,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 4
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "Allocate a second Student with a distinct identity. student-1 still holds \"Ada\".",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 6,
+     "over": "\"Grace\"",
+     "nth": 1,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "This new call has its own locals. self now points to student-2, while ada still points to student-1.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [
+    {
+     "id": 2,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-2"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Grace",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "Student(\"Grace\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 4,
+       "line": 6,
+       "over": "\"Grace\"",
+       "nth": 1,
+       "value": "Grace",
+       "type": "str"
+      }
+     ],
+     "construct": "student-2"
+    }
+   ],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "called": {
+     "frameId": 2,
+     "args": [
+      {
+       "name": "self"
+      },
+      {
+       "name": "name",
+       "fromBadge": 4
+      }
+     ]
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read \"Grace\" from the second initializer's local name parameter.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [
+    {
+     "id": 2,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-2"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Grace",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "Student(\"Grace\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 4,
+       "line": 6,
+       "over": "\"Grace\"",
+       "nth": 1,
+       "value": "Grace",
+       "type": "str"
+      }
+     ],
+     "construct": "student-2"
+    }
+   ],
+   "badges": [
+    {
+     "id": 5,
+     "line": 3,
+     "over": "name",
+     "nth": 2,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {},
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 5,
+     "from": {
+      "kind": "var",
+      "name": "name",
+      "frameId": 2
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Initialize student-2's name to \"Grace\". The first instance's name remains \"Ada\".",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [
+    {
+     "id": 2,
+     "name": "Student.__init__",
+     "vars": [
+      {
+       "name": "self",
+       "value": {
+        "ref": "student-2"
+       },
+       "type": "Student"
+      },
+      {
+       "name": "name",
+       "value": "Grace",
+       "type": "str"
+      }
+     ],
+     "returnTo": {
+      "line": 6,
+      "over": "Student(\"Grace\")",
+      "nth": 1
+     },
+     "callerBadges": [
+      {
+       "id": 4,
+       "line": 6,
+       "over": "\"Grace\"",
+       "nth": 1,
+       "value": "Grace",
+       "type": "str"
+      }
+     ],
+     "construct": "student-2"
+    }
+   ],
+   "badges": [
+    {
+     "id": 5,
+     "line": 3,
+     "over": "name",
+     "nth": 2,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "updated": {
+     "name": "self",
+     "frameId": 2,
+     "attribute": "name",
+     "ref": "student-2",
+     "fromBadge": 5
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "The second initializer finishes with None; this constructor expression produces a reference to student-2.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 6,
+     "line": 6,
+     "over": "Student(\"Grace\")",
+     "nth": 1,
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "returned": {
+     "frameId": 2,
+     "badgeId": 6
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 6,
+   "caption": "ada and grace point to two independent instances of the same class. Both have an attribute named name.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 6,
+     "line": 6,
+     "over": "Student(\"Grace\")",
+     "nth": 1,
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "grace",
+     "frameId": 0,
+     "fromBadge": 6,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 7,
+   "caption": "Evaluate the replacement name before updating ada's instance.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 7,
+     "line": 7,
+     "over": "\"Lovelace\"",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Ada"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 7
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 7,
+   "caption": "Replace only student-1's name with \"Lovelace\". Using the same class and attribute name does not make the two instances share that attribute's value.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 7,
+     "line": 7,
+     "over": "\"Lovelace\"",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0,
+    "updated": {
+     "name": "ada",
+     "frameId": 0,
+     "attribute": "name",
+     "ref": "student-1",
+     "fromBadge": 7
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 8,
+   "caption": "Follow ada's reference and read \"Lovelace\" from the first instance.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 8,
+     "line": 8,
+     "over": "ada.name",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 8,
+     "from": {
+      "kind": "var",
+      "name": "ada",
+      "frameId": 0,
+      "attribute": "name",
+      "ref": "student-1"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 8,
+   "caption": "Print the first instance's updated name.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 8,
+     "line": 8,
+     "over": "ada.name",
+     "nth": 1,
+     "value": "Lovelace",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Lovelace\n",
+     "fromBadge": 8
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 9,
+   "caption": "Follow grace's different reference. Its instance still holds \"Grace\".",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 9,
+     "line": 9,
+     "over": "grace.name",
+     "nth": 1,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Lovelace\n",
+     "fromBadge": 8
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 9,
+     "from": {
+      "kind": "var",
+      "name": "grace",
+      "frameId": 0,
+      "attribute": "name",
+      "ref": "student-2"
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 9,
+   "caption": "The two outputs confirm independent state. Updating ada.name did not change grace.name.",
+   "vars": [
+    {
+     "name": "ada",
+     "value": {
+      "ref": "student-1"
+     },
+     "type": "Student"
+    },
+    {
+     "name": "grace",
+     "value": {
+      "ref": "student-2"
+     },
+     "type": "Student"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 9,
+     "line": 9,
+     "over": "grace.name",
+     "nth": 1,
+     "value": "Grace",
+     "type": "str"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "Lovelace\n",
+     "fromBadge": 8
+    },
+    {
+     "kind": "out",
+     "text": "Grace\n",
+     "fromBadge": 9
+    }
+   ],
+   "selection": null,
+   "heap": [
+    {
+     "id": "student-1",
+     "fields": {
+      "name": "Lovelace"
+     },
+     "type": "Student",
+     "class": "Student"
+    },
+    {
+     "id": "student-2",
+     "fields": {
+      "name": "Grace"
+     },
+     "type": "Student",
+     "class": "Student"
+    }
+   ],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  }
+ ],
+ "while-loop": [
+  {
+   "error": null,
+   "line": null,
+   "caption": null,
+   "vars": [],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 1,
+   "caption": "Start count at 0. The loop will check count before running its body.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "assigned": {
+     "name": "count",
+     "frameId": 0,
+     "isNew": true
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "With count at 0, 0 < 2 is True. Enter the loop body.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 1,
+     "line": 2,
+     "over": "count < 2",
+     "nth": 1,
+     "value": true,
+     "type": "bool"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 1
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read count for the first print. Its value is 0.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "count",
+     "nth": 1,
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "console": [],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 0,
+    "badgeAdded": {
+     "id": 2,
+     "from": {
+      "kind": "var",
+      "name": "count",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The first iteration prints 0.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 2,
+     "line": 3,
+     "over": "count",
+     "nth": 1,
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 0
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Evaluate 0 + 1 to get 1. count still holds 0 until assignment.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 0,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 4,
+     "over": "count + 1",
+     "nth": 1,
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 3
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Store 1 in count, then return to the condition at the top of the loop.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 3,
+     "line": 4,
+     "over": "count + 1",
+     "nth": 1,
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1,
+    "assigned": {
+     "name": "count",
+     "frameId": 0,
+     "fromBadge": 3,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Now 1 < 2 is True. Run the body again with count at 1.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 4,
+     "line": 2,
+     "over": "count < 2",
+     "nth": 1,
+     "value": true,
+     "type": "bool"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 4
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "Read count for the second print. Its value is now 1.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 3,
+     "over": "count",
+     "nth": 1,
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 1,
+    "badgeAdded": {
+     "id": 5,
+     "from": {
+      "kind": "var",
+      "name": "count",
+      "frameId": 0
+     }
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 3,
+   "caption": "The second iteration prints 1.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 5,
+     "line": 3,
+     "over": "count",
+     "nth": 1,
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    },
+    {
+     "kind": "out",
+     "text": "1\n",
+     "fromBadge": 5
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 1
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Evaluate 1 + 1 to get 2. count still holds 1 until assignment.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 1,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 6,
+     "line": 4,
+     "over": "count + 1",
+     "nth": 1,
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    },
+    {
+     "kind": "out",
+     "text": "1\n",
+     "fromBadge": 5
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 2,
+    "badgeAdded": {
+     "id": 6
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 4,
+   "caption": "Store 2 in count, then check the condition again.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 6,
+     "line": 4,
+     "over": "count + 1",
+     "nth": 1,
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    },
+    {
+     "kind": "out",
+     "text": "1\n",
+     "fromBadge": 5
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 2,
+    "assigned": {
+     "name": "count",
+     "frameId": 0,
+     "fromBadge": 6,
+     "isNew": false
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 2,
+   "caption": "Now 2 < 2 is False. Skip the body; there is no third iteration and no printed 2.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [
+    {
+     "id": 7,
+     "line": 2,
+     "over": "count < 2",
+     "nth": 1,
+     "value": false,
+     "type": "bool"
+    }
+   ],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    },
+    {
+     "kind": "out",
+     "text": "1\n",
+     "fromBadge": 5
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 2,
+    "badgeAdded": {
+     "id": 7
+    }
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "Leave the loop and continue at the unindented print after it. count remains 2.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    },
+    {
+     "kind": "out",
+     "text": "1\n",
+     "fromBadge": 5
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": true,
+    "consoleFrom": 2
+   }
+  },
+  {
+   "error": null,
+   "line": 5,
+   "caption": "The console shows 0, 1, then Done. The final false condition ended the loop.",
+   "vars": [
+    {
+     "name": "count",
+     "value": 2,
+     "type": "int"
+    }
+   ],
+   "frames": [],
+   "badges": [],
+   "console": [
+    {
+     "kind": "out",
+     "text": "0\n",
+     "fromBadge": 2
+    },
+    {
+     "kind": "out",
+     "text": "1\n",
+     "fromBadge": 5
+    },
+    {
+     "kind": "out",
+     "text": "Done\n"
+    }
+   ],
+   "selection": null,
+   "heap": [],
+   "events": {
+    "lineChanged": false,
+    "consoleFrom": 2
+   }
+  }
+ ]
+}

@@ -25,6 +25,11 @@ to a canonical lesson. It checks structure and action combinations; runtime
 validation still checks state and code targets. Unit tests validate the whole
 corpus against both layers.
 
+Adding, removing, or editing a canonical lesson also changes the corpus snapshot
+fixture and the tests that count the corpus (currently 24 lessons). Update those
+counts, regenerate the fixture as described in [Testing](testing.md), and review
+the fixture diff in the same commit.
+
 ## Metadata
 
 Every `index.md` begins with this frontmatter structure:
