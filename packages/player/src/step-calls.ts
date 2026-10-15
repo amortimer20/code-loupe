@@ -1,6 +1,6 @@
 import { isReference, cloneValue } from './values';
 import { checkKeys, findNth, isRecord } from './validation';
-import { readBinding, readValue } from './step-bindings';
+import { readBinding, readResult } from './step-bindings';
 import type { BadgeState } from './state';
 import type { CallFrame } from './visuals/call-stack-state';
 import { constructedInstance } from './visuals/instance-state';
@@ -54,7 +54,7 @@ export function applyReturn(ctx: StepContext) {
   if (!isRecord(step.return)) fail('`return` needs a mapping with value or from.');
   checkKeys(step.return, ['value', 'type', 'from'], 'return', fail);
   const frame = s.frames.at(-1) ?? fail('`return` needs an active function call.');
-  const result = readValue(ctx, step.return, 'return', true);
+  const result = readResult(ctx, step.return, 'return');
   if (frame.construct !== undefined && result.value !== null) fail('an initializer must finish with null (Python None), not return the instance.');
   const instance = frame.construct === undefined ? undefined : constructedInstance(s, frame.construct, fail);
   s.frames.pop();

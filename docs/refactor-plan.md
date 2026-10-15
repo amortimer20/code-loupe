@@ -43,10 +43,14 @@ snapshot, `fail`, `checkLine`, `checkTarget`, language, and id counters.
 `buildSnapshots` keeps one explicit ordered list of handlers, which documents
 the processing order teachers currently have to learn from prose.
 
-**1.3 One binding resolver.** `readValue` (with an overload flag for list
-references) and `readBinding` overlap. Replace them with one function with
-explicit modes: scalar-only (update/append), binding (assign/call arguments),
-and result (return). Keep error messages identical.
+**1.3 One binding resolver (done 2026-10-14).** `readValue` (with an overload flag for list
+references) and `readBinding` duplicated finding the badge and validating the value.
+Instead of one function with modes, which would interleave three unrelated flows,
+they now share two private steps (`sourceOf`, `finishLiteral`) behind three named
+entry points: `readValue` (update/append elements), `readResult` (return, passing
+list references through), and `readBinding` (assign/call parameters, allocating lists
+and binding explicit references). Error messages are unchanged and covered by
+`bindings.test.ts`.
 
 ## Phase 2: player component (`code-loupe.ts`, 961 lines)
 
