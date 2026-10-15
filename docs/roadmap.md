@@ -101,6 +101,9 @@ workflow. A future fixed-input trace-to-authored experiment may populate the
 builder, but it is not the next implementation task. Iframe embedding and the
 host styling API remain independent backlog items.
 
+Before new builder forms, work through the behavior-preserving
+[refactor plan](refactor-plan.md) (2026-10-14).
+
 Ideas still to design, rather than settled API:
 
 - Optional author-defined input constraints, including unrestricted text for error lessons.
@@ -216,8 +219,10 @@ through a shared "where is this value on screen?" lookup.
 6. [ ] **Small GUI builder:** introductory action forms, code-target selection,
        keyboard step organization, and shared preview/undo with the source editor.
        Use the agreed Step cards layout: expandable cards beside the live preview.
-       Initial lesson details/action forms, caption editing, new drafts, and shared
-       undo/redo are implemented. Code selection and richer step organization remain next.
+       Lesson details, introductory scalar, input/conversion, and list action forms,
+       caption editing, new drafts, shared undo/redo, preview code picking, and step
+       insertion, duplication, and keyboard moves are implemented. Teacher trials,
+       drag reordering, and dictionary/call/instance forms remain.
        Follow [the implementation plan](authoring-plan.md); advanced content is preserved
        while its dedicated forms remain future work.
 

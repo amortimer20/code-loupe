@@ -33,7 +33,8 @@ This is an npm workspace monorepo:
   panel and its animations, collection helpers/transitions, dictionary field
   and instance attribute/constructor helpers, and object identity helpers/panel.
   Variables hold references; list contents or scalar named fields live once in each
-  snapshot's heap. Ordinary list values remain independent authored values.
+  snapshot's heap. Every variable-held list is a heap object; plain list values
+  exist only in badges and literal returns, and are allocated when bound.
   Keep browser panel imports out of the pure state path.
   Authored unhandled program errors use pure `error-state.ts` validation and
   `error-panel.ts` annotations. They end execution while preserving prior state;
