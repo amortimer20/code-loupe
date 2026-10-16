@@ -17,17 +17,17 @@ const [first] = mathLessons, start = mathLessons.map(lesson => buildMathSnapshot
     <select id="ml-example" disabled>{mathLessons.map(lesson => <option value={lesson.id}>{lesson.title}</option>)}</select>
     <p id="ml-objective">{first.objective}</p>
   </div>
-  <section id="ml-viewer" class="ml-viewer" tabindex="0" aria-labelledby="ml-title">
-    <header><h2 id="ml-title">{first.title}</h2></header>
-    <div class="ml-stage" role="img" aria-label={start.spoken}>{tokens(start.expression).map(token => token.text).join(' ')}</div>
-    <p class="ml-caption"></p>
-    <nav class="ml-controls" aria-label="Playback">
-      <button type="button" data-restart aria-label="Restart" title="Restart (Home)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 5v14l-10-7z"/></svg></button>
-      <button type="button" data-back aria-label="Previous step" title="Previous step (←)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg></button>
-      <button type="button" data-next aria-label="Next step" title="Next step (→)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 5.4 10 4l8 8-8 8-1.4-1.4 6.6-6.6z"/></svg></button>
-      <span class="ml-counter">Step 0 of {first.steps.length}</span>
-    </nav>
-    <p class="ml-announcement ml-sr-only" role="status" aria-atomic="true"></p>
-  </section>
+  <dialog class="lesson-view" id="lesson-view" aria-label="Math lesson" open>
+    <math-loupe aria-label={`${first.title}: ${start.spoken}`}>
+      <button slot="viewer-actions" class="fullscreen-toggle" type="button" aria-label="Enter fullscreen" aria-pressed="false" title="Enter fullscreen">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path class="expand-icon" d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5" />
+          <path class="collapse-icon" d="M4 9h5V4m11 5h-5V4M9 20v-5H4m11 5v-5h5" />
+        </svg>
+      </button>
+      <p class="ml-fallback">{tokens(start.expression).map(token => token.text).join(' ')}</p>
+    </math-loupe>
+  </dialog>
+  <noscript><p>Enable JavaScript to step through the examples. The starting expression is shown above.</p></noscript>
 </Layout>
-<script>import '../math-loupe/viewer';</script>
+<script>import '../math-loupe/viewer'; import '../focus-lesson';</script>

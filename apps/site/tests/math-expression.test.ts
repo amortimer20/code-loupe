@@ -41,6 +41,10 @@ test('the equation changes both sides together and keeps its equals sign', () =>
     { sources: ['t-three/sign', 'three', 't-three-left/sign', 'three-left'], results: ['t-zero/sign', 'zero'] },
     { sources: ['eleven', 't-three-right/sign', 'three-right'], results: ['eight'] },
   ]);
+  // Variables are authored: hidden at Step 0, unknown until the solving step, and never inferred.
+  assert.deepEqual(snapshots.map(snapshot => snapshot.variables.map(item => `${item.name}=${item.value}`).join()),
+    ['', 'x=unknown', 'x=unknown', 'x=unknown', 'x=unknown', 'x=unknown', 'x=4']);
+  assert.throws(() => buildMathSnapshots({ ...balanceEquation, steps: [{ caption: '', variables: [{ name: 'y', value: 1 }] }] }), /variable "y" is not declared/);
   // x survives the division, so it is a retained glyph rather than a new one.
   assert.ok(ids(balanceEquation, 5).includes('x') && ids(balanceEquation, 6).includes('x'));
 });

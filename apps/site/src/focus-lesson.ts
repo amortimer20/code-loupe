@@ -1,6 +1,6 @@
 const view = document.querySelector<HTMLDialogElement>('#lesson-view')!;
 const toggle = view.querySelector<HTMLButtonElement>('.fullscreen-toggle')!;
-const player = view.querySelector('code-loupe')!;
+const player = view.querySelector('code-loupe, math-loupe')!;
 let focused = false;
 let pageScroll = 0;
 

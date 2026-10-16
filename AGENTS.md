@@ -32,6 +32,10 @@ This is an npm workspace monorepo:
   `lesson-source.ts` hold Shiki highlighting (including its theme-change race
   loop) and lesson-source reading; the component keeps the load and theme-refresh
   race guards.
+- `packages/player/src/chrome.ts` (`code-loupe/chrome`): viewer chrome shared with
+  the math loupe: frame, title, Variables panel, caption and controls styles,
+  control markup/icons, speeds, palette tokens, and motion/speed preferences.
+  Change it for both players.
 - `packages/player/src/themes.ts`: DOM-independent starter palettes and syntax
   themes shared with the site. Keep regular Shiki theme names working.
 - `packages/player/src/visuals/`: pure call-frame scope helpers, the Call stack
@@ -52,6 +56,8 @@ This is an npm workspace monorepo:
   (state, events, undo). Builder markup is built with the auto-escaping `html` tag (`html.ts`): interpolated
   text is escaped, nested markup uses another `html` template, and `raw` is only for
   constant fragments, never teacher text.
+  `src/math-loupe/` is the experimental `<math-loupe>` player: pure expression
+  trees/snapshots, MathML rendering, and one general morph; `/math-loupe/` hosts it.
   Preserve the raw draft, advanced actions, comments, and shared source undo history.
   Import the browser player only in client scripts; its entry depends on DOM globals.
   Build-time validation uses `code-loupe/lesson` and `code-loupe/state` instead.

@@ -213,8 +213,13 @@ two authored steps rather than a special `+0` animation: the opposites combine
 into `+ 0` while `11 − 3` becomes 8, then adding zero is removed. Glyph identity
 lets x survive `2x ÷ 2 → x` and slide into place.
 
-Before replacing `/math/`: the Variables panel (x unknown, then 4), autoplay,
-speed, scrubbing and fullscreen; then port its browser checks and remove the old
-fixtures. Open questions
+The player is now a `<math-loupe>` web component built on the code player's shared
+chrome (`code-loupe/chrome`): the same frame, title, Variables panel, caption,
+controls, palettes, keyboard handling, autoplay pacing, and remembered speed and
+motion preferences. Lessons declare authored variables (x unknown, then 4), and
+the page reuses the sample pages' fullscreen dialog and the site's lesson theme.
+
+Before replacing `/math/`: port its remaining browser checks and remove the old
+fixtures, styles and page. Open questions
 include a bundled math font for consistent rendering across systems, and whether
 evaluation results should be checked for arithmetic subsets.

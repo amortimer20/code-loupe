@@ -1,6 +1,5 @@
 import type { ThemePreset } from '../themes';
-
-const TOKENS = ['bg', 'fg', 'panel', 'raised', 'muted', 'line', 'accent', 'name', 'input', 'error'];
+import { PALETTE_TOKENS, paletteTokens } from '../chrome';
 
 /**
  * Color the player with a starter preset's palette, or, for a regular Shiki theme, with the
@@ -8,14 +7,11 @@ const TOKENS = ['bg', 'fg', 'panel', 'raised', 'muted', 'line', 'accent', 'name'
  */
 export function applyPalette(ca: HTMLElement, codeHost: HTMLElement, preset: ThemePreset | undefined, variant?: 'light' | 'dark') {
   // Clear every preset override when returning to a regular Shiki theme.
-  for (const token of TOKENS) {
+  for (const token of PALETTE_TOKENS) {
     ca.style.removeProperty(`--ca-${token}`);
   }
   if (preset) {
-    const p = preset.palette;
-    const tokens = { bg: p.bg, fg: p.fg, panel: p.panel, raised: p.raised, muted: p.muted,
-      line: p.border, accent: p.accent, name: p.name, input: p.input, error: p.error };
-    for (const [token, color] of Object.entries(tokens)) {
+    for (const [token, color] of Object.entries(paletteTokens(preset))) {
       ca.style.setProperty(`--ca-${token}`, color);
     }
     ca.style.colorScheme = preset.variant;

@@ -15,26 +15,13 @@ import { applyPalette } from './visuals/palette';
 import { el, escapeHtml } from './visuals/dom';
 import { animateAssignment, animateBadgeAdded, animateCollectionChange, animateConsole, animateConversion, animateRemoval, type StepAnimationContext } from './visuals/step-animation';
 import { errorStyles, renderProgramError, renderErrorTarget } from './visuals/error-panel';
+import { AUTOPLAY_PAUSE_MS, CONTROLS_HTML, ICONS, MOTION_STORAGE_KEY, SPEED_STORAGE_KEY, SPEEDS, animationsOn, readStoredSpeed, reducedMotionQuery, storeSetting } from './chrome';
 
 const DEFAULT_THEME = 'dark-plus';
 
 // Durations at 1× speed. Every animation is divided by the current speed.
 const LINE_MS = 500;
 const MOVE_MS = 800;
-const AUTOPLAY_PAUSE_MS = 1600;
-
-const SPEEDS = [0.25, 0.5, 0.75, 1, 1.5, 2];
-const SPEED_STORAGE_KEY = 'code-loupe:speed';
-const MOTION_STORAGE_KEY = 'code-loupe:motion';
-
-const ICONS = {
-  first: '<svg viewBox="0 0 24 24"><path d="M6 5h2v14H6zM19 5v14l-10-7z"/></svg>',
-  prev: '<svg viewBox="0 0 24 24"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg>',
-  next: '<svg viewBox="0 0 24 24"><path d="M8.6 5.4 10 4l8 8-8 8-1.4-1.4 6.6-6.6z"/></svg>',
-  play: '<svg viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></svg>',
-  pause: '<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>',
-  motion: '<svg viewBox="0 0 24 24"><path d="M15 6a6 6 0 1 1 0 12 6 6 0 0 1 0-12zM1 8h6v2H1zm1 3h5v2H2zm-1 3h6v2H1z"/></svg>',
-};
 
 const TEMPLATE = `
 <style>${styles}${callStackStyles}${collectionStyles}${heapStyles}${errorStyles}</style>
@@ -66,18 +53,7 @@ const TEMPLATE = `
     <h3 class="label">Console</h3>
     <pre></pre>
   </section>
-  <nav class="controls" aria-label="Playback">
-    <button data-act="first" aria-label="Restart" title="Restart (Home)">${ICONS.first}</button>
-    <button data-act="prev" aria-label="Previous step" title="Previous step (←)">${ICONS.prev}</button>
-    <button data-act="play" aria-label="Play" title="Play / pause (Space)">${ICONS.play}</button>
-    <button data-act="next" aria-label="Next step" title="Next step (→)">${ICONS.next}</button>
-    <input class="scrub" type="range" min="0" max="0" value="0" aria-label="Step">
-    <span class="counter"></span>
-    <button data-act="motion" class="motion" aria-pressed="true">${ICONS.motion}</button>
-    <select class="speed" aria-label="Playback speed" title="Playback speed">
-      ${SPEEDS.map((s) => `<option value="${s}">${s}×</option>`).join('')}
-    </select>
-  </nav>
+  ${CONTROLS_HTML.trimStart()}
   <div class="step-status" role="status" aria-live="polite" aria-atomic="true"></div>
   <div class="overlay" aria-hidden="true"></div>
   <pre class="error" role="alert" hidden></pre>
@@ -165,7 +141,7 @@ export class CodeLoupe extends HTMLElement {
       this.speed = Number(this.#els.speed.value);
       storeSetting(SPEED_STORAGE_KEY, String(this.speed));
     });
-    REDUCED_MOTION.addEventListener('change', () => this.#renderMotion());
+    reducedMotionQuery()?.addEventListener('change', () => this.#renderMotion());
     this.#renderMotion();
 
     $('.controls').addEventListener('click', (e) => {
@@ -237,10 +213,7 @@ export class CodeLoupe extends HTMLElement {
    * otherwise the operating system's reduce-motion setting decides.
    */
   get animationsOn() {
-    const choice = readSetting(MOTION_STORAGE_KEY) ?? this.getAttribute('motion');
-    if (choice === 'full') return true;
-    if (choice === 'reduced') return false;
-    return !REDUCED_MOTION.matches;
+    return animationsOn(this.getAttribute('motion'));
   }
 
   #renderMotion() {
@@ -727,29 +700,4 @@ export class CodeLoupe extends HTMLElement {
     if (e.key !== ' ') this.pause();
     action();
   }
-}
-
-const REDUCED_MOTION = matchMedia('(prefers-reduced-motion: reduce)');
-
-// Viewer preferences live in localStorage, which can be unavailable (private windows,
-// blocked site data). Then choices simply aren't remembered.
-function readSetting(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function storeSetting(key: string, value: string) {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    // Not remembered; the current page still uses it.
-  }
-}
-
-function readStoredSpeed(): number | null {
-  const speed = Number(readSetting(SPEED_STORAGE_KEY));
-  return speed > 0 ? speed : null;
 }

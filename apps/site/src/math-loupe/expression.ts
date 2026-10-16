@@ -42,17 +42,26 @@ export type MathChange =
   | { kind: 'wrap'; target: string; id: string; op: Operator; operand: MathNode }
   /** Drop a term from a sum, such as + 0. */
   | { kind: 'remove'; target: string };
+/** A teacher-authored value shown in the Variables panel; the player does not solve for it. */
+export interface MathVariable { name: string; value: number | 'unknown' }
 export interface MathLessonStep {
   caption: string;
+  /** Update listed variables by name, such as x becoming 4 once it is solved. */
+  variables?: MathVariable[];
   /** Node ids to emphasize. Defaults to what the changes introduce; otherwise nothing. */
   focus?: string[];
   /** Applied together, so both sides of an equation can change in one step. */
   changes?: MathChange[];
 }
-export interface MathLesson { id: string; title: string; objective: string; start: MathNode; steps: MathLessonStep[] }
+export interface MathLesson {
+  id: string; title: string; objective: string; start: MathNode; steps: MathLessonStep[];
+  /** Shown from step 1, like the rest of the explanation. */
+  variables?: MathVariable[];
+}
 export interface MathSnapshot {
   expression: MathNode;
   focus: string[];
+  variables: MathVariable[];
   caption: string;
   spoken: string;
   /** The changes that produced this snapshot from the previous one. */
@@ -210,15 +219,22 @@ function apply(root: MathNode, change: MathChange, where: string): MathNode {
 /** Snapshot 0 is the untouched starting expression; snapshot n follows authored step n. */
 export function buildMathSnapshots(lesson: MathLesson): MathSnapshot[] {
   assertUniqueIds(lesson.start, `${lesson.id} start`);
-  const snapshots: MathSnapshot[] = [{ expression: lesson.start, focus: [], caption: '', spoken: speak(lesson.start), changes: [] }];
+  const snapshots: MathSnapshot[] = [{ expression: lesson.start, focus: [], variables: [], caption: '', spoken: speak(lesson.start), changes: [] }];
   lesson.steps.forEach((step, index) => {
     const where = `${lesson.id} step ${index + 1}`, changes = step.changes ?? [];
-    let expression = snapshots[snapshots.length - 1].expression;
+    const previous = snapshots[snapshots.length - 1];
+    let expression = previous.expression;
+    const variables = (index === 0 ? lesson.variables ?? [] : previous.variables).map(item => ({ ...item }));
+    for (const update of step.variables ?? []) {
+      const existing = variables.find(item => item.name === update.name);
+      if (!existing) throw new Error(`${where}: variable "${update.name}" is not declared by the lesson.`);
+      existing.value = update.value;
+    }
     for (const change of changes) { expression = apply(expression, change, where); assertUniqueIds(expression, where); }
     const focus = step.focus ?? changes.flatMap(introduced);
     const missing = focus.find(id => !findNode(expression, id));
     if (missing) throw new Error(`${where}: cannot focus missing node "${missing}".`);
-    snapshots.push({ expression, focus, caption: step.caption, spoken: speak(expression), changes });
+    snapshots.push({ expression, focus, variables, caption: step.caption, spoken: speak(expression), changes });
   });
   return snapshots;
 }

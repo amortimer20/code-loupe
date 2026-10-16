@@ -5,7 +5,7 @@ const appearance = document.querySelector<HTMLSelectElement>('#site-appearance')
 const picker = document.querySelector<HTMLSelectElement>('#site-theme')!;
 
 function syncPlayers() {
-  document.querySelectorAll('code-loupe').forEach(player => {
+  document.querySelectorAll('code-loupe, math-loupe').forEach(player => {
     player.setAttribute('theme', root.dataset.lessonTheme ?? 'midnight');
   });
 }

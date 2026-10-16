@@ -706,3 +706,18 @@ operations on both sides happen together.
 Author cancellation as two steps: opposites combine into `+ 0`, then adding zero
 is removed. This keeps each step to one idea, needs no special animation, and gives
 teachers the pacing choice. The earlier prototype combined both in one step.
+
+
+## 2026-10-16 — Share viewer chrome between code and math loupes
+
+Teachers should meet one familiar player whether a lesson shows code or math.
+Earlier we deferred a shared playback shell until the math prototype proved a
+need; matching the code player's look and behavior is that need. Extract only the
+chrome into `code-loupe/chrome`: frame, title, Variables panel, caption and
+control styles, control markup and icons, speeds, autoplay pause, palette tokens,
+and the shared speed/motion preferences. The code player's rendered rules are
+unchanged (same rule set, verified line by line) and remain its own otherwise.
+
+`<math-loupe>` is a site-local web component on that chrome, with the same API
+shape, keyboard rules and fullscreen dialog as code samples. Lesson state, rendering
+and animation stay separate per player; no general playback framework is implied.

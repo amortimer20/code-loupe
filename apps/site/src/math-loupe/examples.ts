@@ -32,6 +32,7 @@ export const parenthesesFirst: MathLesson = {
 export const balanceEquation: MathLesson = {
   id: 'equation', title: 'Keep both sides equal',
   objective: 'Solve a linear equation by applying the same operation to both sides.',
+  variables: [{ name: 'x', value: 'unknown' }],
   start: equation('equation',
     sum('left', plus(times('two-x', num('coefficient', 2), variable('x', 'x'))), plus(num('three', 3))),
     sum('right', plus(num('eleven', 11)))),
@@ -54,7 +55,7 @@ export const balanceEquation: MathLesson = {
     { changes: [
       { kind: 'evaluate', target: 'left-division', result: variable('x', 'x') },
       { kind: 'evaluate', target: 'right-division', result: num('four', 4) },
-    ], caption: 'Two x divided by two is x, and eight divided by two is four.' },
+    ], variables: [{ name: 'x', value: 4 }], caption: 'Two x divided by two is x, and eight divided by two is four.' },
   ],
 };
 

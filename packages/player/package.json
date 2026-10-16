@@ -11,6 +11,7 @@
     "./state": "./src/state.ts",
     "./address": "./src/address.ts",
     "./themes": "./src/themes.ts",
+    "./chrome": "./src/chrome.ts",
     "./lesson.schema.json": "./lesson.schema.json"
   },
   "scripts": {
