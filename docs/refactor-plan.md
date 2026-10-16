@@ -120,6 +120,10 @@ The prototype did not meet expectations, so it was removed instead of refactored
 12 browser tests, plan, and doc sections, plus the layout and theme changes made only for it. See
 the journal entry of the same date. It can be recovered from commit `a1c16e2`.
 
+The rebuilt `<math-loupe>` (journal, 2026-10-16) is new code rather than the refactored
+prototype. It shares only the viewer chrome (`chrome.ts`) with the code player; its lesson
+state, rendering and animation live in `apps/site/src/math-loupe/`.
+
 ## Not in scope
 
 - Monaco's download size (a loading decision, not a refactor).

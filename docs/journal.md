@@ -731,3 +731,16 @@ still describe wanted behavior moved to the new player's spec rather than being
 dropped. Before adding paper-style marks (strikes, fraction bars, stacked working),
 ask colleagues to show how they write these steps, so classroom conventions choose
 the defaults rather than our guesses.
+
+
+## 2026-10-16 — Bring mathematics back as a rebuilt player
+
+The removal on 2026-10-15 and the rebuild happened in parallel: the rebuild began in
+a checkout that predated the removal, starting from the frame review that showed the
+prototype's problems came from its representation. Its result, `<math-loupe>` on
+expression trees, MathML and the shared chrome, answers the reasons for removal, so
+it returns at `/math/` on top of the refactor rather than undoing it. The removal
+entry stays as history. When combining them, the refactor's palette extraction was
+kept and now takes its token mapping from `chrome.ts`, so both players share one
+mapping. Next, colleagues' handwritten working will choose the default conventions
+for paper-style marks.

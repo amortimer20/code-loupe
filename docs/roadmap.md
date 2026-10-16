@@ -292,12 +292,23 @@ through a shared "where is this value on screen?" lookup.
 
 ---
 
-## 9. Mathematics (removed)
+## 9. Mathematics (separate experimental track)
 
-A small experiment with authored arithmetic and algebra walkthroughs lived at `/math/` from
-2026-10-14 and was removed on 2026-10-15 because it did not meet expectations. It was isolated
-from the code player and lesson format. It can be recovered from git history (commit `a1c16e2`),
-but any future mathematics work should start from a fresh design discussion.
+The first `/math/` experiment (2026-10-14) did not meet expectations and was removed on
+2026-10-15. It was then rebuilt from a fresh design discussion as `<math-loupe>`: pure
+expression trees, MathML typesetting, one general transition, and the code player's shared
+chrome. It again serves `/math/`. Follow [the math plan](math-plan.md); useful explanations
+and teacher-controlled detail take precedence over reaching the answer.
+
+- [x] Teaching scope and three worked examples: arithmetic order of operations,
+      grouping, and a one-variable linear equation with an integer solution.
+- [x] Rebuilt read-only player sharing the code player's frame, controls, palettes,
+      keyboard handling and preferences. Math data stays out of code lesson YAML and snapshots.
+- [ ] Gather how colleagues write these steps on paper (photos of the three examples),
+      then choose default conventions.
+- [ ] Paper-style marks: strike-throughs, a drawn fraction bar for division, writing the
+      same operation under both sides, and possibly stacked line-by-line working.
+- [ ] Trial variants side by side with teachers before a public authoring format or editor.
 
 ## Suggested order
 

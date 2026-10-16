@@ -288,6 +288,17 @@ leave cancellation and clean departure after Save, typed summaries and source
 previews, list-reference badge contents, and action-specific hints. Both motion
 modes and narrow layouts run against existing visual references.
 
+
+Math player checks (`tests/browser/math-loupe.spec.ts`, `apps/site/tests/math-expression.test.ts`)
+cover the pure expression model and authoring errors, MathML rendering, reversible
+stepping, the morph (final DOM installed first, overlays only for departing glyphs,
+retained terms held still or slid, x surviving `2x ÷ 2 → x`), an equals sign fixed
+through every step, narrow and short fullscreen in every palette, and interruptions
+by navigation, example changes, theme changes and resizes. Parity checks compare the
+math player's computed chrome with a code player's and cover shared autoplay, speed,
+motion and keyboard rules. Mid-transition frames are frozen with `getAnimations()`;
+no math screenshot references exist yet.
+
 ## Corpus snapshot fixture
 
 `packages/player/tests/corpus-snapshots.test.ts` records every canonical lesson's
