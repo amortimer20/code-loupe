@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { buildMathSnapshots, tokens } from '../math-loupe/expression';
+import { mathLessons } from '../math-loupe/examples';
+import '../math-loupe/math-loupe.css';
+// Build-time check: an authoring mistake in any example fails the site build, as code lessons do.
+const [first] = mathLessons, start = mathLessons.map(lesson => buildMathSnapshots(lesson))[0][0];
+---
+<Layout title="Math loupe (next)" description="Work in progress: a rebuilt math loupe core using expression trees and MathML.">
+  <header>
+    <p class="eyebrow">Mathematics · Work in progress</p>
+    <h1>Math loupe core</h1>
+    <p class="lede">A rebuilt core for the math demo: expression trees, MathML typesetting and one general transition.</p>
+  </header>
+  <div class="ml-example-control">
+    <label for="ml-example">Worked example</label>
+    <select id="ml-example" disabled>{mathLessons.map(lesson => <option value={lesson.id}>{lesson.title}</option>)}</select>
+    <p id="ml-objective">{first.objective}</p>
+  </div>
+  <section id="ml-viewer" class="ml-viewer" tabindex="0" aria-labelledby="ml-title">
+    <header><h2 id="ml-title">{first.title}</h2></header>
+    <div class="ml-stage" role="img" aria-label={start.spoken}>{tokens(start.expression).map(token => token.text).join(' ')}</div>
+    <p class="ml-caption"></p>
+    <nav class="ml-controls" aria-label="Playback">
+      <button type="button" data-restart aria-label="Restart" title="Restart (Home)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 5v14l-10-7z"/></svg></button>
+      <button type="button" data-back aria-label="Previous step" title="Previous step (←)" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.4 5.4 14 4l-8 8 8 8 1.4-1.4L8.8 12z"/></svg></button>
+      <button type="button" data-next aria-label="Next step" title="Next step (→)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.6 5.4 10 4l8 8-8 8-1.4-1.4 6.6-6.6z"/></svg></button>
+      <span class="ml-counter">Step 0 of {first.steps.length}</span>
+    </nav>
+    <p class="ml-announcement ml-sr-only" role="status" aria-atomic="true"></p>
+  </section>
+</Layout>
+<script>import '../math-loupe/viewer';</script>

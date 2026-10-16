@@ -676,3 +676,33 @@ sections, plus two small layout and theme changes made only for it. The earlier 
 entries about it stay as history. It can be recovered from commit `a1c16e2`. Any future
 mathematics work should begin with a fresh design discussion; the older idea of authored
 algebra explanations remains an unexamined possibility, not a plan.
+
+
+## 2026-10-15 — Rebuild the math core on expression trees
+
+Frame review showed that the prototype's remaining quality problems came from its
+representation rather than timing: text fragments, monospace glyphs, and bespoke
+choreography for each transition kind. Rebuild the core with pure expression trees
+(stable node ids, teacher-authored evaluation results), MathML rendering for real
+typesetting without a dependency, and one general morph. The morph installs the
+final DOM before animating, so interruptions cannot leave stale overlays or a
+mismatched handoff. Departing glyphs leave before results arrive, avoiding the
+overlapping cross-fades of the prototype.
+
+Build it beside the existing `/math/` demo and port one example at a time,
+starting with `3 + 2 × 4`; switch over and remove the old fixtures once algebra is
+ported. This remains a site-local prototype, not a public format or package.
+
+
+## 2026-10-15 — Signed terms and equations in the math core
+
+Represent addition and subtraction as a flat list of signed terms instead of
+binary operations. In a binary tree `2x + 3 − 3` is `(2x + 3) − 3`, so the
+opposites a teacher wants to cancel are never one node; as terms they are an
+adjacent pair. Multiplication and division stay binary. An equation is a root
+relation anchored on its equals sign, and a step may apply several changes so
+operations on both sides happen together.
+
+Author cancellation as two steps: opposites combine into `+ 0`, then adding zero
+is removed. This keeps each step to one idea, needs no special animation, and gives
+teachers the pacing choice. The earlier prototype combined both in one step.
