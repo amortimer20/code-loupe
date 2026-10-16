@@ -77,8 +77,10 @@ export function readStoredSpeed(): number | null {
   return speed > 0 ? speed : null;
 }
 
-export const chromeStyles = /* css */ `
-.step-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+// The shared styles are four exact pieces of the code player's original stylesheet. The code
+// player interleaves them with its own rules in that original order, so its rendered CSS text
+// (hashed by the rendered-DOM baselines) is unchanged; the math loupe uses them in sequence.
+export const chromeHostStyles = /* css */ `.step-status { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 :host {
   display: block;
   container-type: inline-size;
@@ -86,7 +88,8 @@ export const chromeStyles = /* css */ `
 :host(:focus-visible) { outline: none; }
 :host(:focus-visible) .ca { outline: 2px solid var(--ca-accent); outline-offset: 2px; }
 
-.ca {
+`;
+export const chromeFrameStyles = /* css */ `.ca {
   /* --ca-bg and --ca-fg are replaced with the Shiki theme's colors at load. */
   --ca-bg: #1e1e1e;
   --ca-fg: #d4d4d4;
@@ -126,7 +129,7 @@ export const chromeStyles = /* css */ `
   color: var(--ca-muted);
 }
 
-/* ---- Stage: data panel + main view ---- */
+/* ---- Stage: variables + code ---- */
 .stage {
   display: grid;
   grid-template-columns: minmax(10rem, 16rem) minmax(0, 1fr);
@@ -178,7 +181,8 @@ export const chromeStyles = /* css */ `
 }
 .var .tag { margin-left: auto; }
 
-/* ---- Caption ---- */
+`;
+export const chromeCaptionStyles = /* css */ `/* ---- Caption ---- */
 .caption {
   min-height: 1.4em;
   padding: 0.65rem 1rem;
@@ -187,7 +191,8 @@ export const chromeStyles = /* css */ `
 }
 .caption:empty::before { content: '\\00a0'; }
 
-/* ---- Controls ---- */
+`;
+export const chromeControlStyles = /* css */ `/* ---- Controls ---- */
 .controls {
   display: flex;
   align-items: center;
@@ -244,4 +249,6 @@ export const chromeStyles = /* css */ `
 @container (max-width: 480px) {
   .counter { display: none; }
 }
+
 `;
+export const chromeStyles = chromeHostStyles + chromeFrameStyles + chromeCaptionStyles + chromeControlStyles;

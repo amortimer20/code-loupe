@@ -1,8 +1,7 @@
-import { chromeStyles } from './chrome';
+import { chromeCaptionStyles, chromeControlStyles, chromeFrameStyles, chromeHostStyles } from './chrome';
 
-/** Code-specific styles; the shared frame, panels, caption and controls live in chrome.ts. */
-export const styles = chromeStyles + /* css */ `
-/* Opt-in bounded viewer: the host supplies a definite height. */
+/** Code-specific styles, interleaved with the shared chrome pieces in their original order. */
+export const styles = '\n' + chromeHostStyles + /* css */ `/* Opt-in bounded viewer: the host supplies a definite height. */
 :host([fit]) .ca { height: 100%; box-sizing: border-box; display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto auto; }
 :host([fit]) .title { grid-row: 1; }
 :host([fit]) .stage { grid-row: 2; min-height: 0; }
@@ -18,7 +17,8 @@ export const styles = chromeStyles + /* css */ `
   :host([fit]) .stage { grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); }
 }
 
-/* ---- Code ---- */
+`
+  + chromeFrameStyles + /* css */ `/* ---- Code ---- */
 .code-scroll {
   position: relative;
   overflow-x: auto;
@@ -94,7 +94,8 @@ export const styles = chromeStyles + /* css */ `
   border-radius: 0;
 }
 
-/* ---- Console ---- */
+`
+  + chromeCaptionStyles + /* css */ `/* ---- Console ---- */
 .console {
   padding: 0.6rem 1rem 0.75rem;
   border-top: 1px solid var(--ca-line);
@@ -127,7 +128,8 @@ export const styles = chromeStyles + /* css */ `
   opacity: 0.75;
 }
 
-/* ---- Animation overlay + errors ---- */
+`
+  + chromeControlStyles + /* css */ `/* ---- Animation overlay + errors ---- */
 .overlay {
   position: absolute;
   inset: 0;
