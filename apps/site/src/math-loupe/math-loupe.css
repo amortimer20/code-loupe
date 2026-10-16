@@ -1,4 +1,6 @@
 /* Page styles only; the player's own styles live inside <math-loupe>. */
+.ml-intro h1 { max-width: 24ch; }
+.ml-prototype-note { color: var(--muted); font-size: .8rem; }
 .ml-example-control { display: grid; gap: .5rem; max-width: 42rem; margin: 1.8rem 0; }
 .ml-example-control label { font-weight: 600; }
 .ml-example-control select { width: 100%; min-width: 0; padding: .65rem; color: var(--text); background: var(--control); border: 1px solid var(--control-border); }

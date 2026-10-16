@@ -721,3 +721,13 @@ unchanged (same rule set, verified line by line) and remain its own otherwise.
 `<math-loupe>` is a site-local web component on that chrome, with the same API
 shape, keyboard rules and fullscreen dialog as code samples. Lesson state, rendering
 and animation stay separate per player; no general playback framework is implied.
+
+
+## 2026-10-16 — Retire the first math prototype
+
+`<math-loupe>` now serves `/math/` with all three examples, so the first
+prototype's fixtures, viewer, styles and browser spec are removed. Its checks that
+still describe wanted behavior moved to the new player's spec rather than being
+dropped. Before adding paper-style marks (strikes, fraction bars, stacked working),
+ask colleagues to show how they write these steps, so classroom conventions choose
+the defaults rather than our guesses.

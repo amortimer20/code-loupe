@@ -139,7 +139,10 @@ after the first classroom-oriented review.
 
 ## Prototype available
 
-The isolated `/math/` route now offers the three fixed examples, explicit
+This section describes the first prototype, since replaced by the rebuilt core
+below; its fixtures, viewer and checks have been removed.
+
+The isolated `/math/` route offered the three fixed examples, explicit
 display-part emphasis, one stable expression stage, authored variables, captions,
 keyboard stepping, autoplay, speed, scrubbing, restart, and fullscreen. It uses ordinary text and mathematical symbols with
 authored spoken labels; it does not yet render general LaTeX or expose an editor.
@@ -182,8 +185,8 @@ algebra operations remain separate future work.
 
 The prototype's quality was limited by its representation: text fragments with
 hand-placed spaces, monospace glyphs, and per-transition choreography. A rebuilt
-core lives in `apps/site/src/math-loupe/` on the separate `/math-loupe/` route,
-leaving `/math/` and its tests unchanged until the new core covers all three examples.
+core lives in `apps/site/src/math-loupe/`. It was built beside the prototype and
+now serves `/math/`, having replaced the prototype once all three examples were ported.
 
 - `expression.ts`: pure expression trees with stable node ids. Authored steps
   emphasize nodes or evaluate a subtree into a teacher-supplied result; snapshots
@@ -219,7 +222,9 @@ controls, palettes, keyboard handling, autoplay pacing, and remembered speed and
 motion preferences. Lessons declare authored variables (x unknown, then 4), and
 the page reuses the sample pages' fullscreen dialog and the site's lesson theme.
 
-Before replacing `/math/`: port its remaining browser checks and remove the old
-fixtures, styles and page. Open questions
+The new player now serves `/math/`. The prototype's remaining useful browser checks
+(no-JavaScript fallback, stable stage height, short/narrow fullscreen in every palette,
+interrupted transitions, and the motion override) were ported. Next, gather how
+colleagues write these steps on paper before adding paper-style marks. Open questions
 include a bundled math font for consistent rendering across systems, and whether
 evaluation results should be checked for arithmetic subsets.

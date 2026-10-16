@@ -57,7 +57,7 @@ This is an npm workspace monorepo:
   text is escaped, nested markup uses another `html` template, and `raw` is only for
   constant fragments, never teacher text.
   `src/math-loupe/` is the experimental `<math-loupe>` player: pure expression
-  trees/snapshots, MathML rendering, and one general morph; `/math-loupe/` hosts it.
+  trees/snapshots, MathML rendering, and one general morph; `/math/` hosts it.
   Preserve the raw draft, advanced actions, comments, and shared source undo history.
   Import the browser player only in client scripts; its entry depends on DOM globals.
   Build-time validation uses `code-loupe/lesson` and `code-loupe/state` instead.

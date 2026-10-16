@@ -2,7 +2,7 @@ import { test, expect } from './helpers';
 import type { Page } from '@playwright/test';
 
 async function ready(page: Page) {
-  await page.goto('/math-loupe/');
+  await page.goto('/math/');
   await expect(page.locator('math-loupe')).toHaveAttribute('data-ready', 'true');
 }
 const expression = (page: Page) => page.locator('.ml-expression math');
@@ -268,4 +268,97 @@ test('math variables, themes and fullscreen behave like a code sample', async ({
   await expect(page.locator('math-loupe .counter')).toHaveText('Step 6 / 6');
   await page.keyboard.press('ArrowLeft');
   await expect(variable).toHaveAttribute('aria-label', 'x: unknown');
+});
+
+// Ported from the retired /math/ prototype's checks.
+test('the starting expression stays readable without JavaScript', async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  try {
+    await page.goto('/math/');
+    await expect(page.locator('.ml-fallback')).toHaveText('3 + 2 × 4');
+    await expect(page.locator('math-loupe')).toHaveAttribute('aria-label', /3 plus 2 times 4/);
+    await expect(page.locator('noscript p')).toBeVisible();
+  } finally { await context.close(); }
+});
+
+test('the expression stage keeps a stable height across steps and widths', async ({ page }) => {
+  await ready(page);
+  const stage = page.locator('.ml-stage');
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 720 });
+    for (const lesson of ['order', 'grouping', 'equation']) {
+      await page.locator('#ml-example').selectOption(lesson);
+      const initial = (await stage.boundingBox())!.height;
+      await page.locator('math-loupe').focus(); await page.keyboard.press('End');
+      expect((await stage.boundingBox())!.height).toBe(initial);
+    }
+  }
+});
+
+test('short and narrow fullscreen keeps the player inside the viewport in every palette', async ({ page }) => {
+  await ready(page);
+  await page.locator('#ml-example').selectOption('equation');
+  const scrub = page.getByRole('slider', { name: 'Step', exact: true });
+  await scrub.evaluate(el => { (el as HTMLInputElement).value = '4'; el.dispatchEvent(new Event('input', { bubbles: true })); });
+  for (const theme of ['paper', 'midnight', 'terminal']) {
+    await page.locator('#site-theme').selectOption(theme);
+    for (const width of [1280, 390]) {
+      await page.setViewportSize({ width, height: 600 });
+      await page.getByRole('button', { name: 'Enter fullscreen', exact: true }).click();
+      await expect(page.locator('math-loupe')).toHaveAttribute('fit', '');
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
+      const player = (await page.locator('math-loupe').boundingBox())!;
+      expect(player.y).toBeGreaterThanOrEqual(0); expect(player.y + player.height).toBeLessThanOrEqual(600.5);
+      for (const part of ['.title', '.controls', '.ml-expression']) {
+        const box = (await page.locator(`math-loupe ${part}`).boundingBox())!;
+        expect(box.y).toBeGreaterThanOrEqual(0); expect(box.y + box.height).toBeLessThanOrEqual(600.5);
+      }
+      const equals = page.locator('[data-token="equation/="]');
+      const before = (await equals.boundingBox())!;
+      await next(page).click();
+      await page.locator('.ml-stage').evaluate(el => el.getAnimations({ subtree: true }).forEach(animation => animation.finish()));
+      const after = (await equals.boundingBox())!;
+      expect(Math.abs(before.x + before.width / 2 - after.x - after.width / 2)).toBeLessThan(.5);
+      await page.getByRole('button', { name: 'Previous step', exact: true }).click();
+      await page.keyboard.press('Escape');
+      await expect(page.locator('math-loupe')).not.toHaveAttribute('fit');
+      await expect(page.locator('math-loupe .counter')).toHaveText('Step 4 / 6');
+    }
+  }
+});
+
+test('theme changes and resizes during a transition settle the destination state', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name === 'chromium-reduced', 'No transitions with reduced motion.');
+  await ready(page);
+  await page.locator('#ml-example').selectOption('equation');
+  for (const interrupt of ['theme', 'resize'] as const) {
+    await page.locator('math-loupe').focus(); await page.keyboard.press('Home');
+    for (let step = 0; step < 2; step++) await next(page).click();
+    await page.locator('.ml-stage').evaluate(el => el.getAnimations({ subtree: true }).forEach(animation => animation.finish()));
+    await next(page).click();
+    await freeze(page, .3);
+    await expect(page.locator('.ml-ghost')).not.toHaveCount(0);
+    if (interrupt === 'theme') await page.locator('#site-theme').selectOption('paper');
+    else await page.setViewportSize({ width: 390, height: 720 });
+    await expect(page.locator('.ml-ghost')).toHaveCount(0);
+    expect(await page.locator('.ml-stage').evaluate(el => el.getAnimations({ subtree: true }).length)).toBe(0);
+    await expect(page.locator('math-loupe .counter')).toHaveText('Step 3 / 6');
+    await expect(page.locator('.ml-expression .ml-focus-glyph')).toHaveText(['+', '0', '8']);
+  }
+  await expect.poll(() => page.locator('.ml-expression .ml-focus-glyph').first().evaluate(el => getComputedStyle(el).color)).toBe('rgb(37, 108, 97)');
+});
+
+test('an explicit animations choice overrides the system reduced-motion setting', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await ready(page);
+  const toggle = page.getByRole('button', { name: 'Animations', exact: true });
+  await expect(toggle).toHaveAttribute('aria-pressed', 'false');
+  await next(page).click(); await next(page).click();
+  expect(await page.locator('.ml-stage').evaluate(el => el.getAnimations({ subtree: true }).length)).toBe(0);
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Previous step', exact: true }).click();
+  await next(page).click();
+  expect(await page.locator('.ml-stage').evaluate(el => el.getAnimations({ subtree: true }).length)).toBeGreaterThan(0);
 });

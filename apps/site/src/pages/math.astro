@@ -6,11 +6,11 @@ import '../math-loupe/math-loupe.css';
 // Build-time check: an authoring mistake in any example fails the site build, as code lessons do.
 const [first] = mathLessons, start = mathLessons.map(lesson => buildMathSnapshots(lesson))[0][0];
 ---
-<Layout title="Math loupe (next)" description="Work in progress: a rebuilt math loupe core using expression trees and MathML.">
-  <header>
-    <p class="eyebrow">Mathematics · Work in progress</p>
-    <h1>Math loupe core</h1>
-    <p class="lede">A rebuilt core for the math demo: expression trees, MathML typesetting and one general transition.</p>
+<Layout title="Math demo" description="Explore arithmetic and algebra through teacher-authored worked steps.">
+  <header class="ml-intro">
+    <p class="eyebrow">Mathematics · Experimental</p>
+    <h1>One transformation at a time.</h1>
+    <p class="lede">Explore three fixed worked examples. Each step highlights what changes and explains why.</p>
   </header>
   <div class="ml-example-control">
     <label for="ml-example">Worked example</label>
@@ -28,6 +28,7 @@ const [first] = mathLessons, start = mathLessons.map(lesson => buildMathSnapshot
       <p class="ml-fallback">{tokens(start.expression).map(token => token.text).join(' ')}</p>
     </math-loupe>
   </dialog>
+  <p class="ml-prototype-note">These explanations are authored examples. This prototype does not calculate solutions or check student answers.</p>
   <noscript><p>Enable JavaScript to step through the examples. The starting expression is shown above.</p></noscript>
 </Layout>
 <script>import '../math-loupe/viewer'; import '../focus-lesson';</script>
